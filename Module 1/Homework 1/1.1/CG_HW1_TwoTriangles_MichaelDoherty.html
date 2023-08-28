@@ -5,8 +5,8 @@
     #version 300 es
 
     in vec4 aPosition;
-    in vec4 aColor;         // Add an attribute for this vertex for color
-    out vec4 vColor;        // Pass it on through the pipeline to be handled by fragment shader
+    in vec4 aColor;    // Add an attribute for this vertex for color
+    out vec4 vColor;   // Pass it on through the pipeline to be handled by fragment shader
     void main()
     {
         gl_Position = aPosition;
@@ -19,8 +19,8 @@
     #version 300 es 
     precision mediump float;
     
-    in  vec4  vColor;        // Receive the color attribute passed from the vertex shader
-    out vec4  fColor;        // Set the color in the framebuffer
+    in  vec4  vColor;  // Receive the color attribute passed from the vertex shader
+    out vec4  fColor;  // Set the color in the framebuffer
 
     void main()
     {
@@ -98,16 +98,15 @@ function initShaders( gl, vertexShaderId, fragmentShaderId ){
 // MODELING: This code defines vertices that describe the shape we want to draw
 function initializePoints()
 {
-   points = new Float32Array( [             // EXPERIMENT - change colors and primitve types
-   //  X ,  Y    R   G   B                  //  How can you get solid colored primitives?
-      0.54, 0.12,   .768, .682, .470,                  //  How can you get different colored primitives 
-      0.0, 0.68,   .768, .682, .470,                  //  How can you use this and drawArrays arguments
-      0.5, 0.83,   .768, .682, .470,                  //    to mix types and colors with one set of data?
-      -0.58, -0.72, .968, .788, .713,
-      -0.76, -0.1,  .968, .788, .713,
-       0.0, -0.43, .968, .788, .713
+   points = new Float32Array( [
+   //     X     Y      R     G     B                  
+        0.54,  0.12, .768, .682, .470,                  
+         0.0,  0.68, .768, .682, .470,                 
+         0.5,  0.83, .768, .682, .470,             
+       -0.58, -0.72, .968, .788, .713,
+       -0.76,  -0.1, .968, .788, .713,
+         0.0, -0.43, .968, .788, .713
       ]);
-
 }
 
 // Move Data from CPU to GPU : This code defines vertices that describe the shape we want to draw
@@ -122,9 +121,9 @@ function initializeGPUBuffers()
     gl.vertexAttribPointer( aPosition, 2, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 0);    // (x,y) floating point values provided
     gl.enableVertexAttribArray( aPosition );  
     
-       // Associate out shader variables with our data buffer
+    // Associate out shader variables with our data buffer
     var aColor = gl.getAttribLocation( program, "aColor" );
-    gl.vertexAttribPointer( aColor, 3, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);    // (x,y) floating point values provided
+    gl.vertexAttribPointer( aColor, 3, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);    // (r,g,b) floating point values provided
     gl.enableVertexAttribArray( aColor);   
 }
 
@@ -140,22 +139,15 @@ function render()
     
    // Configure color to use to clear all pixels  
    // ! This line changes the background color of the canvas
-   //              Red  Green  Blue  Alpha   
-    gl.clearColor( .854,  .905,  .866,   1.0 );  // Changing this between runs is a nice visual verification you are runnign the code you think you are
+   //               Red   Green  Blue   Alpha   
+    gl.clearColor( .854,  .905,  .866,   1.0 );
    
 
     // Render
-    gl.clear( gl.COLOR_BUFFER_BIT );         // Set all pixels in the canvas to the color specied with gl.clearColor
+    gl.clear( gl.COLOR_BUFFER_BIT ); // Set all pixels in the canvas to the color specied with gl.clearColor
 
-    gl.drawArrays( gl.TRIANGLES, 3,  3);      // Note the last argument!    
-    gl.drawArrays( gl.TRIANGLES, 0, 3);
-    //gl.drawArrays( gl.LINES, 0,  6);         
-    //gl.drawArrays( gl.LINE_LOOP, 0,  6); 
-    //gl.drawArrays( gl.LINE_STRIP, 0,  6);         
-    //gl.drawArrays( gl.TRIANGLE_STRIP, 0,  6);     
-    //gl.drawArrays( gl.TRIANGLE_FAN, 0,  6);     
-    //gl.drawArrays( gl.POINTS, 0,  3);       //   Note the second argument!
-
+    gl.drawArrays( gl.LINE_LOOP, 0, 3); //draws the wireframe triangle
+    gl.drawArrays( gl.TRIANGLES, 3, 3); //draws the second triangle
 }
 
 // EXECUTION: Code executes starting here when we launch this file
