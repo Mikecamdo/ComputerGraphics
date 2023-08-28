@@ -1,0 +1,35 @@
+A) Line 25 is used to specify the color of the triangle
+    i) How would you change this to display a BLUE triangle? (write the modified line of code as your answer)
+	- fColor = vec4( 0.0, 0.0, 1.0, 1.0 );
+
+    ii) How would you change this to display a YELLOW triangle? (write the modified line of code as your answer)
+	- fColor = vec4( 1.0, 1.0, 0.0, 1.0 );
+
+    iii) Is this line of code executed on the CPU or the GPU?
+	- The GPU (as this code is run on the fragment shader, which is part of the GPU)
+
+
+B) Line 154 is used to specify the color of the background.
+    i) How would you change this to display a BLACK background? (write the modified line of code as your answer)
+	- gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
+
+    ii) Change line 154 to display a GREEN background.  Verify this was successful THEN comment out line 157.  What happened?  How do you explain this?  (Uncomment line 157 before proceeding.)
+	- When line 157 is commented out, the background color disappears (and just appears as white). This is because line 154 specifies what color to use to clear all pixels, while line 157 is the actual call to clear all pixels in the framebuffer; without this call, the color we specified on line 154 will not show up (as we aren't clearing any pixels).
+
+C) Comment out line 143.  What happens? (Uncomment line 143 before proceeding.)
+	- The triangle disappears (the only thing on the screen is the background color).
+
+D) Line 158 includes a drawing primitive in gl.TRIANGLES.  Change this to gl.LINES. Now change this to gl.LINE_STRIP. Now change this it gl.LINE_LOOP.  Explain what you observe.
+	- For gl.LINES, it draws a single line between the first two points ((0.0, 0.8) and (-0.4, -0.2)). This is because LINES require 2 points, so it ignores the 3rd point as there is not a 4th point for it to draw a line between.
+	- For gl.LINE_STRIP, it draws two lines (one between (0.0, 0.8) and (-0.4, -0.2), and the other between (-0.4, -0.2) and (0.4, -0.2)) This is because LINE_STRIP draws a line between point 1 and point 2, then point 2 and point 3, etc. for all given points.
+	- For gl.LINE_LOOP, it draws three lines (one between (0.0, 0.8) and (-0.4, -0.2), one between (-0.4, -0.2) and (0.4, -0.2), and one between (0.4, -0.2) and (0.0, 0.8)). This is because LINE_LOOP does essentially the same thing as LINE_STRIP, except it draws an additional line between the first point (0.0, 0.8) and the last point (0.4, -0.2), completing the loop.
+
+E) What lines of this file are executed on the GPU? (Provide answer as line numbers)
+	- Lines 4-27
+F) Lines 122-127 specify the coordinates of the three vertices of the triangle. 
+
+    i) What are the coordinate ranges of both the X and Y axes that are visible on the screen. 
+	- The coordinate range for both the X and Y axes that are visible on the screen is [-1.0, 1.0] (any value between -1 and 1, inclusive).
+
+    ii) What happens if one coordinate is outside these bounds?
+	- If a coordinate is outside these bounds, the program will still draw whatever shape you specify, but the coordinate outside these bounds will not be visible on the screen; if you draw a shape like gl.TRIANGLES that fills in the space between the lines with the color of the lines, this colored space will still be visible (it will just cut off at values greater than 1.0 or less than -1.0).
