@@ -16,7 +16,6 @@
     }
 </script>
 
-
 <!-- FRAGMENT SHADER SOURCE CODE: Written in GLSL -->
 <script id="fragment-shader" type="x-shader/x-fragment">
     #version 300 es 
@@ -30,7 +29,6 @@
        fColor = vColor;
     }
 </script>
-
 
 <canvas id="gl-canvas" width="400" height="400"> </canvas>
 
@@ -102,9 +100,9 @@ function initShaders( gl, vertexShaderId, fragmentShaderId ){
 
 function initializePoints()
 {
-    // Generate 12 evenly spaced points along a circle using polar coordinates
-    points = new Float32Array( [    
-        Math.cos(0*2*Math.PI/12), Math.sin(0*2*Math.PI/12), //for the outer circle, 0
+    points = new Float32Array( [
+        //coordinates for the outer circle, 0
+        Math.cos(0*2*Math.PI/12), Math.sin(0*2*Math.PI/12), 
         Math.cos(1*2*Math.PI/12), Math.sin(1*2*Math.PI/12),
         Math.cos(2*2*Math.PI/12), Math.sin(2*2*Math.PI/12),
         Math.cos(3*2*Math.PI/12), Math.sin(3*2*Math.PI/12),
@@ -117,7 +115,8 @@ function initializePoints()
         Math.cos(10*2*Math.PI/12), Math.sin(10*2*Math.PI/12),
         Math.cos(11*2*Math.PI/12), Math.sin(11*2*Math.PI/12),
 
-        Math.cos(0*2*Math.PI/12) * 0.9, Math.sin(0*2*Math.PI/12) * 0.9, //for the inner circle, 12
+        //coordinates for the inner circle, 12
+        Math.cos(0*2*Math.PI/12) * 0.9, Math.sin(0*2*Math.PI/12) * 0.9, 
         Math.cos(1*2*Math.PI/12) * 0.9, Math.sin(1*2*Math.PI/12) * 0.9,
         Math.cos(2*2*Math.PI/12) * 0.9, Math.sin(2*2*Math.PI/12) * 0.9,
         Math.cos(3*2*Math.PI/12) * 0.9, Math.sin(3*2*Math.PI/12) * 0.9,
@@ -130,7 +129,8 @@ function initializePoints()
         Math.cos(10*2*Math.PI/12) * 0.9, Math.sin(10*2*Math.PI/12) * 0.9,
         Math.cos(11*2*Math.PI/12) * 0.9, Math.sin(11*2*Math.PI/12) * 0.9,
 
-        Math.cos(0*2*Math.PI/12), Math.sin(0*2*Math.PI/12), // for the lines, 24
+        //coordinates for the slice lines, 24
+        Math.cos(0*2*Math.PI/12), Math.sin(0*2*Math.PI/12), 
         Math.cos(6*2*Math.PI/12), Math.sin(6*2*Math.PI/12),
         Math.cos(1*2*Math.PI/12), Math.sin(1*2*Math.PI/12),
         Math.cos(7*2*Math.PI/12), Math.sin(7*2*Math.PI/12),
@@ -143,7 +143,8 @@ function initializePoints()
         Math.cos(5*2*Math.PI/12), Math.sin(5*2*Math.PI/12),
         Math.cos(11*2*Math.PI/12), Math.sin(11*2*Math.PI/12),
 
-        Math.cos(0*2*Math.PI/12), Math.sin(0*2*Math.PI/12), //for filling in the crust, 36
+        //coordinates for filling in the crust, 36
+        Math.cos(0*2*Math.PI/12), Math.sin(0*2*Math.PI/12), 
         Math.cos(1*2*Math.PI/12), Math.sin(1*2*Math.PI/12),
         Math.cos(0*2*Math.PI/12) * 0.9, Math.sin(0*2*Math.PI/12) * 0.9,
         Math.cos(1*2*Math.PI/12) * 0.9, Math.sin(1*2*Math.PI/12) * 0.9,
@@ -192,7 +193,8 @@ function initializePoints()
         Math.cos(11*2*Math.PI/12) * 0.9, Math.sin(11*2*Math.PI/12) * 0.9,
         Math.cos(0*2*Math.PI/12) * 0.9, Math.sin(0*2*Math.PI/12) * 0.9,
 
-        Math.cos(0*2*Math.PI/12) * 0.9, Math.sin(0*2*Math.PI/12) * 0.9, //for filling in the slices, 84
+        //coordinates for filling in the slices, 84
+        Math.cos(0*2*Math.PI/12) * 0.9, Math.sin(0*2*Math.PI/12) * 0.9, 
         Math.cos(1*2*Math.PI/12) * 0.9, Math.sin(1*2*Math.PI/12) * 0.9,
         0, 0,
         Math.cos(1*2*Math.PI/12) * 0.9, Math.sin(1*2*Math.PI/12) * 0.9,
@@ -229,10 +231,12 @@ function initializePoints()
         Math.cos(0*2*Math.PI/12) * 0.9, Math.sin(0*2*Math.PI/12) * 0.9,
         0, 0,
 
-        Math.cos(2*2*Math.PI/12 - 0.3) * 0.5, Math.sin(2*2*Math.PI/12 + 0.2) * 0.5, //for the pepperoni, 120
+        //coordinates for the pepperoni, 120
+        Math.cos(2*2*Math.PI/12 - 0.3) * 0.5, Math.sin(2*2*Math.PI/12 + 0.2) * 0.5, 
         Math.cos(4*2*Math.PI/12 + 0.3) * 0.5, Math.sin(4*2*Math.PI/12 - 0.2) * 0.5,
 
-        Math.cos(7*2*Math.PI/12) * 0.5, Math.sin(7*2*Math.PI/12) * 0.5, //for the sausage, 122
+        //coordinates for the sausage, 122
+        Math.cos(7*2*Math.PI/12) * 0.5, Math.sin(7*2*Math.PI/12) * 0.5,
         Math.cos(8*2*Math.PI/12) * 0.5, Math.sin(8*2*Math.PI/12) * 0.5,
         Math.cos(9*2*Math.PI/12) * 0.5, Math.sin(9*2*Math.PI/12) * 0.5, 
         Math.cos(10*2*Math.PI/12) * 0.5, Math.sin(10*2*Math.PI/12) * 0.5,
@@ -241,7 +245,7 @@ function initializePoints()
 
     colors = new Float32Array( [            
     //    R      G      B                 
-        0.953, 0.776, 0.506, //for the outer circle, 0
+        0.953, 0.776, 0.506, //colors for the outer circle, 0
         0.953, 0.776, 0.506,                 
         0.953, 0.776, 0.506,                
         0.953, 0.776, 0.506,
@@ -254,7 +258,7 @@ function initializePoints()
         0.953, 0.776, 0.506,
         0.953, 0.776, 0.506,
 
-        1.0, 0.675, 0.055, //for the inner circle, 12
+        1.0, 0.675, 0.055, //colors for the inner circle, 12
         1.0, 0.675, 0.055,                 
         1.0, 0.675, 0.055,                
         1.0, 0.675, 0.055,
@@ -267,7 +271,7 @@ function initializePoints()
         1.0, 0.675, 0.055,
         1.0, 0.675, 0.055,
 
-        0.0, 0.0, 0.0, //for the lines, 24
+        0.0, 0.0, 0.0, //colors for the slice lines, 24
         0.0, 0.0, 0.0,                 
         0.0, 0.0, 0.0,                
         0.0, 0.0, 0.0,
@@ -280,7 +284,7 @@ function initializePoints()
         0.0, 0.0, 0.0,
         0.0, 0.0, 0.0,
 
-        0.953, 0.776, 0.506, //for filling in the crust, 36
+        0.953, 0.776, 0.506, //colors for filling in the crust, 36
         0.953, 0.776, 0.506,                 
         0.953, 0.776, 0.506,                
         0.953, 0.776, 0.506,
@@ -329,7 +333,7 @@ function initializePoints()
         0.953, 0.776, 0.506,
         0.953, 0.776, 0.506,
 
-        1.0, 0.675, 0.055, //for filling in the slices, 84
+        1.0, 0.675, 0.055, //colors for filling in the slices, 84
         1.0, 0.675, 0.055,                 
         1.0, 0.675, 0.055,                
         1.0, 0.675, 0.055,
@@ -366,10 +370,10 @@ function initializePoints()
         1.0, 0.675, 0.055,
         1.0, 0.675, 0.055,
 
-        0.767, 0.267, 0.0, //for the pepperoni, 120
+        0.767, 0.267, 0.0, //colors for the pepperoni, 120
         0.767, 0.267, 0.0,
 
-        0.588, 0.294, 0.0, //for the sausage, 122
+        0.588, 0.294, 0.0, //colors for the sausage, 122
         0.588, 0.294, 0.0,
         0.588, 0.294, 0.0,
         0.588, 0.294, 0.0,
@@ -407,21 +411,20 @@ function render()
     gl.clearColor( 0.75,  0.75,  0.75,   1.0 );  
     gl.clear( gl.COLOR_BUFFER_BIT ); 
 
-    //gl.drawArrays( gl.POINTS, 0, 12);  
-    gl.drawArrays( gl.LINE_LOOP, 0, 12);
-    gl.drawArrays( gl.LINE_LOOP, 12, 12);
+    gl.drawArrays( gl.LINE_LOOP, 0, 12); //draws the outer circle (the crust)
+    gl.drawArrays( gl.LINE_LOOP, 12, 12); //draws the inner circle (the pizza)
     
 
     for (let i = 0; i < 12; i++) {
-        gl.drawArrays(gl.TRIANGLE_STRIP, 36 + (4 * i), 4);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 36 + (4 * i), 4); //colors the crust
     }
 
     for (let i = 0; i < 12; i++) {
-        gl.drawArrays(gl.TRIANGLES, 84 + (3 * i), 3);
+        gl.drawArrays(gl.TRIANGLES, 84 + (3 * i), 3); //colors the pizza
     }
 
-    gl.drawArrays(gl.LINES, 24, 12);
-    gl.drawArrays(gl.POINTS, 120, 7);
+    gl.drawArrays(gl.LINES, 24, 12); //draws the slice lines
+    gl.drawArrays(gl.POINTS, 120, 7); //draws the pizza toppings
 }
 
 
@@ -465,8 +468,6 @@ window.onload = function init()
     render();
 };
 
-
 </script>
-
 
 </html>
