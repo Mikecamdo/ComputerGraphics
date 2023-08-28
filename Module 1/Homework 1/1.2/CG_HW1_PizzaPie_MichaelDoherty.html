@@ -1,0 +1,472 @@
+<html>
+
+<!-- VERTEX SHADER SOURCE CODE: Written in GLSL -->
+<script id="vertex-shader" type="x-shader/x-vertex">
+    #version 300 es
+
+    in vec4 aPosition;
+    in vec4 aColor;
+    out vec4 vColor;
+
+    void main()
+    {
+        gl_Position = aPosition;
+        gl_PointSize = 15.0;
+        vColor = aColor;
+    }
+</script>
+
+
+<!-- FRAGMENT SHADER SOURCE CODE: Written in GLSL -->
+<script id="fragment-shader" type="x-shader/x-fragment">
+    #version 300 es 
+    precision mediump float;
+    
+    in  vec4  vColor;   // Receive the color attribute passed from the vertex shader
+    out vec4  fColor;   // Set the color in the framebuffer
+
+    void main()
+    {
+       fColor = vColor;
+    }
+</script>
+
+
+<canvas id="gl-canvas" width="400" height="400"> </canvas>
+
+<!-- Written in Javascript -->
+<script>
+
+// Set up some global variables for graphics
+var canvas;       // Browser-managed drawing area on screen
+var gl;           // This is the drawing context
+var program;      // Compiled and linked GPU code
+var points;       // array of vertices as (x,y) pairs
+var colors;       // array of colors as (r,g,b) pairs
+var colorbuffer;   // Buffer for color data
+
+// This compiles and links the shaders to create a GPU program object
+// The GLSL code above is parsed and provided as the source code
+function initShaders( gl, vertexShaderId, fragmentShaderId ){
+    var vertShdr;
+    var fragShdr;
+
+    var vertElem = document.getElementById( vertexShaderId );
+    if ( !vertElem ) {
+        alert( "Unable to load vertex shader " + vertexShaderId );
+        return -1;
+    }
+    else {
+        vertShdr = gl.createShader( gl.VERTEX_SHADER );
+        gl.shaderSource( vertShdr, vertElem.textContent.replace(/^\s+|\s+$/g, '' ));
+        gl.compileShader( vertShdr );
+        if ( !gl.getShaderParameter(vertShdr, gl.COMPILE_STATUS) ) {
+            var msg = "Vertex shader failed to compile.  The error log is:"
+        	+ "<pre>" + gl.getShaderInfoLog( vertShdr ) + "</pre>";
+            alert( msg );
+            return -1;
+        }
+    }
+
+    var fragElem = document.getElementById( fragmentShaderId );
+    if ( !fragElem ) {
+        alert( "Unable to load vertex shader " + fragmentShaderId );
+        return -1;
+    }
+    else {
+        fragShdr = gl.createShader( gl.FRAGMENT_SHADER );
+        gl.shaderSource( fragShdr, fragElem.textContent.replace(/^\s+|\s+$/g, '' ) );
+        gl.compileShader( fragShdr );
+        if ( !gl.getShaderParameter(fragShdr, gl.COMPILE_STATUS) ) {
+            var msg = "Fragment shader failed to compile.  The error log is:"
+        	+ "<pre>" + gl.getShaderInfoLog( fragShdr ) + "</pre>";
+            alert( msg );
+            return -1;
+        }
+    }
+
+    program = gl.createProgram();
+    gl.attachShader( program, vertShdr );
+    gl.attachShader( program, fragShdr );
+    gl.linkProgram( program );
+
+    if ( !gl.getProgramParameter(program, gl.LINK_STATUS) ) {
+        var msg = "Shader program failed to link.  The error log is:"
+            + "<pre>" + gl.getProgramInfoLog( program ) + "</pre>";
+        alert( msg );
+        return -1;
+    }
+
+    return program;
+}
+
+function initializePoints()
+{
+    // Generate 12 evenly spaced points along a circle using polar coordinates
+    points = new Float32Array( [    
+        Math.cos(0*2*Math.PI/12), Math.sin(0*2*Math.PI/12), //for the outer circle, 0
+        Math.cos(1*2*Math.PI/12), Math.sin(1*2*Math.PI/12),
+        Math.cos(2*2*Math.PI/12), Math.sin(2*2*Math.PI/12),
+        Math.cos(3*2*Math.PI/12), Math.sin(3*2*Math.PI/12),
+        Math.cos(4*2*Math.PI/12), Math.sin(4*2*Math.PI/12),
+        Math.cos(5*2*Math.PI/12), Math.sin(5*2*Math.PI/12),
+        Math.cos(6*2*Math.PI/12), Math.sin(6*2*Math.PI/12),
+        Math.cos(7*2*Math.PI/12), Math.sin(7*2*Math.PI/12),
+        Math.cos(8*2*Math.PI/12), Math.sin(8*2*Math.PI/12),
+        Math.cos(9*2*Math.PI/12), Math.sin(9*2*Math.PI/12),
+        Math.cos(10*2*Math.PI/12), Math.sin(10*2*Math.PI/12),
+        Math.cos(11*2*Math.PI/12), Math.sin(11*2*Math.PI/12),
+
+        Math.cos(0*2*Math.PI/12) * 0.9, Math.sin(0*2*Math.PI/12) * 0.9, //for the inner circle, 12
+        Math.cos(1*2*Math.PI/12) * 0.9, Math.sin(1*2*Math.PI/12) * 0.9,
+        Math.cos(2*2*Math.PI/12) * 0.9, Math.sin(2*2*Math.PI/12) * 0.9,
+        Math.cos(3*2*Math.PI/12) * 0.9, Math.sin(3*2*Math.PI/12) * 0.9,
+        Math.cos(4*2*Math.PI/12) * 0.9, Math.sin(4*2*Math.PI/12) * 0.9,
+        Math.cos(5*2*Math.PI/12) * 0.9, Math.sin(5*2*Math.PI/12) * 0.9,
+        Math.cos(6*2*Math.PI/12) * 0.9, Math.sin(6*2*Math.PI/12) * 0.9,
+        Math.cos(7*2*Math.PI/12) * 0.9, Math.sin(7*2*Math.PI/12) * 0.9,
+        Math.cos(8*2*Math.PI/12) * 0.9, Math.sin(8*2*Math.PI/12) * 0.9,
+        Math.cos(9*2*Math.PI/12) * 0.9, Math.sin(9*2*Math.PI/12) * 0.9,
+        Math.cos(10*2*Math.PI/12) * 0.9, Math.sin(10*2*Math.PI/12) * 0.9,
+        Math.cos(11*2*Math.PI/12) * 0.9, Math.sin(11*2*Math.PI/12) * 0.9,
+
+        Math.cos(0*2*Math.PI/12), Math.sin(0*2*Math.PI/12), // for the lines, 24
+        Math.cos(6*2*Math.PI/12), Math.sin(6*2*Math.PI/12),
+        Math.cos(1*2*Math.PI/12), Math.sin(1*2*Math.PI/12),
+        Math.cos(7*2*Math.PI/12), Math.sin(7*2*Math.PI/12),
+        Math.cos(2*2*Math.PI/12), Math.sin(2*2*Math.PI/12),
+        Math.cos(8*2*Math.PI/12), Math.sin(8*2*Math.PI/12),
+        Math.cos(3*2*Math.PI/12), Math.sin(3*2*Math.PI/12),
+        Math.cos(9*2*Math.PI/12), Math.sin(9*2*Math.PI/12),
+        Math.cos(4*2*Math.PI/12), Math.sin(4*2*Math.PI/12),
+        Math.cos(10*2*Math.PI/12), Math.sin(10*2*Math.PI/12),
+        Math.cos(5*2*Math.PI/12), Math.sin(5*2*Math.PI/12),
+        Math.cos(11*2*Math.PI/12), Math.sin(11*2*Math.PI/12),
+
+        Math.cos(0*2*Math.PI/12), Math.sin(0*2*Math.PI/12), //for filling in the crust, 36
+        Math.cos(1*2*Math.PI/12), Math.sin(1*2*Math.PI/12),
+        Math.cos(0*2*Math.PI/12) * 0.9, Math.sin(0*2*Math.PI/12) * 0.9,
+        Math.cos(1*2*Math.PI/12) * 0.9, Math.sin(1*2*Math.PI/12) * 0.9,
+        Math.cos(1*2*Math.PI/12), Math.sin(1*2*Math.PI/12),
+        Math.cos(2*2*Math.PI/12), Math.sin(2*2*Math.PI/12),
+        Math.cos(1*2*Math.PI/12) * 0.9, Math.sin(1*2*Math.PI/12) * 0.9,
+        Math.cos(2*2*Math.PI/12) * 0.9, Math.sin(2*2*Math.PI/12) * 0.9,
+        Math.cos(2*2*Math.PI/12), Math.sin(2*2*Math.PI/12),
+        Math.cos(3*2*Math.PI/12), Math.sin(3*2*Math.PI/12),
+        Math.cos(2*2*Math.PI/12) * 0.9, Math.sin(2*2*Math.PI/12) * 0.9,
+        Math.cos(3*2*Math.PI/12) * 0.9, Math.sin(3*2*Math.PI/12) * 0.9,
+        Math.cos(3*2*Math.PI/12), Math.sin(3*2*Math.PI/12),
+        Math.cos(4*2*Math.PI/12), Math.sin(4*2*Math.PI/12),
+        Math.cos(3*2*Math.PI/12) * 0.9, Math.sin(3*2*Math.PI/12) * 0.9,
+        Math.cos(4*2*Math.PI/12) * 0.9, Math.sin(4*2*Math.PI/12) * 0.9,
+        Math.cos(4*2*Math.PI/12), Math.sin(4*2*Math.PI/12),
+        Math.cos(5*2*Math.PI/12), Math.sin(5*2*Math.PI/12),
+        Math.cos(4*2*Math.PI/12) * 0.9, Math.sin(4*2*Math.PI/12) * 0.9,
+        Math.cos(5*2*Math.PI/12) * 0.9, Math.sin(5*2*Math.PI/12) * 0.9,
+        Math.cos(5*2*Math.PI/12), Math.sin(5*2*Math.PI/12),
+        Math.cos(6*2*Math.PI/12), Math.sin(6*2*Math.PI/12),
+        Math.cos(5*2*Math.PI/12) * 0.9, Math.sin(5*2*Math.PI/12) * 0.9,
+        Math.cos(6*2*Math.PI/12) * 0.9, Math.sin(6*2*Math.PI/12) * 0.9,
+        Math.cos(6*2*Math.PI/12), Math.sin(6*2*Math.PI/12),
+        Math.cos(7*2*Math.PI/12), Math.sin(7*2*Math.PI/12),
+        Math.cos(6*2*Math.PI/12) * 0.9, Math.sin(6*2*Math.PI/12) * 0.9,
+        Math.cos(7*2*Math.PI/12) * 0.9, Math.sin(7*2*Math.PI/12) * 0.9,
+        Math.cos(7*2*Math.PI/12), Math.sin(7*2*Math.PI/12),
+        Math.cos(8*2*Math.PI/12), Math.sin(8*2*Math.PI/12),
+        Math.cos(7*2*Math.PI/12) * 0.9, Math.sin(7*2*Math.PI/12) * 0.9,
+        Math.cos(8*2*Math.PI/12) * 0.9, Math.sin(8*2*Math.PI/12) * 0.9,
+        Math.cos(8*2*Math.PI/12), Math.sin(8*2*Math.PI/12),
+        Math.cos(9*2*Math.PI/12), Math.sin(9*2*Math.PI/12),
+        Math.cos(8*2*Math.PI/12) * 0.9, Math.sin(8*2*Math.PI/12) * 0.9,
+        Math.cos(9*2*Math.PI/12) * 0.9, Math.sin(9*2*Math.PI/12) * 0.9,
+        Math.cos(9*2*Math.PI/12), Math.sin(9*2*Math.PI/12),
+        Math.cos(10*2*Math.PI/12), Math.sin(10*2*Math.PI/12),
+        Math.cos(9*2*Math.PI/12) * 0.9, Math.sin(9*2*Math.PI/12) * 0.9,
+        Math.cos(10*2*Math.PI/12) * 0.9, Math.sin(10*2*Math.PI/12) * 0.9,
+        Math.cos(10*2*Math.PI/12), Math.sin(10*2*Math.PI/12),
+        Math.cos(11*2*Math.PI/12), Math.sin(11*2*Math.PI/12),
+        Math.cos(10*2*Math.PI/12) * 0.9, Math.sin(10*2*Math.PI/12) * 0.9,
+        Math.cos(11*2*Math.PI/12) * 0.9, Math.sin(11*2*Math.PI/12) * 0.9,
+        Math.cos(11*2*Math.PI/12), Math.sin(11*2*Math.PI/12),
+        Math.cos(0*2*Math.PI/12), Math.sin(0*2*Math.PI/12),
+        Math.cos(11*2*Math.PI/12) * 0.9, Math.sin(11*2*Math.PI/12) * 0.9,
+        Math.cos(0*2*Math.PI/12) * 0.9, Math.sin(0*2*Math.PI/12) * 0.9,
+
+        Math.cos(0*2*Math.PI/12) * 0.9, Math.sin(0*2*Math.PI/12) * 0.9, //for filling in the slices, 84
+        Math.cos(1*2*Math.PI/12) * 0.9, Math.sin(1*2*Math.PI/12) * 0.9,
+        0, 0,
+        Math.cos(1*2*Math.PI/12) * 0.9, Math.sin(1*2*Math.PI/12) * 0.9,
+        Math.cos(2*2*Math.PI/12) * 0.9, Math.sin(2*2*Math.PI/12) * 0.9,
+        0, 0,
+        Math.cos(2*2*Math.PI/12) * 0.9, Math.sin(2*2*Math.PI/12) * 0.9,
+        Math.cos(3*2*Math.PI/12) * 0.9, Math.sin(3*2*Math.PI/12) * 0.9,
+        0, 0,
+        Math.cos(3*2*Math.PI/12) * 0.9, Math.sin(3*2*Math.PI/12) * 0.9,
+        Math.cos(4*2*Math.PI/12) * 0.9, Math.sin(4*2*Math.PI/12) * 0.9,
+        0, 0,
+        Math.cos(4*2*Math.PI/12) * 0.9, Math.sin(4*2*Math.PI/12) * 0.9,
+        Math.cos(5*2*Math.PI/12) * 0.9, Math.sin(5*2*Math.PI/12) * 0.9,
+        0, 0,
+        Math.cos(5*2*Math.PI/12) * 0.9, Math.sin(5*2*Math.PI/12) * 0.9,
+        Math.cos(6*2*Math.PI/12) * 0.9, Math.sin(6*2*Math.PI/12) * 0.9,
+        0, 0,
+        Math.cos(6*2*Math.PI/12) * 0.9, Math.sin(6*2*Math.PI/12) * 0.9,
+        Math.cos(7*2*Math.PI/12) * 0.9, Math.sin(7*2*Math.PI/12) * 0.9,
+        0, 0,
+        Math.cos(7*2*Math.PI/12) * 0.9, Math.sin(7*2*Math.PI/12) * 0.9,
+        Math.cos(8*2*Math.PI/12) * 0.9, Math.sin(8*2*Math.PI/12) * 0.9,
+        0, 0,
+        Math.cos(8*2*Math.PI/12) * 0.9, Math.sin(8*2*Math.PI/12) * 0.9,
+        Math.cos(9*2*Math.PI/12) * 0.9, Math.sin(9*2*Math.PI/12) * 0.9,
+        0, 0,
+        Math.cos(9*2*Math.PI/12) * 0.9, Math.sin(9*2*Math.PI/12) * 0.9,
+        Math.cos(10*2*Math.PI/12) * 0.9, Math.sin(10*2*Math.PI/12) * 0.9,
+        0, 0,
+        Math.cos(10*2*Math.PI/12) * 0.9, Math.sin(10*2*Math.PI/12) * 0.9,
+        Math.cos(11*2*Math.PI/12) * 0.9, Math.sin(11*2*Math.PI/12) * 0.9,
+        0, 0,
+        Math.cos(11*2*Math.PI/12) * 0.9, Math.sin(11*2*Math.PI/12) * 0.9,
+        Math.cos(0*2*Math.PI/12) * 0.9, Math.sin(0*2*Math.PI/12) * 0.9,
+        0, 0,
+
+        Math.cos(2*2*Math.PI/12) * 0.5, Math.sin(2*2*Math.PI/12) * 0.5, //for the pepperoni, 120
+        Math.cos(4*2*Math.PI/12) * 0.5, Math.sin(4*2*Math.PI/12) * 0.5,
+
+        Math.cos(7*2*Math.PI/12) * 0.5, Math.sin(7*2*Math.PI/12) * 0.5, //for the sausage, 122
+        Math.cos(8*2*Math.PI/12) * 0.5, Math.sin(8*2*Math.PI/12) * 0.5,
+        Math.cos(9*2*Math.PI/12) * 0.5, Math.sin(9*2*Math.PI/12) * 0.5, 
+        Math.cos(10*2*Math.PI/12) * 0.5, Math.sin(10*2*Math.PI/12) * 0.5,
+        Math.cos(11*2*Math.PI/12) * 0.5, Math.sin(11*2*Math.PI/12) * 0.5, 
+    ]);
+
+    colors = new Float32Array( [            
+    //    R      G      B                 
+        0.953, 0.776, 0.506, //for the outer circle, 0
+        0.953, 0.776, 0.506,                 
+        0.953, 0.776, 0.506,                
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,                  
+        0.953, 0.776, 0.506,                 
+        0.953, 0.776, 0.506,                
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+
+        1.0, 0.675, 0.055, //for the inner circle, 12
+        1.0, 0.675, 0.055,                 
+        1.0, 0.675, 0.055,                
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,                  
+        1.0, 0.675, 0.055,                 
+        1.0, 0.675, 0.055,                
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+
+        0.0, 0.0, 0.0, //for the lines, 24
+        0.0, 0.0, 0.0,                 
+        0.0, 0.0, 0.0,                
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,                  
+        0.0, 0.0, 0.0,                 
+        0.0, 0.0, 0.0,                
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,
+
+        0.953, 0.776, 0.506, //for filling in the crust, 36
+        0.953, 0.776, 0.506,                 
+        0.953, 0.776, 0.506,                
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,                  
+        0.953, 0.776, 0.506,                 
+        0.953, 0.776, 0.506,                
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,                 
+        0.953, 0.776, 0.506,                
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,                  
+        0.953, 0.776, 0.506,                 
+        0.953, 0.776, 0.506,                
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,                 
+        0.953, 0.776, 0.506,                
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,                  
+        0.953, 0.776, 0.506,                 
+        0.953, 0.776, 0.506,                
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,                 
+        0.953, 0.776, 0.506,                
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,                  
+        0.953, 0.776, 0.506,                 
+        0.953, 0.776, 0.506,                
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+        0.953, 0.776, 0.506,
+
+        1.0, 0.675, 0.055, //for filling in the slices, 84
+        1.0, 0.675, 0.055,                 
+        1.0, 0.675, 0.055,                
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,                  
+        1.0, 0.675, 0.055,                 
+        1.0, 0.675, 0.055,                
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,                 
+        1.0, 0.675, 0.055,                
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,                  
+        1.0, 0.675, 0.055,                 
+        1.0, 0.675, 0.055,                
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,                 
+        1.0, 0.675, 0.055,                
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,                  
+        1.0, 0.675, 0.055,                 
+        1.0, 0.675, 0.055,                
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+        1.0, 0.675, 0.055,
+
+        0.767, 0.267, 0.0, //for the pepperoni, 120
+        0.767, 0.267, 0.0,
+
+        0.588, 0.294, 0.0, //for the sausage, 122
+        0.588, 0.294, 0.0,
+        0.588, 0.294, 0.0,
+        0.588, 0.294, 0.0,
+        0.588, 0.294, 0.0
+    ]);
+}
+
+// Move data from CPU to GPU in separate attribute buffers
+function initializeGPUBuffers() 
+{
+    var pointsBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, pointsBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, points, gl.STATIC_DRAW );  
+    
+    // Associate out shader variables with our data buffer
+    var aPosition = gl.getAttribLocation( program, "aPosition" );
+    // (x,y) floating point values provided
+    gl.vertexAttribPointer( aPosition, 2, gl.FLOAT, false, 0, 0);    
+    gl.enableVertexAttribArray( aPosition );  
+    
+     // Associate out shader variables with our color buffer
+    var colorBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, colorBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW );  
+
+    var aColor = gl.getAttribLocation( program, "aColor" );
+    // (r,g,b) floating point values provided
+    gl.vertexAttribPointer( aColor, 3, gl.FLOAT, false, 0, 0);    
+    gl.enableVertexAttribArray( aColor);   
+} 
+
+function render()
+{
+    gl.viewport( 0, 0, canvas.width, canvas.height ); 
+    gl.clearColor( 0.75,  0.75,  0.75,   1.0 );  
+    gl.clear( gl.COLOR_BUFFER_BIT ); 
+
+    //gl.drawArrays( gl.POINTS, 0, 12);  
+    gl.drawArrays( gl.LINE_LOOP, 0, 12);
+    gl.drawArrays( gl.LINE_LOOP, 12, 12);
+    
+
+    for (let i = 0; i < 12; i++) {
+        gl.drawArrays(gl.TRIANGLE_STRIP, 36 + (4 * i), 4);
+    }
+
+    for (let i = 0; i < 12; i++) {
+        gl.drawArrays(gl.TRIANGLES, 84 + (3 * i), 3);
+    }
+
+    gl.drawArrays(gl.LINES, 24, 12);
+    gl.drawArrays(gl.POINTS, 120, 7);
+}
+
+
+// EXECUTION: Code executes starting here when we launch this file
+window.onload = function init()
+{
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //   Setup Browser for WebGL rendering
+    //
+    //   Grab the section of the screen for drawing. This is provided by the browser.
+    //   All graphic output is within the canvas in the browser
+    canvas = document.getElementById( "gl-canvas" );
+     
+    // Create a drawing context (framebuffer) for use by the GPU for rendering.
+    // This corresponds to the browser canvas ( but is not the same thing )
+    gl = canvas.getContext('webgl2');
+    if (!gl) { alert( "WebGL 2.0 isn't available" ); }
+ 
+    ////////////////////////////////////////////////////////////////////////////////  
+    //  Load shaders and initialize attribute buffers
+    //
+
+    var program = initShaders( gl, "vertex-shader", "fragment-shader" );
+    gl.useProgram( program );
+    
+    ////////////////////////////////////////////////////////////////////////////////   
+    // Load models
+    initializePoints();
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////
+    // Load data from CPU into the GPU
+    //
+    initializeGPUBuffers();
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Configure WebGL drawning context settings and draw
+    //
+    render();
+};
+
+
+</script>
+
+
+</html>
