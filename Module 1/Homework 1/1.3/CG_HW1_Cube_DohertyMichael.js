@@ -12,73 +12,70 @@ var theta = [0, 0, 0];		// Rotation angles for x, y and z axes
 var thetaLoc;			// Holds shader uniform variable location
 var flag = true;		// Toggle Rotation Control
 
-var vertices = new Float32Array ( [			// Use Javascript typed arrays
-//    X     Y     Z
-    -0.5, -0.5,  0.5, 
-    -0.5,  0.5,  0.5,
-    -0.5, -0.5,  0.5,
-     0.5, -0.5,  0.5,
+    var vertices = new Float32Array ( [			// Use Javascript typed arrays
+    //    X     Y     Z
+        -0.5, -0.5,  0.5, //front side
+        -0.5,  0.5,  0.5,
+         0.5, -0.5,  0.5,
+         0.5,  0.5,  0.5,
 
-    -0.5,  0.5,  0.5,
-     0.5,  0.5,  0.5,
-     0.5, -0.5,  0.5,
-     0.5,  0.5,  0.5,
+        -0.5, -0.5, -0.5, //back side
+        -0.5,  0.5, -0.5,
+         0.5, -0.5, -0.5,
+         0.5,  0.5, -0.5,
 
-    -0.5, -0.5, -0.5, 
-    -0.5,  0.5, -0.5,
-    -0.5, -0.5, -0.5,
-     0.5, -0.5, -0.5,
+        -0.5,  0.5, -0.5, //top side
+        -0.5,  0.5,  0.5,
+         0.5,  0.5, -0.5,
+         0.5,  0.5,  0.5,
 
-    -0.5,  0.5, -0.5,
-     0.5,  0.5, -0.5,
-     0.5, -0.5, -0.5,
-     0.5,  0.5, -0.5,
+        -0.5, -0.5, -0.5, //bottom side
+        -0.5, -0.5,  0.5,
+         0.5, -0.5, -0.5,
+         0.5, -0.5,  0.5,
 
-    -0.5, -0.5,  0.5,
-    -0.5, -0.5, -0.5,
-    -0.5,  0.5,  0.5,
-    -0.5,  0.5, -0.5,
+         0.5, -0.5, -0.5, //right side
+         0.5, -0.5,  0.5,
+         0.5,  0.5, -0.5,
+         0.5,  0.5,  0.5,
 
-     0.5,  0.5,  0.5,
-     0.5,  0.5, -0.5,
-     0.5, -0.5,  0.5,
-     0.5, -0.5, -0.5
+        -0.5, -0.5, -0.5, //left side
+        -0.5, -0.5,  0.5,
+        -0.5,  0.5, -0.5,
+        -0.5,  0.5,  0.5
+    ] );
 
+    var vertexColors = new Float32Array ( [	
+        1.0, 0.0, 0.0, 1.0,  // red
+        1.0, 0.0, 0.0, 1.0,
+        1.0, 0.0, 0.0, 1.0,
+        1.0, 0.0, 0.0, 1.0,
 
+        0.0, 0.0, 1.0, 1.0,  // blue
+        0.0, 0.0, 1.0, 1.0,
+        0.0, 0.0, 1.0, 1.0,
+        0.0, 0.0, 1.0, 1.0,
 
-] );
+        0.0, 1.0, 0.0, 1.0,  // green
+        0.0, 1.0, 0.0, 1.0,
+        0.0, 1.0, 0.0, 1.0,
+        0.0, 1.0, 0.0, 1.0,
 
-var vertexColors = new Float32Array ( [	
-    1.0, 0.0, 0.0, 1.0,
-    1.0, 0.0, 0.0, 1.0,
-    0.0, 1.0, 0.0, 1.0,
-    0.0, 1.0, 0.0, 1.0,
+        1.0, 1.0, 0.0, 1.0,  // yellow
+        1.0, 1.0, 0.0, 1.0,
+        1.0, 1.0, 0.0, 1.0,
+        1.0, 1.0, 0.0, 1.0,
 
-    0.0, 0.0, 1.0, 1.0,
-    0.0, 0.0, 1.0, 1.0,
-    1.0, 1.0, 0.0, 1.0,
-    1.0, 1.0, 0.0, 1.0,
+        1.0, 0.0, 1.0, 1.0,  // magenta
+        1.0, 0.0, 1.0, 1.0,
+        1.0, 0.0, 1.0, 1.0,
+        1.0, 0.0, 1.0, 1.0,
 
-    1.0, 0.0, 1.0, 1.0,
-    1.0, 0.0, 1.0, 1.0,
-    0.0, 1.0, 1.0, 1.0,
-    0.0, 1.0, 1.0, 1.0,
-
-    1.0, 1.0, 1.0, 1.0,
-    1.0, 1.0, 1.0, 1.0,
-    0.0, 0.0, 0.0, 1.0,
-    0.0, 0.0, 0.0, 1.0,
-
-    1.0, 0.5, 0.3, 1.0,
-    1.0, 0.5, 0.3, 1.0,
-    0.4, 0.7, 0.2, 1.0,
-    0.4, 0.7, 0.2, 1.0,
-
-    0.7, 0.3, 0.3, 1.0,
-    0.7, 0.3, 0.3, 1.0,
-    0.0, 0.4, 0.6, 1.0,
-    0.0, 0.4, 0.6, 1.0
-]);
+        0.0, 1.0, 1.0, 1.0,  // cyan
+        0.0, 1.0, 1.0, 1.0,
+        0.0, 1.0, 1.0, 1.0,
+        0.0, 1.0, 1.0, 1.0
+    ]);
 
 
 window.onload = function init()
@@ -92,7 +89,7 @@ window.onload = function init()
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(0.8, 0.8, 0.8, 1.0);
 
-    //gl.enable(gl.DEPTH_TEST);;
+    gl.enable(gl.DEPTH_TEST);
 
     //
     //  Load shaders and initialize attribute buffers
@@ -146,12 +143,12 @@ function render()
 
     gl.uniform3fv(thetaLoc, theta);	// Update uniform in vertex shader with new rotation angle
 
-    // gl.drawArrays(gl.LINE_LOOP, 0, 4);	// Try changing the primitive type
-    // gl.drawArrays(gl.LINE_LOOP, 4, 4);
-    gl.drawArrays(gl.LINES, 0, 24);
-    // gl.drawArrays(gl.LINES, 10, 2);
-    // gl.drawArrays(gl.LINES, 12, 2);
-    // gl.drawArrays(gl.LINES, 14, 2);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); //draws the front side
+    gl.drawArrays(gl.TRIANGLE_STRIP, 4, 4); //draws the back side
+    gl.drawArrays(gl.TRIANGLE_STRIP, 8, 4); //draws the top side
+    gl.drawArrays(gl.TRIANGLE_STRIP, 12, 4); //draws the bottom side
+    gl.drawArrays(gl.TRIANGLE_STRIP, 16, 4); //draws the right side
+    gl.drawArrays(gl.TRIANGLE_STRIP, 20, 4); //draws the left side
 
     requestAnimationFrame(render);	// Call to browser to refresh display
 }
