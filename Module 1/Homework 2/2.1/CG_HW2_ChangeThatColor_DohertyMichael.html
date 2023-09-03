@@ -5,26 +5,25 @@
     #version 300 es
 
     in vec4 aPosition;
-    in vec4 aColor;    // Add an attribute for this vertex for color
-    out vec4 vColor;   // Pass it on through the pipeline to be handled by fragment shader
+
     void main()
     {
         gl_Position = aPosition;
-        vColor = aColor;
     }
 </script>
 
 <!-- FRAGMENT SHADER SOURCE CODE: Written in GLSL -->
 <script id="fragment-shader" type="x-shader/x-fragment">
-    #version 300 es 
+    #version 300 es
+
     precision mediump float;
     
-    in  vec4  vColor;  // Receive the color attribute passed from the vertex shader
-    out vec4  fColor;  // Set the color in the framebuffer
+    uniform vec4 uColor;
+    out vec4 fColor;
 
     void main()
     {
-       fColor = vColor;
+       fColor = uColor;
     }
 </script>
 
@@ -148,11 +147,24 @@ function render()
    //               Red   Green  Blue   Alpha   
     gl.clearColor(  0.8,   0.8,  0.8,   1.0 );
    
-
     // Render
     gl.clear( gl.COLOR_BUFFER_BIT ); // Set all pixels in the canvas to the color specied with gl.clearColor
 
+    let uColorLoc = gl.getUniformLocation(program, "uColor");
+
+    let colorChoice = document.getElementById("colors").value;
+
+    if (colorChoice == "red") {
+        gl.uniform4f(uColorLoc, 1.0, 0.0, 0.0, 1.0);
+    } else if (colorChoice == "green") {
+        gl.uniform4f(uColorLoc, 0.0, 1.0, 0.0, 1.0);
+    } else if (colorChoice == "blue") {
+        gl.uniform4f(uColorLoc, 0.0, 0.0, 1.0, 1.0);
+    }
+
     gl.drawArrays( gl.TRIANGLES, 0, 3); //draws the triangle
+
+    requestAnimationFrame(render);
 }
 
 // EXECUTION: Code executes starting here when we launch this file
