@@ -27,7 +27,6 @@
     }
 </script>
 
-
 <canvas id="gl-canvas" width="500" height="500"> </canvas>
 
 <br/>
@@ -38,6 +37,16 @@
     <option value="red">Red</option>
     <option value="green">Green</option>
     <option value="blue">Blue</option>
+</select>
+
+<br/>
+
+<label for="background-colors">Choose a background color:</label>
+
+<select name="background-colors" id="background-colors">
+    <option value="gray">Gray</option>
+    <option value="black">Black</option>
+    <option value="white">White</option>
 </select>
 
 <!-- Written in Javascript -->
@@ -133,8 +142,6 @@ function initializeGPUBuffers()
     gl.enableVertexAttribArray( aColor);   
 }
 
-
-
 // RENDERING: This code configures the drawing context and
 //             commands the GPU to draw to framebuffer (drawing context).
 //            (But the browser makes it display on our canvas.)
@@ -146,6 +153,15 @@ function render()
    // Configure color to use to clear all pixels  
    //               Red   Green  Blue   Alpha   
     gl.clearColor(  0.8,   0.8,  0.8,   1.0 );
+    let backgroundColor = document.getElementById("background-colors").value;
+
+    if (backgroundColor == "gray") {
+        gl.clearColor(0.8, 0.8, 0.8, 1.0 );
+    } else if (backgroundColor == "black") {
+        gl.clearColor(0.0, 0.0, 0.0, 1.0 );
+    } else if (backgroundColor == "white") {
+        gl.clearColor(1.0, 1.0, 1.0, 1.0 );
+    }
    
     // Render
     gl.clear( gl.COLOR_BUFFER_BIT ); // Set all pixels in the canvas to the color specied with gl.clearColor
