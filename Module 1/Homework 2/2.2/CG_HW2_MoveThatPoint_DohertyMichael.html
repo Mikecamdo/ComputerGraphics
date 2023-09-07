@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <!-- VERTEX SHADER SOURCE CODE: Written in GLSL -->
@@ -5,7 +6,7 @@
 #version 300 es
 
 in vec4 aPosition;
-uniform vec4 uOffset;
+uniform vec4 uOffset; // uniform variable for x and y offsets
 
 void main()
 {
@@ -20,11 +21,11 @@ void main()
 
 precision mediump float;
 
-out vec4  fColor;
+out vec4 fColor;
 
 void main()
 {
-    fColor = vec4(gl_FragCoord.x/600.0, 0.3, 0.5, 1.0 );
+    fColor = vec4(gl_FragCoord.x/600.0, 0.3, 0.5, 1.0); // color changes based on location
 }
 </script>
 
@@ -92,17 +93,18 @@ function initShaders( gl, vertexShaderId, fragmentShaderId )
 // EXECUTION: Code executes starting here when we launch this file
 window.onload = function init()
 {
-    canvas = document.getElementById( "gl-canvas" );
+    canvas = document.getElementById("gl-canvas");
 
-    gl = canvas.getContext('webgl2', { preserveDrawingBuffer: true });                   // Create Graphics Device Context
-    if (!gl) { alert( "WebGL 2.0 isn't available" ); }
+    gl = canvas.getContext('webgl2', { preserveDrawingBuffer: true }); // Create Graphics Device Context
+    if (!gl) { alert("WebGL 2.0 isn't available"); }
 
     //  Compile and link shaders to create a program object in the Graphics Device Context
-    program = initShaders( gl, "vertex-shader", "fragment-shader" );
-    gl.useProgram( program );
+    program = initShaders(gl, "vertex-shader", "fragment-shader");
+    gl.useProgram(program);
 
-    aPosition = gl.getAttribLocation( program, "aPosition" );
-    gl.vertexAttrib3f(aPosition, 0, 0, 0.0);
+    // initializes the point's location at 0, 0
+    aPosition = gl.getAttribLocation(program, "aPosition");
+    gl.vertexAttrib3f(aPosition, 0.0, 0.0, 0.0);
 
     uOffset = gl.getUniformLocation( program, "uOffset" );
 
@@ -120,12 +122,13 @@ var y;
 var t;
 function render()
 {
+    //The parametric equation, which is a Lissajous figure
     t = t + 0.005;
     x = 0.8 * Math.sin(5 * t + (Math.PI / 2));
     y = 0.8 * Math.sin(4 * t);
     
-    gl.vertexAttrib3f(uOffset, x, y, 0.0);
-    gl.drawArrays(gl.POINTS, 0, 1); //Draws the point
+    gl.vertexAttrib3f(uOffset, x, y, 0.0); // Sets the x and y offsets
+    gl.drawArrays(gl.POINTS, 0, 1); // Draws the point
 
     requestAnimationFrame(render);
 }
