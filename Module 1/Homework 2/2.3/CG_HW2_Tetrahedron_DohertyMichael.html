@@ -58,45 +58,46 @@ void main()
 
 <script type="text/javascript" src="../Common/initShaders.js"></script>
 <script>
-var canvas;			// Drawing surface 
-var gl;				// Graphics context
+var canvas;	// Drawing surface 
+var gl;	// Graphics context
 
-var axis = 0;			// Currently active axis of rotation
-var xAxis = 0;			//  Will be assigned on of these codes for
-var yAxis = 1;			//  
+var axis = 0; // Currently active axis of rotation
+var xAxis = 0;
+var yAxis = 1;
 var zAxis = 2;
 
-var theta = [0, 0, 0];		// Rotation angles for x, y and z axes
-var thetaLoc;			// Holds shader uniform variable location
-var flag = false;		// Toggle Rotation Control
+var theta = [0, 0, 0]; // Rotation angles for x, y and z axes
+var thetaLoc; // Holds shader uniform variable location
+var flag = true; // Toggle Rotation Control
 
-    var vertices = new Float32Array ( [			// Use Javascript typed arrays
+    var vertices = new Float32Array ( [	// Use Javascript typed arrays for coordinates
     //    X     Y     Z
-        0.5, 0.5, 0.5,
-        -0.5, -0.5, 0.5,
-        -0.5, 0.5, -0.5,
+         0.5,  0.5,  0.5, //Coordinates for the tetrahedron
+        -0.5, -0.5,  0.5,
+        -0.5,  0.5, -0.5,
 
-        0.5, 0.5, 0.5,
-        -0.5, -0.5, 0.5,
-        0.5, -0.5, -0.5,
+         0.5,  0.5,  0.5,
+        -0.5, -0.5,  0.5,
+         0.5, -0.5, -0.5,
 
-        0.5, 0.5, 0.5,
-        -0.5, 0.5, -0.5,
-        0.5, -0.5, -0.5,
+         0.5,  0.5,  0.5,
+        -0.5,  0.5, -0.5,
+         0.5, -0.5, -0.5,
 
-        -0.5, -0.5, 0.5,
-        -0.5, 0.5, -0.5,
-        0.5, -0.5, -0.5,
+        -0.5, -0.5,  0.5,
+        -0.5,  0.5, -0.5,
+         0.5, -0.5, -0.5,
 
-       -1.0, 0.0, 0.0,
-        1.0, 0.0, 0.0,
-        0.0,-1.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 0.0,-1.0,
-        0.0, 0.0, 1.0
+        -1.0,  0.0,  0.0, //Coordinates for the axes
+         1.0,  0.0,  0.0,
+         0.0, -1.0,  0.0,
+         0.0,  1.0,  0.0,
+         0.0,  0.0, -1.0,
+         0.0,  0.0,  1.0
         ] );
 
     var vertexColors = new Float32Array ( [	
+        // Colors for the tetrahedron
         1.0, 0.0, 0.0, 1.0,  // red
         1.0, 0.0, 0.0, 1.0,
         1.0, 0.0, 0.0, 1.0,
@@ -113,11 +114,12 @@ var flag = false;		// Toggle Rotation Control
         1.0, 1.0, 0.0, 1.0,
         1.0, 1.0, 0.0, 1.0,
 
+        // Colors for the axes
+        1.0, 0.0, 0.0, 1.0, //red (x axis)
         1.0, 0.0, 0.0, 1.0,
-        1.0, 0.0, 0.0, 1.0,
+        0.0, 1.0, 0.0, 1.0, //green (y axis)
         0.0, 1.0, 0.0, 1.0,
-        0.0, 1.0, 0.0, 1.0,
-        0.0, 0.0, 1.0, 1.0,
+        0.0, 0.0, 1.0, 1.0, //blue (z axis)
         0.0, 0.0, 1.0, 1.0
     ]);
 
@@ -164,7 +166,6 @@ window.onload = function init()
     thetaLoc = gl.getUniformLocation(program, "uTheta");
 
     //event listeners for buttons
-
     document.getElementById( "xButton" ).onclick = function () {
         axis = xAxis;
     };
@@ -176,6 +177,7 @@ window.onload = function init()
     };
     document.getElementById("ButtonT").onclick = function(){flag = !flag;};
 
+    //event listeners for sliders
     document.getElementById("x-slider").onpointermove = function(event) {
         xOffset = event.target.value;
     };
@@ -188,7 +190,7 @@ window.onload = function init()
         zOffset = event.target.value;
     };
 
-    uOffset = gl.getUniformLocation( program, "uOffset" );
+    uOffset = gl.getUniformLocation(program, "uOffset");
 
     xOffset = 0.0;
     yOffset = 0.0;
@@ -197,7 +199,7 @@ window.onload = function init()
     render();
 }
 
-var uOffset;
+var uOffset; //variable representing the uniform variable for the offset
 var xOffset;
 var yOffset;
 var zOffset;
@@ -206,19 +208,19 @@ function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    let temp = new Float32Array([xOffset, yOffset, zOffset, 0.0]);
+    let newOffset = new Float32Array([xOffset, yOffset, zOffset, 0.0]); // Gets the current offset
 
     if(flag) theta[axis] += 0.017;	// Increment rotation of currently active axis of rotation in radians
 
-    gl.uniform3fv(thetaLoc, [0, 0, 0]);	// Update uniform in vertex shader with new rotation angle
+    gl.uniform3fv(thetaLoc, [0, 0, 0]);	// Clear offset and rotation angle so they doesn't apply to the axes
     gl.uniform4fv(uOffset, [0, 0, 0, 0]);
 
-    gl.drawArrays(gl.LINES, 12, 6);
+    gl.drawArrays(gl.LINES, 12, 6); // Draw the axes
 
     gl.uniform3fv(thetaLoc, theta);	// Update uniform in vertex shader with new rotation angle
-    gl.uniform4fv(uOffset, temp);
+    gl.uniform4fv(uOffset, newOffset); // Update uniform in vertex shader with new offset
 
-    gl.drawArrays(gl.TRIANGLES, 0, 12);
+    gl.drawArrays(gl.TRIANGLES, 0, 12); // Draw the tetrahedron
 
     requestAnimationFrame(render);	// Call to browser to refresh display
 }
@@ -226,6 +228,7 @@ function render()
 </script>
 
 <body>
+
 <canvas id="gl-canvas" width="512" height="512">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
