@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <!-- VERTEX SHADER SOURCE CODE: Written in GLSL -->
@@ -31,12 +32,13 @@
 
 <br/>
 
-<label for="colors">Choose a color:</label>
+<label for="colors">Choose a triangle color:</label>
 
 <select name="colors" id="colors">
     <option value="red">Red</option>
     <option value="green">Green</option>
     <option value="blue">Blue</option>
+    <option value="random">Random</option>
 </select>
 
 <br/>
@@ -57,6 +59,11 @@ var canvas;       // Browser-managed drawing area on screen
 var gl;           // This is the drawing context
 var program;      // Compiled and linked GPU code
 var points;       // array of vertices as (x,y) pairs
+
+// random colors for the triangle
+var randomColor1;
+var randomColor2;
+var randomColor3;
 
 // This compiles and links the shaders to create a GPU program object
 // The GLSL code above is parsed and provided as the source code
@@ -151,8 +158,6 @@ function render()
     gl.viewport( 0, 0, canvas.width, canvas.height ); 
     
    // Configure color to use to clear all pixels  
-   //               Red   Green  Blue   Alpha   
-    gl.clearColor(  0.8,   0.8,  0.8,   1.0 );
     let backgroundColor = document.getElementById("background-colors").value;
 
     if (backgroundColor == "gray") {
@@ -164,8 +169,9 @@ function render()
     }
    
     // Render
-    gl.clear( gl.COLOR_BUFFER_BIT ); // Set all pixels in the canvas to the color specied with gl.clearColor
+    gl.clear(gl.COLOR_BUFFER_BIT); // Set all pixels in the canvas to the color specied with gl.clearColor
 
+    // Set triangle color
     let uColorLoc = gl.getUniformLocation(program, "uColor");
 
     let colorChoice = document.getElementById("colors").value;
@@ -176,9 +182,11 @@ function render()
         gl.uniform4f(uColorLoc, 0.0, 1.0, 0.0, 1.0);
     } else if (colorChoice == "blue") {
         gl.uniform4f(uColorLoc, 0.0, 0.0, 1.0, 1.0);
+    } else if (colorChoice == "random") {
+        gl.uniform4f(uColorLoc, randomColor1, randomColor2, randomColor3, 1.0);
     }
 
-    gl.drawArrays( gl.TRIANGLES, 0, 3); //draws the triangle
+    gl.drawArrays(gl.TRIANGLES, 0, 3); //draws the triangle
 
     requestAnimationFrame(render);
 }
@@ -186,13 +194,19 @@ function render()
 // EXECUTION: Code executes starting here when we launch this file
 window.onload = function init()
 {
+    // Function to generate a new random color every time the triangle color changes
+    document.getElementById("colors").onchange = function() {
+        randomColor1 = Math.random(); //Math.random() generates a number between 0 and 1
+        randomColor2 = Math.random();
+        randomColor3 = Math.random();
+    }
 
     ////////////////////////////////////////////////////////////////////////////////
     //   Setup Browser for WebGL rendering
     //
     //   Grab the section of the screen for drawing. This is provided by the browser.
     //   All graphic output is within the canvas in the browser
-    canvas = document.getElementById( "gl-canvas" );
+    canvas = document.getElementById("gl-canvas");
      
     // Create a drawing context (framebuffer) for use by the GPU for rendering.
     // This corresponds to the browser canvas ( but is not the same thing )
@@ -202,7 +216,6 @@ window.onload = function init()
     ////////////////////////////////////////////////////////////////////////////////  
     //  Load shaders and initialize attribute buffers
     //
-
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
     
@@ -210,19 +223,16 @@ window.onload = function init()
     // Load models
     initializePoints();
     
-    
     ////////////////////////////////////////////////////////////////////////////////
     // Load data from CPU into the GPU
     //
     initializeGPUBuffers();
-
 
     ////////////////////////////////////////////////////////////////////////////////
     // Configure WebGL drawning context settings and draw
     //
     render();
 };
-
 
 </script>
 
