@@ -15,31 +15,65 @@ var flag = false; // Toggle Rotation Control
 
 window.onload = function init()
 {
-    // ! change the following every time you need more values
-    let vertices = new Float32Array(48 * 3);
+    let vertices = [];
+
+    for (let i = 0; i < 24; i++) { //points for top of pedestal
+        vertices.push(
+            Math.cos(i*2*Math.PI/24) * 0.4, // X
+            0.2,                            // Y
+            Math.sin(i*2*Math.PI/24) * 0.4  // Z
+        );
+    }
 
     for (let i = 0; i < 24; i++) { //points for bottom of pedestal
-        vertices[3 * i] = Math.cos(i*2*Math.PI/24) * 0.8; //x
-        vertices[3 * i + 1] = -0.5; //y
-        vertices[3 * i + 2] = Math.sin(i*2*Math.PI/24) * 0.8; //z
+        vertices.push(
+            Math.cos(i*2*Math.PI/24) * 0.8, // X
+            -0.5,                           // Y
+            Math.sin(i*2*Math.PI/24) * 0.8  // Z
+        );
     }
 
-    for (let i = 24; i < 48; i++) { //points for top of pedestal
-        vertices[3 * i] = Math.cos(i*2*Math.PI/24) * 0.4; //x
-        vertices[3 * i + 1] = 0.2; //y
-        vertices[3 * i + 2] = Math.sin(i*2*Math.PI/24) * 0.4; //z
+    for (let i = 0; i < 24; i++) { //points for connecting top and bottom of pedestal
+        vertices.push(
+            Math.cos(i*2*Math.PI/24) * 0.8, // X
+            -0.5,                           // Y
+            Math.sin(i*2*Math.PI/24) * 0.8, // Z
+
+            Math.cos(i*2*Math.PI/24) * 0.4, // X
+            0.2,                            // Y
+            Math.sin(i*2*Math.PI/24) * 0.4, // Z
+
+            Math.cos((i+1)*2*Math.PI/24) * 0.4, // X
+            0.2,                                // Y
+            Math.sin((i+1)*2*Math.PI/24) * 0.4, // Z
+
+            Math.cos((i+1)*2*Math.PI/24) * 0.8, // X
+            -0.5,                               // Y
+            Math.sin((i+1)*2*Math.PI/24) * 0.8  // Z
+        );
     }
 
-    let vertexColors = new Float32Array(48 * 4);
+    let vertexColors = [];
 
-    for (let i = 0; i < 48; i++) { //colors for pedestal
-        vertexColors[4 * i] = 0.0; //r
-        vertexColors[4 * i + 1] = 0.0; //g
-        vertexColors[4 * i + 2] = 0.0; //b
-        vertexColors[4 * i + 3] = 1.0; //a
+    for (let i = 0; i < 24; i++) { //color for top of pedestal
+        vertexColors.push(
+        //   R    G    B    A
+            1.0, 1.0, 1.0, 1.0
+        );
+    }
+
+    for (let i = 0; i < 120; i++) { //colors rest of pedestal
+        vertexColors.push(
+        //   R    G    B    A
+            0.0, 0.0, 0.0, 1.0
+        );
     }
     
-    
+    // convert to typed arrays
+    vertices = new Float32Array(vertices);
+    vertexColors = new Float32Array(vertexColors);
+
+// ----------------------------------------------------------
 
     canvas = document.getElementById("gl-canvas");
 
@@ -106,6 +140,10 @@ function render()
 
     gl.drawArrays(gl.LINE_LOOP, 24, 24);
     gl.drawArrays(gl.TRIANGLE_FAN, 24, 24);
+
+    for (let i = 0; i < 24; i++) {
+        gl.drawArrays(gl.TRIANGLE_FAN, 48 + (4 * i), 4);
+    }
 
     requestAnimationFrame(render);	// Call to browser to refresh display
 }
