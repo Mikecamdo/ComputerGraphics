@@ -12,124 +12,35 @@ var theta = [0, 0, 0]; // Rotation angles for x, y and z axes
 var thetaLoc; // Holds shader uniform variable location
 var flag = false; // Toggle Rotation Control
 
-    var vertices = new Float32Array ( [
-    //    X     Y     Z
-    Math.cos(0*2*Math.PI/24) * 0.8, -0.5, Math.sin(0*2*Math.PI/24) * 0.8, 
-    Math.cos(1*2*Math.PI/24) * 0.8, -0.5, Math.sin(1*2*Math.PI/24) * 0.8,
-    Math.cos(2*2*Math.PI/24) * 0.8, -0.5, Math.sin(2*2*Math.PI/24) * 0.8,
-    Math.cos(3*2*Math.PI/24) * 0.8, -0.5, Math.sin(3*2*Math.PI/24) * 0.8,
-    Math.cos(4*2*Math.PI/24) * 0.8, -0.5, Math.sin(4*2*Math.PI/24) * 0.8,
-    Math.cos(5*2*Math.PI/24) * 0.8, -0.5, Math.sin(5*2*Math.PI/24) * 0.8,
-    Math.cos(6*2*Math.PI/24) * 0.8, -0.5, Math.sin(6*2*Math.PI/24) * 0.8,
-    Math.cos(7*2*Math.PI/24) * 0.8, -0.5, Math.sin(7*2*Math.PI/24) * 0.8,
-    Math.cos(8*2*Math.PI/24) * 0.8, -0.5, Math.sin(8*2*Math.PI/24) * 0.8,
-    Math.cos(9*2*Math.PI/24) * 0.8, -0.5, Math.sin(9*2*Math.PI/24) * 0.8,
-    Math.cos(10*2*Math.PI/24) * 0.8, -0.5, Math.sin(10*2*Math.PI/24) * 0.8,
-    Math.cos(11*2*Math.PI/24) * 0.8, -0.5, Math.sin(11*2*Math.PI/24) * 0.8,
-    Math.cos(12*2*Math.PI/24) * 0.8, -0.5, Math.sin(12*2*Math.PI/24) * 0.8, 
-    Math.cos(13*2*Math.PI/24) * 0.8, -0.5, Math.sin(13*2*Math.PI/24) * 0.8,
-    Math.cos(14*2*Math.PI/24) * 0.8, -0.5, Math.sin(14*2*Math.PI/24) * 0.8,
-    Math.cos(15*2*Math.PI/24) * 0.8, -0.5, Math.sin(15*2*Math.PI/24) * 0.8,
-    Math.cos(16*2*Math.PI/24) * 0.8, -0.5, Math.sin(16*2*Math.PI/24) * 0.8,
-    Math.cos(17*2*Math.PI/24) * 0.8, -0.5, Math.sin(17*2*Math.PI/24) * 0.8,
-    Math.cos(18*2*Math.PI/24) * 0.8, -0.5, Math.sin(18*2*Math.PI/24) * 0.8,
-    Math.cos(19*2*Math.PI/24) * 0.8, -0.5, Math.sin(19*2*Math.PI/24) * 0.8,
-    Math.cos(20*2*Math.PI/24) * 0.8, -0.5, Math.sin(20*2*Math.PI/24) * 0.8,
-    Math.cos(21*2*Math.PI/24) * 0.8, -0.5, Math.sin(21*2*Math.PI/24) * 0.8,
-    Math.cos(22*2*Math.PI/24) * 0.8, -0.5, Math.sin(22*2*Math.PI/24) * 0.8,
-    Math.cos(23*2*Math.PI/24) * 0.8, -0.5, Math.sin(23*2*Math.PI/24) * 0.8,
-
-    Math.cos(0*2*Math.PI/24) * 0.4, 0.2, Math.sin(0*2*Math.PI/24) * 0.4, 
-    Math.cos(1*2*Math.PI/24) * 0.4, 0.2, Math.sin(1*2*Math.PI/24) * 0.4,
-    Math.cos(2*2*Math.PI/24) * 0.4, 0.2, Math.sin(2*2*Math.PI/24) * 0.4,
-    Math.cos(3*2*Math.PI/24) * 0.4, 0.2, Math.sin(3*2*Math.PI/24) * 0.4,
-    Math.cos(4*2*Math.PI/24) * 0.4, 0.2, Math.sin(4*2*Math.PI/24) * 0.4,
-    Math.cos(5*2*Math.PI/24) * 0.4, 0.2, Math.sin(5*2*Math.PI/24) * 0.4,
-    Math.cos(6*2*Math.PI/24) * 0.4, 0.2, Math.sin(6*2*Math.PI/24) * 0.4,
-    Math.cos(7*2*Math.PI/24) * 0.4, 0.2, Math.sin(7*2*Math.PI/24) * 0.4,
-    Math.cos(8*2*Math.PI/24) * 0.4, 0.2, Math.sin(8*2*Math.PI/24) * 0.4,
-    Math.cos(9*2*Math.PI/24) * 0.4, 0.2, Math.sin(9*2*Math.PI/24) * 0.4,
-    Math.cos(10*2*Math.PI/24) * 0.4, 0.2, Math.sin(10*2*Math.PI/24) * 0.4,
-    Math.cos(11*2*Math.PI/24) * 0.4, 0.2, Math.sin(11*2*Math.PI/24) * 0.4,
-    Math.cos(12*2*Math.PI/24) * 0.4, 0.2, Math.sin(12*2*Math.PI/24) * 0.4, 
-    Math.cos(13*2*Math.PI/24) * 0.4, 0.2, Math.sin(13*2*Math.PI/24) * 0.4,
-    Math.cos(14*2*Math.PI/24) * 0.4, 0.2, Math.sin(14*2*Math.PI/24) * 0.4,
-    Math.cos(15*2*Math.PI/24) * 0.4, 0.2, Math.sin(15*2*Math.PI/24) * 0.4,
-    Math.cos(16*2*Math.PI/24) * 0.4, 0.2, Math.sin(16*2*Math.PI/24) * 0.4,
-    Math.cos(17*2*Math.PI/24) * 0.4, 0.2, Math.sin(17*2*Math.PI/24) * 0.4,
-    Math.cos(18*2*Math.PI/24) * 0.4, 0.2, Math.sin(18*2*Math.PI/24) * 0.4,
-    Math.cos(19*2*Math.PI/24) * 0.4, 0.2, Math.sin(19*2*Math.PI/24) * 0.4,
-    Math.cos(20*2*Math.PI/24) * 0.4, 0.2, Math.sin(20*2*Math.PI/24) * 0.4,
-    Math.cos(21*2*Math.PI/24) * 0.4, 0.2, Math.sin(21*2*Math.PI/24) * 0.4,
-    Math.cos(22*2*Math.PI/24) * 0.4, 0.2, Math.sin(22*2*Math.PI/24) * 0.4,
-    Math.cos(23*2*Math.PI/24) * 0.4, 0.2, Math.sin(23*2*Math.PI/24) * 0.4,
-    ] );
-
-    var vertexColors = new Float32Array ( [	
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 1.0
-    ]);
-
 
 window.onload = function init()
 {
+    // ! change the following every time you need more values
+    let vertices = new Float32Array(48 * 3);
+
+    for (let i = 0; i < 24; i++) { //points for bottom of pedestal
+        vertices[3 * i] = Math.cos(i*2*Math.PI/24) * 0.8; //x
+        vertices[3 * i + 1] = -0.5; //y
+        vertices[3 * i + 2] = Math.sin(i*2*Math.PI/24) * 0.8; //z
+    }
+
+    for (let i = 24; i < 48; i++) { //points for top of pedestal
+        vertices[3 * i] = Math.cos(i*2*Math.PI/24) * 0.4; //x
+        vertices[3 * i + 1] = 0.2; //y
+        vertices[3 * i + 2] = Math.sin(i*2*Math.PI/24) * 0.4; //z
+    }
+
+    let vertexColors = new Float32Array(48 * 4);
+
+    for (let i = 0; i < 48; i++) { //colors for pedestal
+        vertexColors[4 * i] = 0.0; //r
+        vertexColors[4 * i + 1] = 0.0; //g
+        vertexColors[4 * i + 2] = 0.0; //b
+        vertexColors[4 * i + 3] = 1.0; //a
+    }
+    
+    
+
     canvas = document.getElementById("gl-canvas");
 
     gl = canvas.getContext('webgl2');
@@ -162,7 +73,6 @@ window.onload = function init()
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
     var positionLoc = gl.getAttribLocation( program, "aPosition");
-    // ! need to change the following line when I go back to 3D
     gl.vertexAttribPointer(positionLoc, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionLoc );
 
@@ -191,9 +101,11 @@ function render()
 
     gl.uniform3fv(thetaLoc, theta);	// Update uniform in vertex shader with new rotation angle
 
-    gl.drawArrays( gl.LINE_LOOP, 0, 24);
+    gl.drawArrays(gl.LINE_LOOP, 0, 24);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 24);
 
     gl.drawArrays(gl.LINE_LOOP, 24, 24);
+    gl.drawArrays(gl.TRIANGLE_FAN, 24, 24);
 
     requestAnimationFrame(render);	// Call to browser to refresh display
 }
