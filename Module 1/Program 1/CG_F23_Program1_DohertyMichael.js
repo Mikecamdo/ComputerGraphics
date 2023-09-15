@@ -19,37 +19,37 @@ window.onload = function init()
 
     for (let i = 0; i < 24; i++) { //points for top of pedestal
         vertices.push(
-            Math.cos(i*2*Math.PI/24) * 0.4, // X
-            0.2,                            // Y
-            Math.sin(i*2*Math.PI/24) * 0.4  // Z
+            Math.cos(i*2*Math.PI/24) * 0.3, // X
+            -0.1,                            // Y
+            Math.sin(i*2*Math.PI/24) * 0.3  // Z
         );
     }
 
     for (let i = 0; i < 24; i++) { //points for bottom of pedestal
         vertices.push(
-            Math.cos(i*2*Math.PI/24) * 0.8, // X
-            -0.5,                           // Y
-            Math.sin(i*2*Math.PI/24) * 0.8  // Z
+            Math.cos(i*2*Math.PI/24) * 0.6, // X
+            -0.8,                           // Y
+            Math.sin(i*2*Math.PI/24) * 0.6  // Z
         );
     }
 
     for (let i = 0; i < 24; i++) { //points for connecting top and bottom of pedestal
         vertices.push(
-            Math.cos(i*2*Math.PI/24) * 0.8, // X
-            -0.5,                           // Y
-            Math.sin(i*2*Math.PI/24) * 0.8, // Z
+            Math.cos(i*2*Math.PI/24) * 0.6, // X
+            -0.8,                           // Y
+            Math.sin(i*2*Math.PI/24) * 0.6, // Z
 
-            Math.cos(i*2*Math.PI/24) * 0.4, // X
-            0.2,                            // Y
-            Math.sin(i*2*Math.PI/24) * 0.4, // Z
+            Math.cos(i*2*Math.PI/24) * 0.3, // X
+            -0.1,                            // Y
+            Math.sin(i*2*Math.PI/24) * 0.3, // Z
 
-            Math.cos((i+1)*2*Math.PI/24) * 0.4, // X
-            0.2,                                // Y
-            Math.sin((i+1)*2*Math.PI/24) * 0.4, // Z
+            Math.cos((i+1)*2*Math.PI/24) * 0.3, // X
+            -0.1,                                // Y
+            Math.sin((i+1)*2*Math.PI/24) * 0.3, // Z
 
-            Math.cos((i+1)*2*Math.PI/24) * 0.8, // X
-            -0.5,                               // Y
-            Math.sin((i+1)*2*Math.PI/24) * 0.8  // Z
+            Math.cos((i+1)*2*Math.PI/24) * 0.6, // X
+            -0.8,                               // Y
+            Math.sin((i+1)*2*Math.PI/24) * 0.6  // Z
         );
     }
 
