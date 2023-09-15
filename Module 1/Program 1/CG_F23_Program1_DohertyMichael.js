@@ -32,6 +32,31 @@ window.onload = function init()
             Math.sin(i*2*Math.PI/24) * 0.6  // Z
         );
     }
+    
+    vertices.push( //points for M
+    //     X     Y    Z
+        -0.15, -0.1, 0.05,
+        -0.15,  0.3, 0.05,
+        -0.10,  0.3, 0.05,
+        -0.10, -0.1, 0.05,
+         0.0,   0.0, 0.05,
+         0.0,   0.1, 0.05,
+         0.10, -0.1, 0.05,
+         0.10,  0.3, 0.05,
+         0.15,  0.3, 0.05,
+         0.15, -0.1, 0.05,
+
+        -0.15, -0.1, -0.05,
+        -0.15,  0.3, -0.05,
+        -0.10,  0.3, -0.05,
+        -0.10, -0.1, -0.05,
+         0.0,   0.0, -0.05,
+         0.0,   0.1, -0.05,
+         0.10, -0.1, -0.05,
+         0.10,  0.3, -0.05,
+         0.15,  0.3, -0.05,
+         0.15, -0.1, -0.05
+    );
 
     let vertexColors = [];
 
@@ -49,8 +74,16 @@ window.onload = function init()
         );
     }
 
+    for (let i = 0; i < 20; i++) { //colors for M
+        vertexColors.push(
+        //   R    G    B    A
+            1.0, 0.0, 0.0, 1.0
+        );
+    }
+
     //0 - 23 are top of pedestal
     //24 - 47 are bottom of pedestal
+    //48 - 67 are M
     let indices = [];
 
     for (let i = 0; i < 48; i++) { // indices for top/bottom of pedestal
@@ -61,6 +94,38 @@ window.onload = function init()
         indices.push(i, i + 24, i + 25, i + 1);
     }
     indices.push(23, 47, 24, 0);
+
+    // indices for the M
+    indices.push(
+        //front face of M
+        48, 49, 50, 51, 
+        54, 55, 56, 57,
+        49, 52, 53, 50, 
+        55, 53, 52, 56,
+
+        //back face of M
+        58, 59, 60, 61, 
+        64, 65, 66, 67,
+        59, 62, 63, 60, 
+        65, 63, 62, 66,
+
+        //other faces of M
+        48, 58, 61, 51,
+        48, 58, 59, 49,
+        49, 59, 60, 50,
+        51, 50, 60, 61,
+
+        49, 59, 62, 52,
+        50, 60, 63, 53,
+
+        52, 62, 66, 56,
+        53, 63, 65, 55,
+
+        54, 64, 67, 57,
+        54, 64, 65, 55,
+        55, 65, 66, 56,
+        57, 56, 66, 67
+    );
     
     // convert to typed arrays
     vertices = new Float32Array(vertices);
@@ -144,6 +209,11 @@ function render()
     // connect top and bottom of pedestal
     for (let i = 0; i < 24; i++) {
         gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 48 + (4 * i));
+    }
+
+    // draw M
+    for (let i = 0; i < 20; i++) {
+        gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 144 + (4 * i));
     }
 
     requestAnimationFrame(render);	// Call to browser to refresh display
