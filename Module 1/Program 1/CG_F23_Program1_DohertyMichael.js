@@ -33,26 +33,6 @@ window.onload = function init()
         );
     }
 
-    for (let i = 0; i < 24; i++) { //points for connecting top and bottom of pedestal
-        vertices.push(
-            Math.cos(i*2*Math.PI/24) * 0.6, // X
-            -0.8,                           // Y
-            Math.sin(i*2*Math.PI/24) * 0.6, // Z
-
-            Math.cos(i*2*Math.PI/24) * 0.3, // X
-            -0.1,                            // Y
-            Math.sin(i*2*Math.PI/24) * 0.3, // Z
-
-            Math.cos((i+1)*2*Math.PI/24) * 0.3, // X
-            -0.1,                                // Y
-            Math.sin((i+1)*2*Math.PI/24) * 0.3, // Z
-
-            Math.cos((i+1)*2*Math.PI/24) * 0.6, // X
-            -0.8,                               // Y
-            Math.sin((i+1)*2*Math.PI/24) * 0.6  // Z
-        );
-    }
-
     let vertexColors = [];
 
     for (let i = 0; i < 24; i++) { //color for top of pedestal
@@ -62,16 +42,30 @@ window.onload = function init()
         );
     }
 
-    for (let i = 0; i < 120; i++) { //colors rest of pedestal
+    for (let i = 0; i < 24; i++) { //colors for bottom of pedestal
         vertexColors.push(
         //   R    G    B    A
             0.0, 0.0, 0.0, 1.0
         );
     }
+
+    //0 - 23 are top of pedestal
+    //24 - 47 are bottom of pedestal
+    let indices = [];
+
+    for (let i = 0; i < 48; i++) { // indices for top/bottom of pedestal
+        indices.push(i);
+    }
+
+    for (let i = 0; i < 23; i++) { // indices for connecting the top and bottom of pedestal
+        indices.push(i, i + 24, i + 25, i + 1);
+    }
+    indices.push(23, 47, 24, 0);
     
     // convert to typed arrays
     vertices = new Float32Array(vertices);
     vertexColors = new Float32Array(vertexColors);
+    indices = new Uint8Array(indices);
 
 // ----------------------------------------------------------
 
@@ -79,7 +73,6 @@ window.onload = function init()
 
     gl = canvas.getContext('webgl2');
     if (!gl) alert("WebGL 2.0 isn't available");
-
 
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(0.8, 0.8, 0.8, 1.0);
@@ -92,7 +85,7 @@ window.onload = function init()
     var program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
-    // color array atrribute buffer
+    // color array attribute buffer
     var cBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertexColors, gl.STATIC_DRAW);
@@ -106,9 +99,14 @@ window.onload = function init()
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
-    var positionLoc = gl.getAttribLocation( program, "aPosition");
+    var positionLoc = gl.getAttribLocation(program, "aPosition");
     gl.vertexAttribPointer(positionLoc, 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(positionLoc );
+    gl.enableVertexAttribArray(positionLoc);
+
+    // ! new buffer, leave a better comment
+    var iBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
     thetaLoc = gl.getUniformLocation(program, "uTheta");
 
@@ -135,14 +133,17 @@ function render()
 
     gl.uniform3fv(thetaLoc, theta);	// Update uniform in vertex shader with new rotation angle
 
-    gl.drawArrays(gl.LINE_LOOP, 0, 24);
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, 24);
+    // draw top of pedestal
+    gl.drawElements(gl.LINE_LOOP, 24, gl.UNSIGNED_BYTE, 0);
+    gl.drawElements(gl.TRIANGLE_FAN, 24, gl.UNSIGNED_BYTE, 0);
 
-    gl.drawArrays(gl.LINE_LOOP, 24, 24);
-    gl.drawArrays(gl.TRIANGLE_FAN, 24, 24);
+    // draw bottom of pedestal
+    gl.drawElements(gl.LINE_LOOP, 24, gl.UNSIGNED_BYTE, 24);
+    gl.drawElements(gl.TRIANGLE_FAN, 24, gl.UNSIGNED_BYTE, 24);
 
+    // connect top and bottom of pedestal
     for (let i = 0; i < 24; i++) {
-        gl.drawArrays(gl.TRIANGLE_FAN, 48 + (4 * i), 4);
+        gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 48 + (4 * i));
     }
 
     requestAnimationFrame(render);	// Call to browser to refresh display
