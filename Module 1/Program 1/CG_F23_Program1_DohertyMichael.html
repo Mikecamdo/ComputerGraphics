@@ -79,6 +79,10 @@ void main()
     body {
       text-align: center;
     }
+
+    .active-button {
+      background-color: #e4871d;
+    }
   </style>
 </head>
 
@@ -88,10 +92,10 @@ void main()
   </canvas>
 
   <div>
-    <button id= "xButton">Rotate X</button>
-    <button id= "yButton">Rotate Y</button>
-    <button id= "zButton">Rotate Z</button>
-    <button id = "ButtonT">Toggle Rotation</button>
+    <button id="xButton" class="active-button">Rotate X</button>
+    <button id="yButton">Rotate Y</button>
+    <button id="zButton">Rotate Z</button>
+    <button id="ButtonT">Toggle Rotation</button>
   </div>
 </body>
 

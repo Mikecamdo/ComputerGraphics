@@ -176,18 +176,52 @@ window.onload = function init()
     thetaLoc = gl.getUniformLocation(program, "uTheta");
 
     //event listeners for buttons
-    document.getElementById( "xButton" ).onclick = function () {
+    let xButton = document.getElementById("xButton");
+    let yButton = document.getElementById("yButton");
+    let zButton = document.getElementById("zButton");
+
+    document.getElementById("xButton").onclick = function () {
         axis = xAxis;
+        changeButtonColor(xButton, yButton, zButton);
     };
-    document.getElementById( "yButton" ).onclick = function () {
+    document.getElementById("yButton").onclick = function () {
         axis = yAxis;
+        changeButtonColor(xButton, yButton, zButton);
     };
-    document.getElementById( "zButton" ).onclick = function () {
+    document.getElementById("zButton").onclick = function () {
         axis = zAxis;
+        changeButtonColor(xButton, yButton, zButton);
     };
-    document.getElementById("ButtonT").onclick = function(){flag = !flag;};
+    document.getElementById("ButtonT").onclick = function () {
+        flag = !flag;
+        if (flag) {
+            this.classList.add('active-button');
+        } else {
+            this.classList.remove('active-button');
+        }
+    };
 
     render();
+}
+
+// function that highlights the button of the axis that rotation is currently applied to
+function changeButtonColor(xButton, yButton, zButton) {
+    switch(axis) {
+        case xAxis:
+            xButton.classList.add('active-button');
+            yButton.classList.remove('active-button');
+            zButton.classList.remove('active-button');
+            break;
+        case yAxis:
+            xButton.classList.remove('active-button');
+            yButton.classList.add('active-button');
+            zButton.classList.remove('active-button');
+            break;
+        case zAxis:
+            xButton.classList.remove('active-button');
+            yButton.classList.remove('active-button');
+            zButton.classList.add('active-button');
+    }
 }
 
 function render()
