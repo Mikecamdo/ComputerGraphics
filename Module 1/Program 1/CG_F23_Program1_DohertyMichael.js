@@ -58,6 +58,60 @@ window.onload = function init()
          0.15, -0.1, -0.05
     );
 
+    vertices.push( // points for D
+    //     X     Y    Z
+        -0.15,  0.3, 0.05,
+        -0.15,  0.7, 0.05,
+        -0.075,  0.7, 0.05,
+        -0.075,  0.3, 0.05,
+
+        -0.075,  0.375, 0.05,
+        -0.075,  0.625, 0.05,
+    );
+
+    for (let i = 0; i < 13; i++) { //points for D
+        vertices.push(
+            Math.sin(i*2*Math.PI/24) * 0.2 - 0.03, // X
+            -Math.cos(i*2*Math.PI/24) * 0.2 + 0.5, // Y
+            0.05,                           // Z
+        );
+    }
+
+    for (let i = 0; i < 13; i++) { //points for D
+        vertices.push(
+            Math.sin(i*2*Math.PI/24) * 0.125 - 0.03, // X
+            -Math.cos(i*2*Math.PI/24) * 0.125 + 0.5, // Y
+            0.05,                           // Z
+        );
+    }
+
+    vertices.push( // points for D
+    //     X     Y    Z
+        -0.15,  0.3, -0.05,
+        -0.15,  0.7, -0.05,
+        -0.075,  0.7, -0.05,
+        -0.075,  0.3, -0.05,
+
+        -0.075,  0.375, -0.05,
+        -0.075,  0.625, -0.05,
+    );
+
+    for (let i = 0; i < 13; i++) { //points for D
+        vertices.push(
+            Math.sin(i*2*Math.PI/24) * 0.2 - 0.03, // X
+            -Math.cos(i*2*Math.PI/24) * 0.2 + 0.5, // Y
+            -0.05,                           // Z
+        );
+    }
+
+    for (let i = 0; i < 13; i++) { //points for D
+        vertices.push(
+            Math.sin(i*2*Math.PI/24) * 0.125 - 0.03, // X
+            -Math.cos(i*2*Math.PI/24) * 0.125 + 0.5, // Y
+            -0.05,                           // Z
+        );
+    }
+
     let vertexColors = [];
 
     for (let i = 0; i < 24; i++) { //color for top of pedestal
@@ -81,9 +135,19 @@ window.onload = function init()
         );
     }
 
+    for (let i = 0; i < 64; i++) { // colors for D
+        vertexColors.push(
+        //   R    G    B    A
+            0.5, 0.0, 1.0, 1.0
+        );
+    }
+
+    //Numbering for vertex points:
     //0 - 23 are top of pedestal
     //24 - 47 are bottom of pedestal
     //48 - 67 are M
+    //68 - 99 are front of D
+    //100 - 131 are back of D
     let indices = [];
 
     for (let i = 0; i < 48; i++) { // indices for top/bottom of pedestal
@@ -126,6 +190,41 @@ window.onload = function init()
         55, 65, 66, 56,
         57, 56, 66, 67
     );
+
+    indices.push( //front of D
+        68, 69, 70, 71,
+        
+        74, 87, 75, 88, 76, 89, 77, 90, 78, 91, 79, 92, 80, 93, 81, 94, 82, 95, 83, 96, 84, 97, 85, 98, 86, 99,
+
+        73, 70, 86, 99,
+        71, 72, 87, 74
+    );
+
+    indices.push( //back of D
+        100, 101, 102, 103,
+        
+        106, 119, 107, 120, 108, 121, 109, 122, 110, 123, 111, 124, 112, 125, 113, 126, 114, 127, 115, 128, 116, 129, 117, 130, 118, 131,
+
+        105, 102, 118, 131,
+        103, 104, 119, 106
+    );
+
+    indices.push( // filling in the D
+        68, 100, 103, 71,
+        68, 69, 101, 100,
+        69, 101, 102, 70,
+        71, 70, 102, 103,
+
+        70, 102, 118, 86,
+        71, 103, 106, 74,
+    );
+
+    for (let i = 0; i < 12; i++) {
+        let start = 74 + i;
+        indices.push(
+            start, start + 32, start + 33, start + 1
+        );
+    }
     
     // convert to typed arrays
     vertices = new Float32Array(vertices);
@@ -248,6 +347,22 @@ function render()
     // draw M
     for (let i = 0; i < 20; i++) {
         gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 144 + (4 * i));
+    }
+
+    // gl.drawArrays(gl.POINTS, 68, 32); // TODO remove!!
+
+    gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 224);
+    gl.drawElements(gl.TRIANGLE_STRIP, 26, gl.UNSIGNED_BYTE, 228);
+    gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 254);
+    gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 258);
+
+    gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 262);
+    gl.drawElements(gl.TRIANGLE_STRIP, 26, gl.UNSIGNED_BYTE, 266);
+    gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 292);
+    gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 296);
+
+    for (let i = 0; i < 18; i++) {
+        gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 300 + (4 * i));
     }
 
     requestAnimationFrame(render);	// Call to browser to refresh display
