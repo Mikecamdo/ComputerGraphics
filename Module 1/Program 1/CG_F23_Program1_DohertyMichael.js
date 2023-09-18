@@ -20,7 +20,7 @@ window.onload = function init()
     for (let i = 0; i < 24; i++) { //points for top of pedestal
         vertices.push(
             Math.cos(i*2*Math.PI/24) * 0.3, // X
-            -0.1,                            // Y
+            -0.1001,                            // Y
             Math.sin(i*2*Math.PI/24) * 0.3  // Z
         );
     }
@@ -35,44 +35,44 @@ window.onload = function init()
     
     vertices.push( //points for M
     //     X     Y    Z
-        -0.15, -0.1, 0.05,
         -0.15,  0.3, 0.05,
+        -0.15,  0.7, 0.05,
+        -0.10,  0.7, 0.05,
         -0.10,  0.3, 0.05,
-        -0.10, -0.1, 0.05,
-         0.0,   0.0, 0.05,
-         0.0,   0.1, 0.05,
-         0.10, -0.1, 0.05,
+         0.0,   0.4, 0.05,
+         0.0,   0.5, 0.05,
          0.10,  0.3, 0.05,
+         0.10,  0.7, 0.05,
+         0.15,  0.7, 0.05,
          0.15,  0.3, 0.05,
-         0.15, -0.1, 0.05,
 
-        -0.15, -0.1, -0.05,
         -0.15,  0.3, -0.05,
+        -0.15,  0.7, -0.05,
+        -0.10,  0.7, -0.05,
         -0.10,  0.3, -0.05,
-        -0.10, -0.1, -0.05,
-         0.0,   0.0, -0.05,
-         0.0,   0.1, -0.05,
-         0.10, -0.1, -0.05,
+         0.0,   0.4, -0.05,
+         0.0,   0.5, -0.05,
          0.10,  0.3, -0.05,
-         0.15,  0.3, -0.05,
-         0.15, -0.1, -0.05
+         0.10,  0.7, -0.05,
+         0.15,  0.7, -0.05,
+         0.15,  0.3, -0.05
     );
 
     vertices.push( // points for D
     //     X     Y    Z
-        -0.15,  0.3, 0.05,
-        -0.15,  0.7, 0.05,
-        -0.075,  0.7, 0.05,
+        -0.15,  -0.1, 0.05,
+        -0.15,   0.3, 0.05,
         -0.075,  0.3, 0.05,
+        -0.075, -0.1, 0.05,
 
-        -0.075,  0.375, 0.05,
-        -0.075,  0.625, 0.05,
+        -0.075, -0.025, 0.05,
+        -0.075,  0.225, 0.05,
     );
 
     for (let i = 0; i < 13; i++) { //points for D
         vertices.push(
             Math.sin(i*2*Math.PI/24) * 0.2 - 0.03, // X
-            -Math.cos(i*2*Math.PI/24) * 0.2 + 0.5, // Y
+            -Math.cos(i*2*Math.PI/24) * 0.2 + 0.1, // Y
             0.05,                           // Z
         );
     }
@@ -80,26 +80,26 @@ window.onload = function init()
     for (let i = 0; i < 13; i++) { //points for D
         vertices.push(
             Math.sin(i*2*Math.PI/24) * 0.125 - 0.03, // X
-            -Math.cos(i*2*Math.PI/24) * 0.125 + 0.5, // Y
+            -Math.cos(i*2*Math.PI/24) * 0.125 + 0.1, // Y
             0.05,                           // Z
         );
     }
 
     vertices.push( // points for D
     //     X     Y    Z
-        -0.15,  0.3, -0.05,
-        -0.15,  0.7, -0.05,
-        -0.075,  0.7, -0.05,
+        -0.15,  -0.1, -0.05,
+        -0.15,   0.3, -0.05,
         -0.075,  0.3, -0.05,
+        -0.075, -0.1, -0.05,
 
-        -0.075,  0.375, -0.05,
-        -0.075,  0.625, -0.05,
+        -0.075, -0.025, -0.05,
+        -0.075,  0.225, -0.05,
     );
 
     for (let i = 0; i < 13; i++) { //points for D
         vertices.push(
             Math.sin(i*2*Math.PI/24) * 0.2 - 0.03, // X
-            -Math.cos(i*2*Math.PI/24) * 0.2 + 0.5, // Y
+            -Math.cos(i*2*Math.PI/24) * 0.2 + 0.1, // Y
             -0.05,                           // Z
         );
     }
@@ -107,7 +107,7 @@ window.onload = function init()
     for (let i = 0; i < 13; i++) { //points for D
         vertices.push(
             Math.sin(i*2*Math.PI/24) * 0.125 - 0.03, // X
-            -Math.cos(i*2*Math.PI/24) * 0.125 + 0.5, // Y
+            -Math.cos(i*2*Math.PI/24) * 0.125 + 0.1, // Y
             -0.05,                           // Z
         );
     }
@@ -225,6 +225,13 @@ window.onload = function init()
             start, start + 32, start + 33, start + 1
         );
     }
+
+    for (let i = 0; i < 12; i++) {
+        let start = 87 + i;
+        indices.push(
+            start, start + 32, start + 33, start + 1
+        );
+    }
     
     // convert to typed arrays
     vertices = new Float32Array(vertices);
@@ -300,6 +307,8 @@ window.onload = function init()
         }
     };
 
+    console.log(indices);
+
     render();
 }
 
@@ -349,8 +358,6 @@ function render()
         gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 144 + (4 * i));
     }
 
-    // gl.drawArrays(gl.POINTS, 68, 32); // TODO remove!!
-
     gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 224);
     gl.drawElements(gl.TRIANGLE_STRIP, 26, gl.UNSIGNED_BYTE, 228);
     gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 254);
@@ -361,7 +368,7 @@ function render()
     gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 292);
     gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 296);
 
-    for (let i = 0; i < 18; i++) {
+    for (let i = 0; i < 30; i++) {
         gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 300 + (4 * i));
     }
 
