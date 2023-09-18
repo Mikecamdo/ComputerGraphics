@@ -5,8 +5,6 @@
 #version 300 es
 
 in  vec4 aPosition;
-in  vec4 aColor;
-out vec4 vColor;
 
 uniform vec3 uTheta;
 
@@ -37,7 +35,6 @@ void main()
 		    0.0,  0.0,  1.0, 0.0,
 		    0.0,  0.0,  0.0, 1.0);
 
-    vColor = aColor;
     gl_Position = rz * ry * rx * aPosition;
 }
 </script>
@@ -47,12 +44,12 @@ void main()
 
 precision mediump float;
 
-in  vec4 vColor;
+uniform vec4 uColor;
 out vec4 fColor;
 
 void main()
 {
-    fColor = vColor;
+    fColor = uColor;
 }
 </script>
 
@@ -60,6 +57,7 @@ void main()
 <script type="text/javascript" src="CG_F23_Program1_DohertyMichael.js"></script>
 
 <head>
+  <!-- CSS Styles were partially inspired by ChatGPT -->
   <style>
     button {
       color: white;
@@ -70,6 +68,7 @@ void main()
       line-height: 1.5;
       border-radius: 2rem;
       transition: background-color 0.15s ease-in-out;
+      cursor: pointer;
     }
 
     button:hover, button:active {
@@ -88,7 +87,7 @@ void main()
       font-size: 16px;
       padding: 6px;
       border: none;
-      border-radius: 5px;
+      border-radius: 5px 0px 0px 5px;
       background-color: #bb7a30;
       color: white;
       margin-right: -10.5px;
@@ -110,6 +109,35 @@ void main()
 
     option {
       font-size: 14px;
+    }
+
+    #colorPicker {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      outline: none;
+    }
+
+    #colorPicker::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    #colorPicker::-webkit-color-swatch {
+      border: none;
+      border-radius: 50%;
+    }
+
+    #colorPickerLabel {
+      margin-right: -12px;
+      padding-right: 14px;
+    }
+
+    .space {
+      display: flex;
+      justify-content: center;
     }
   </style>
 </head>
@@ -140,6 +168,13 @@ void main()
         <option value="2">2</option>
         <option value="10">10</option>
     </select>
+  </div>
+
+  <br/>
+
+  <div class="space">
+    <label for="colorPicker" id="colorPickerLabel">Choose a pedestal color:</label>
+    <input type="color" id="colorPicker" name="colorPicker">
   </div>
 </body>
 

@@ -1,5 +1,6 @@
 "use strict";
 
+var program;
 var canvas;	// Drawing surface 
 var gl;	// Graphics context
 
@@ -114,36 +115,6 @@ window.onload = function init()
         );
     }
 
-    let vertexColors = [];
-
-    for (let i = 0; i < 24; i++) { //color for top of pedestal
-        vertexColors.push(
-        //   R    G    B    A
-            1.0, 1.0, 1.0, 1.0
-        );
-    }
-
-    for (let i = 0; i < 24; i++) { //colors for bottom of pedestal
-        vertexColors.push(
-        //   R    G    B    A
-            0.0, 0.0, 0.0, 1.0
-        );
-    }
-
-    for (let i = 0; i < 20; i++) { //colors for M
-        vertexColors.push(
-        //   R    G    B    A
-            1.0, 0.0, 0.0, 1.0
-        );
-    }
-
-    for (let i = 0; i < 64; i++) { // colors for D
-        vertexColors.push(
-        //   R    G    B    A
-            0.5, 0.0, 1.0, 1.0
-        );
-    }
-
     //Numbering for vertex points:
     //0 - 23 are top of pedestal
     //24 - 47 are bottom of pedestal
@@ -237,7 +208,6 @@ window.onload = function init()
     
     // convert to typed arrays
     vertices = new Float32Array(vertices);
-    vertexColors = new Float32Array(vertexColors);
     indices = new Uint8Array(indices);
 
 // ----------------------------------------------------------
@@ -255,17 +225,8 @@ window.onload = function init()
     //
     //  Load shaders and initialize attribute buffers
     //
-    var program = initShaders(gl, "vertex-shader", "fragment-shader");
+    program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
-
-    // color array attribute buffer
-    var cBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, vertexColors, gl.STATIC_DRAW);
-
-    var colorLoc = gl.getAttribLocation(program, "aColor");
-    gl.vertexAttribPointer(colorLoc, 4, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(colorLoc);
 
     // vertex array attribute buffer
     var vBuffer = gl.createBuffer();
@@ -335,17 +296,30 @@ function changeButtonColor(xButton, yButton, zButton) {
     }
 }
 
+// this function converts from hex colors to rgb colors
+function hexToRgb(hex) {
+    let r = parseInt(hex[1] + hex[2], 16);
+    let g = parseInt(hex[3] + hex[4], 16);
+    let b = parseInt(hex[5] + hex[6], 16);
+
+    return [r / 255, g / 255, b / 255];
+}
+
 function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // if (document.getElementById("rotationSpeed").value) {
-    //     speed = 1;
-    // }
+    let colorChoice = document.getElementById("colorPicker").value;
+    colorChoice = hexToRgb(colorChoice);
 
     if(flag) theta[axis] += speed * document.getElementById("rotationSpeed").value * direction;	// Increment rotation of currently active axis of rotation in radians
 
     gl.uniform3fv(thetaLoc, theta);	// Update uniform in vertex shader with new rotation angle
+
+    let uColorLoc = gl.getUniformLocation(program, "uColor");
+
+    //! color for pedestal
+    gl.uniform4f(uColorLoc, colorChoice[0], colorChoice[1], colorChoice[2], 1.0);
 
     // draw top of pedestal
     gl.drawElements(gl.LINE_LOOP, 24, gl.UNSIGNED_BYTE, 0);
@@ -360,10 +334,16 @@ function render()
         gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 48 + (4 * i));
     }
 
+    //! color for M
+    gl.uniform4f(uColorLoc, 1.0, 0.0, 0.0, 1.0);
+
     // draw M
     for (let i = 0; i < 20; i++) {
         gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 144 + (4 * i));
     }
+
+    //! color for D
+    gl.uniform4f(uColorLoc, 0.5, 0.0, 1.0, 1.0);
 
     gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 224);
     gl.drawElements(gl.TRIANGLE_STRIP, 26, gl.UNSIGNED_BYTE, 228);
