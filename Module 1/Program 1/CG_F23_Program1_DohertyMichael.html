@@ -7,6 +7,7 @@
 in  vec4 aPosition;
 
 uniform vec3 uTheta;
+uniform vec4 uOffset;
 
 void main()
 {
@@ -35,7 +36,8 @@ void main()
 		    0.0,  0.0,  1.0, 0.0,
 		    0.0,  0.0,  0.0, 1.0);
 
-    gl_Position = rz * ry * rx * aPosition;
+    gl_Position = (rz * ry * rx * aPosition) + uOffset;
+    gl_PointSize = 10.0;
 }
 </script>
 
@@ -101,6 +103,7 @@ void main()
       background-color: #bb7a30;
       color: white;
       cursor: pointer;
+      margin-right: 5px;
     }
 
     select:focus {
@@ -159,6 +162,12 @@ void main()
   <div>
     <button id="rotationButton">Toggle Rotation Direction</button>
     
+    <button id="fireworksButton">Fireworks!</button>
+  </div>
+
+  <br/>
+
+  <div class="space">
     <label for="rotationSpeed">Rotation Speed Multiplier:</label>
 
     <select name="rotationSpeed" id="rotationSpeed">
@@ -168,11 +177,7 @@ void main()
         <option value="2">2</option>
         <option value="10">10</option>
     </select>
-  </div>
 
-  <br/>
-
-  <div class="space">
     <label for="colorPicker" id="colorPickerLabel">Choose a pedestal color:</label>
     <input type="color" id="colorPicker" name="colorPicker">
   </div>

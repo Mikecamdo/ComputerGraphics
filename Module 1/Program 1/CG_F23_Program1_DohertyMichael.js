@@ -16,6 +16,12 @@ var flag = false; // Toggle Rotation Control
 var direction = 1; // Toggle Rotation Direction (1 is counter clockwise, -1 is clockwise)
 var speed = 0.015; // Toggle Rotation Speed
 
+var showFireworks = false; // Toggle Fireworks Animation
+var fireworkOffset = 0; // TODO add description
+var fireworkExplosionOffset = -0.1;
+
+var uOffsetLoc;
+
 window.onload = function init()
 {
     let vertices = [];
@@ -114,6 +120,22 @@ window.onload = function init()
             -0.05,                           // Z
         );
     }
+
+    vertices.push(-0.6, -0.8, 0); //! Temp for fireworks
+
+    for (let i = 0; i < 12; i++) {
+        vertices.push(
+            Math.cos(i*2*Math.PI/12) * 0.125 - 0.6, // X
+            Math.sin(i*2*Math.PI/12) * 0.125 + 0.8, // Y
+            0,                           // Z
+        );
+    }
+
+    // vertices.push(
+    //     -0.8 , 0.8, 0.0,
+    //     -0.85, 0.8, 0.0,
+    //     -0.75, 0.8, 0.0
+    // );
 
     //Numbering for vertex points:
     //0 - 23 are top of pedestal
@@ -272,6 +294,16 @@ window.onload = function init()
     document.getElementById("rotationButton").onclick = function () {
         direction *= -1;
     }
+    document.getElementById("fireworksButton").onclick = function () {
+        //TODO start the fireworks
+        showFireworks = true;
+        fireworkOffset = 0;
+        fireworkExplosionOffset = -0.1;
+        console.log("Fireworks!");
+    }
+
+
+    uOffsetLoc = gl.getUniformLocation(program, "uOffset");
 
     render();
 }
@@ -308,6 +340,8 @@ function hexToRgb(hex) {
 function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    gl.uniform4fv(uOffsetLoc, [0.0, 0.0, 0.0, 0.0]); // reset offset to 0
 
     let colorChoice = document.getElementById("colorPicker").value;
     colorChoice = hexToRgb(colorChoice);
@@ -357,6 +391,39 @@ function render()
 
     for (let i = 0; i < 30; i++) {
         gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 300 + (4 * i));
+    }
+
+    if (showFireworks) {
+        gl.uniform3fv(thetaLoc, [0, 0, 0]); // clears rotation angles so they don't apply to fireworks
+
+        //! color for fireworks
+        gl.uniform4f(uColorLoc, 1.0, 0.0, 0.0, 1.0);
+
+        fireworkOffset += 0.02;
+
+        if (fireworkOffset < 1.6) {
+            gl.uniform4fv(uOffsetLoc, [0.0, fireworkOffset, 0.0, 0.0]);
+
+            gl.drawArrays(gl.POINTS, 132, 1);
+        } else if (fireworkExplosionOffset < 0.8) {
+            for (let i = 0; i < 12; i++) {
+                if (i % 3 == 0) {
+                    gl.uniform4f(uColorLoc, 1.0, 0.0, 0.0, 1.0);
+                } else if (i % 3 == 1) {
+                    gl.uniform4f(uColorLoc, 1.0, 1.0, 0.0, 1.0);
+                } else {
+                    gl.uniform4f(uColorLoc, 1.0, 0.65, 0.0, 1.0);
+                }
+
+                let xOffset = Math.cos(i*2*Math.PI/12) * fireworkExplosionOffset;
+                let yOffset = Math.sin(i*2*Math.PI/12) * fireworkExplosionOffset;
+
+                gl.uniform4fv(uOffsetLoc, [xOffset, yOffset, 0.0, 0.0]);
+                gl.drawArrays(gl.POINTS, 133 + i, 1);
+
+                fireworkExplosionOffset += 0.001;
+            }
+        }
     }
 
     requestAnimationFrame(render);	// Call to browser to refresh display
