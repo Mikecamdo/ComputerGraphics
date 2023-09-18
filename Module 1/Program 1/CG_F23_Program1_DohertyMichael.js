@@ -12,6 +12,8 @@ var theta = [0, 0, 0]; // Rotation angles for x, y and z axes
 var thetaLoc; // Holds shader uniform variable location
 var flag = false; // Toggle Rotation Control
 
+var direction = 1; // Toggle Rotation Direction (1 is counter clockwise, -1 is clockwise)
+var speed = 0.015; // Toggle Rotation Speed
 
 window.onload = function init()
 {
@@ -306,8 +308,9 @@ window.onload = function init()
             this.classList.remove('active-button');
         }
     };
-
-    console.log(indices);
+    document.getElementById("rotationButton").onclick = function () {
+        direction *= -1;
+    }
 
     render();
 }
@@ -336,7 +339,11 @@ function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    if(flag) theta[axis] += 0.017;	// Increment rotation of currently active axis of rotation in radians
+    // if (document.getElementById("rotationSpeed").value) {
+    //     speed = 1;
+    // }
+
+    if(flag) theta[axis] += speed * document.getElementById("rotationSpeed").value * direction;	// Increment rotation of currently active axis of rotation in radians
 
     gl.uniform3fv(thetaLoc, theta);	// Update uniform in vertex shader with new rotation angle
 
