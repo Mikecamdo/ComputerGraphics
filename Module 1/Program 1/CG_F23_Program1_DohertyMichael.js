@@ -422,7 +422,9 @@ function render()
 
         if (fireworkOffset < 1.6) {
             gl.uniform4fv(uOffsetLoc, [0.0, fireworkOffset, 0.0, 0.0]);
+            gl.drawArrays(gl.POINTS, 132, 1);
 
+            gl.uniform4fv(uOffsetLoc, [1.2, fireworkOffset, 0.0, 0.0]);
             gl.drawArrays(gl.POINTS, 132, 1);
         } else if (fireworkExplosionOffset3 < 0.5) {
             for (let i = 0; i < 12; i++) {
@@ -440,12 +442,8 @@ function render()
                     xOffset = Math.cos(i*2*Math.PI/12) * innerRingPoints[j];
                     yOffset = Math.sin(i*2*Math.PI/12) * innerRingPoints[j];
 
-                    // gl.uniform4f(uColorLoc, 1.0, 1.0, 1.0, 1.0 - (j * 0.1));
-
                     gl.uniform4fv(uOffsetLoc, [xOffset, yOffset, 0.0, 0.0]);
                     gl.drawArrays(gl.POINTS, 133 + i, 1);
-
-                    console.log("Drawing point with:", xOffset, yOffset, "on iteration", j);
                 }
 
                 gl.uniform4f(uColorLoc, 1.0, 1.0, 0.0, 1.0 - fireworkExplosionOffset2);
@@ -482,6 +480,61 @@ function render()
                     gl.drawArrays(gl.POINTS, 133 + i, 1);
                 }        
             }
+
+            for (let i = 0; i < 12; i++) {
+
+                gl.uniform4f(uColorLoc, 1.0, 0.65, 0.0, 1.0 - fireworkExplosionOffset);
+
+                // Inner ring of firework
+                let xOffset = Math.cos(i*2*Math.PI/12) * fireworkExplosionOffset;
+                let yOffset = Math.sin(i*2*Math.PI/12) * fireworkExplosionOffset;
+
+                gl.uniform4fv(uOffsetLoc, [xOffset + 1.2, yOffset, 0.0, 0.0]);
+                gl.drawArrays(gl.POINTS, 133 + i, 1);
+
+                for (let j = 0; j < innerRingPoints.length; j++) {
+                    xOffset = Math.cos(i*2*Math.PI/12) * innerRingPoints[j];
+                    yOffset = Math.sin(i*2*Math.PI/12) * innerRingPoints[j];
+
+                    gl.uniform4fv(uOffsetLoc, [xOffset + 1.2, yOffset, 0.0, 0.0]);
+                    gl.drawArrays(gl.POINTS, 133 + i, 1);
+                }
+
+                gl.uniform4f(uColorLoc, 1.0, 1.0, 0.0, 1.0 - fireworkExplosionOffset2);
+
+                // Middle ring of firework
+                xOffset = Math.cos(i*2*Math.PI/12) * fireworkExplosionOffset2;
+                yOffset = Math.sin(i*2*Math.PI/12) * fireworkExplosionOffset2;
+
+                gl.uniform4fv(uOffsetLoc, [xOffset + 1.2, yOffset, 0.0, 0.0]);
+                gl.drawArrays(gl.POINTS, 133 + i, 1);
+
+                for (let j = 0; j < middleRingPoints.length; j++) {
+                    xOffset = Math.cos(i*2*Math.PI/12) * middleRingPoints[j];
+                    yOffset = Math.sin(i*2*Math.PI/12) * middleRingPoints[j];
+
+                    gl.uniform4fv(uOffsetLoc, [xOffset + 1.2, yOffset, 0.0, 0.0]);
+                    gl.drawArrays(gl.POINTS, 133 + i, 1);
+                }
+
+                gl.uniform4f(uColorLoc, 1.0, 0.0, 0.0, 1.0 - fireworkExplosionOffset3);
+
+                // Outer ring of firework
+                xOffset = Math.cos(i*2*Math.PI/12) * fireworkExplosionOffset3;
+                yOffset = Math.sin(i*2*Math.PI/12) * fireworkExplosionOffset3;
+
+                gl.uniform4fv(uOffsetLoc, [xOffset + 1.2, yOffset, 0.0, 0.0]);
+                gl.drawArrays(gl.POINTS, 133 + i, 1);
+
+                for (let j = 0; j < outerRingPoints.length; j++) {
+                    xOffset = Math.cos(i*2*Math.PI/12) * outerRingPoints[j];
+                    yOffset = Math.sin(i*2*Math.PI/12) * outerRingPoints[j];
+
+                    gl.uniform4fv(uOffsetLoc, [xOffset + 1.2, yOffset, 0.0, 0.0]);
+                    gl.drawArrays(gl.POINTS, 133 + i, 1);
+                }        
+            }
+
             if (counter % 4 == 0) {
                 innerRingPoints.push(fireworkExplosionOffset);
                 middleRingPoints.push(fireworkExplosionOffset2);
