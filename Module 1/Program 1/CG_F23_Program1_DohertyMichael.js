@@ -27,7 +27,7 @@ var innerRingOffsets = [ ];
 var middleRingOffsets = [ ];
 var outerRingOffsets = [ ];
 
-var counter = 0; //TODO MOVE THIS AND RENAME (?)
+var counter = 0; // Counter variable that keeps track of the number of frames during the firework animation (used to help create the "trail" effect)
 
 var uOffsetLoc; // Holds shader uniform variable location for uOffset
 var uColorLoc; // Holder shader uniform variable location for uColor
@@ -363,6 +363,7 @@ function hexToRgb(hex) {
     return [r / 255, g / 255, b / 255]; // return normalized RGB value
 }
 
+// function that creates the vertices for the pedestal, M, D, and fireworks
 function getVertices() {
     let vertices = [ ];
 
@@ -473,6 +474,7 @@ function getVertices() {
     return vertices;
 }
 
+// function that creates the indices for the pedestal, M, and D
 function getIndices() {
     //Numbering for vertices:
     //0 - 23 are top of pedestal
@@ -480,7 +482,7 @@ function getIndices() {
     //48 - 67 are M
     //68 - 99 are front of D
     //100 - 131 are back of D
-    //132 - 144 are fireworks
+    //132 - 144 are fireworks (these aren't used here)
     let indices = [ ];
 
     for (let i = 0; i < 48; i++) { // indices for top/bottom of pedestal
