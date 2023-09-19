@@ -1,4 +1,4 @@
-# Program 1
+# Program 1: Put Yourself on a Pedestal
 ## Overview
 For the program you will get to be creative in creating a 3D scene that reflects your own style.
 
