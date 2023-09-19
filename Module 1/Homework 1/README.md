@@ -40,8 +40,8 @@ Create a single graphics program to meet the following requirement:
 - Make one a solid triangle. For interest, consider making one a wireframe triangle.
 
 **TO SUBMIT:** Upload two files, follow naming conventions for the files.
-- **CG_HW1_TwoTriangles_<yourname>.html**, a single, self-contained html file.  No credit is granted if it does not run in my browser. You can assume my browser supports HTML5 and WebGL 2.0
-- **CG_HW1_TwoTriangles_<yourname>.png**, a screenshot of your program
+- **CG_HW1_TwoTriangles_&lt;yourname>.html**, a single, self-contained html file.  No credit is granted if it does not run in my browser. You can assume my browser supports HTML5 and WebGL 2.0
+- **CG_HW1_TwoTriangles_&lt;yourname>.png**, a screenshot of your program
 
 **Example naming convention.**
 
@@ -58,8 +58,8 @@ Create a simple 2D graphics shape to create a pizza with 6-12 slices with toppin
 - Specify color attributes for each vertex. (You may use one buffer with offsets or multiple buffers)
 
 **To SUBMIT:** Attach two files. Follow naming conventions.
-- **CG_HW1_PizzaPie_<yourname>.html** self-contained html file to create this.  No credit is granted if it does not run in my browser. You can assume my browser supports HTML5 and WebGL 2.0
-- **CG_HW1_PizzaPie_<yourname>.png**,  a representative screenshot
+- **CG_HW1_PizzaPie_&lt;yourname>.html** self-contained html file to create this.  No credit is granted if it does not run in my browser. You can assume my browser supports HTML5 and WebGL 2.0
+- **CG_HW1_PizzaPie_&lt;yourname>.png**,  a representative screenshot
 
 ## 1.3 Programming Homework (25 pnts)
 
@@ -96,6 +96,6 @@ You may choose one of the following...
 **TO SUBMIT** Upload **three files** - your two code files and a representative screenshot. Do not zip them. 
 
 Follow this naming convention. Use last name first name.  Do not use blanks in the name.
-- **CG_HW1_Cube_<yourname>.html**
-- **CG_HW1_Cube_<yourname>.js**
-- **CG_HW1_Cube_<yourname>.png**
+- **CG_HW1_Cube_&lt;yourname>.html**
+- **CG_HW1_Cube_&lt;yourname>.js**
+- **CG_HW1_Cube_&lt;yourname>.png**
