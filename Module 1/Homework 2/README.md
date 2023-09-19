@@ -10,8 +10,8 @@ For this homework assignment, you are to create a simple interactive program to 
 **Submission Instructions for programming homework**
 
 Attach a single, zipped folder that includes two files.  Follow naming conventions.
-- **CG_HW2_ChangeThatColor_<yourname>.html**, a single, self-contained html file. No credit is granted if it does not run in my browser. You can assume my browser supports HTML5 and WebGL 2.0
-- **CG_HW2_ChangeThatColor_<yourname>.jpg (or png)**, a representative screenshot
+- **CG_HW2_ChangeThatColor_&lt;yourname>.html**, a single, self-contained html file. No credit is granted if it does not run in my browser. You can assume my browser supports HTML5 and WebGL 2.0
+- **CG_HW2_ChangeThatColor_&lt;yourname>.jpg (or png)**, a representative screenshot
  
 ## 2.2 Move That Point (30 points)
 
@@ -25,8 +25,8 @@ For this homework assignment, you are to create a simple animation by drawing a 
 **Submission Instructions for programming homework**
 
 Attach a single, zipped folder that includes two files.  Follow naming conventions.
-- **CG_HW2_MoveThatPoint_<yourname>.html**, a single, self-contained html file. No credit is granted if it does not run in my browser. You can assume my browser supports HTML5 and WebGL 2.0
-- **CG_HW2_MoveThatPoint_<yourname>.jpg (or png)**, a representative screenshot
+- **CG_HW2_MoveThatPoint_&lt;yourname>.html**, a single, self-contained html file. No credit is granted if it does not run in my browser. You can assume my browser supports HTML5 and WebGL 2.0
+- **CG_HW2_MoveThatPoint_&lt;yourname>.jpg (or png)**, a representative screenshot
  
 ## 2.3 Tetrahedron Slider (40 points)
 For this homework assignment, you are to create a single graphics program to meet the following requirement:
@@ -39,5 +39,5 @@ For this homework assignment, you are to create a single graphics program to mee
 **Submission Instructions for programming homework**
 
 Create two files and upload a single zip folder that includes two files. Follow naming conventions for the files.
-- **CG_HW2_Tetrahedron_<yourname>.html**, a single, self-contained html file. No credit is granted if it does not run in my browser. You can assume my browser supports HTML5 and WebGL 2.0
-- **CG_HW2_Tetarahedron_<yourname>.jpg (or png)**, a screenshot of your program
+- **CG_HW2_Tetrahedron_&lt;yourname>.html**, a single, self-contained html file. No credit is granted if it does not run in my browser. You can assume my browser supports HTML5 and WebGL 2.0
+- **CG_HW2_Tetarahedron_&lt;yourname>.jpg (or png)**, a screenshot of your program
