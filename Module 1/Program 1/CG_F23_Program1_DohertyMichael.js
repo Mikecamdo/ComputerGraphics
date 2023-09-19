@@ -31,6 +31,12 @@ var counter = 0; // Counter variable that keeps track of the number of frames du
 
 var uOffsetLoc; // Holds shader uniform variable location for uOffset
 var uColorLoc; // Holder shader uniform variable location for uColor
+var scaleFactorLoc; // Holder shader uniform variable location for scaleFactor
+
+// Variables to hold the scaleFactor values
+var pedestalScaleFactor;
+var mScaleFactor;
+var dScaleFactor;
 
 window.onload = function init() {
     // put vertices and indices in typed arrays (needed by the GPU)
@@ -71,6 +77,13 @@ window.onload = function init() {
     thetaLoc = gl.getUniformLocation(program, "uTheta");
     uOffsetLoc = gl.getUniformLocation(program, "uOffset");
     uColorLoc = gl.getUniformLocation(program, "uColor");
+    scaleFactorLoc = gl.getUniformLocation(program, "scaleFactor");
+
+    // initialize each scaleFactor to 1
+    pedestalScaleFactor = 1.0;
+    mScaleFactor = 1.0;
+    dScaleFactor = 1.0;
+    gl.uniform1f(scaleFactorLoc, 1.0);
 
     //event listeners for interactive elements (buttons, dropdown menus, etc.)
     let xButton = document.getElementById("xButton");
@@ -116,6 +129,28 @@ window.onload = function init() {
 
         counter = 0; // reset the counter
     }
+    document.getElementById("pedestalScaler").onpointermove = function(event) {
+        pedestalScaleFactor = event.target.value;
+    };
+    document.getElementById("mScaler").onpointermove = function(event) {
+        mScaleFactor = event.target.value;
+    };
+    document.getElementById("dScaler").onpointermove = function(event) {
+        dScaleFactor = event.target.value;
+    };
+    let previous = 1; // variable that stores the last value used from the "Everything" size adjuster
+    document.getElementById("everythingScaler").onpointermove = function(event) {
+        if (event.target.value != previous) { // this if statement prevents the other scale factors from resetting when the "Everything" size adjuster is simply hovered over
+            pedestalScaleFactor = event.target.value;
+            mScaleFactor = event.target.value;
+            dScaleFactor = event.target.value;
+
+            document.getElementById("pedestalScaler").value = event.target.value;
+            document.getElementById("mScaler").value = event.target.value;
+            document.getElementById("dScaler").value = event.target.value;
+            previous = event.target.value;
+        }
+    };
 
     render();
 }
@@ -132,6 +167,7 @@ function render() {
     let pedestalColor = document.getElementById("colorPicker").value; // get pedestal color from HTML input
     pedestalColor = hexToRgb(pedestalColor); // convert color from Hex to RGB
     gl.uniform4f(uColorLoc, pedestalColor[0], pedestalColor[1], pedestalColor[2], 1.0); // set the pedestal's color
+    gl.uniform1f(scaleFactorLoc, pedestalScaleFactor); // set the pedestal's scaleFactor
 
     // draw top of pedestal
     gl.drawElements(gl.LINE_LOOP, 24, gl.UNSIGNED_BYTE, 0);
@@ -147,6 +183,7 @@ function render() {
     }
 
     gl.uniform4f(uColorLoc, 1.0, 0.0, 0.0, 1.0); // set the color for M
+    gl.uniform1f(scaleFactorLoc, mScaleFactor); // set the M's scaleFactor
 
     // draw M
     for (let i = 0; i < 20; i++) {
@@ -154,6 +191,7 @@ function render() {
     }
 
     gl.uniform4f(uColorLoc, 0.5, 0.0, 1.0, 1.0); // set the color for D
+    gl.uniform1f(scaleFactorLoc, dScaleFactor); // set the D's scaleFactor
 
     // draw D
     gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_BYTE, 224);
@@ -171,6 +209,7 @@ function render() {
     }
 
     if (showFireworks) { // code for the fireworks animation
+        gl.uniform1f(scaleFactorLoc, 1.0); // clears scale factor so it doesn't apply to the fireworks
         gl.uniform3fv(thetaLoc, [0, 0, 0]); // clears rotation angles so they don't apply to fireworks
 
         gl.uniform4f(uColorLoc, 1.0, 0.0, 0.0, 1.0); // set the color for the firework rocket
