@@ -336,7 +336,7 @@ function render() {
             }
 
             // the following 2 if statements are used to create the "trail" effect in the fireworks' explosions
-            // we keep 5 previous offset values to redraw the points at those offsets (thus creating a "trail" effect)
+            // The program keeps 5 previous offset values to redraw the points at those offsets (thus creating a "trail" effect)
 
             if (counter % 4 == 0) { // every 4th frame, save the current offset values for the explosion's points
                 innerRingOffsets.push(innerExplosionOffset);
@@ -344,7 +344,7 @@ function render() {
                 outerRingOffsets.push(outerExplosionOffset);
             }
 
-            if (innerRingOffsets.length > 5) { // removes the oldest offset value to maintain a length of 5
+            if (innerRingOffsets.length > 5) { // removes the oldest offset value to maintain a maximum length of 5
                 innerRingOffsets.shift();
                 middleRingOffsets.shift();
                 outerRingOffsets.shift();
@@ -605,6 +605,7 @@ function getIndices() {
         71, 103, 106, 74
     );
 
+    // more indices for filling in the D
     for (let i = 0; i < 12; i++) {
         let start = 74 + i;
         indices.push(
