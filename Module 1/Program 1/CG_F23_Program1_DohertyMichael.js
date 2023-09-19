@@ -216,7 +216,7 @@ function render() {
 
         rocketOffset += 0.02; // increment the firework rocket's offset
 
-        if (rocketOffset < 1.6) { // animation for the firework rocket launching
+        if (rocketOffset < 1.2) { // animation for the firework rocket launching
             gl.uniform4fv(uOffsetLoc, [0.0, rocketOffset, 0.0, 0.0]);
             gl.drawArrays(gl.POINTS, 132, 1);
 
@@ -505,7 +505,7 @@ function getVertices() {
     for (let i = 0; i < 12; i++) {
         vertices.push(
             Math.cos(i*2*Math.PI/12) * 0.125 - 0.6, // X
-            Math.sin(i*2*Math.PI/12) * 0.125 + 0.8, // Y
+            Math.sin(i*2*Math.PI/12) * 0.125 + 0.4, // Y
             0                                       // Z
         );
     }
