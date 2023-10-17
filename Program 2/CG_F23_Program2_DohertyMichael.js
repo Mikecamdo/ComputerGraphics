@@ -54,7 +54,7 @@ window.onload = function init() {
     modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
 
     // ! change first value to change how much you can see in the field of view
-    projectionMatrix = perspective(100, 1, 0.1, 50);
+    projectionMatrix = perspective(70, 1, 0.1, 90);
 
     gl.uniformMatrix4fv( gl.getUniformLocation(program, "projectionMatrix"),  false, flatten(projectionMatrix) );
 
@@ -63,12 +63,12 @@ window.onload = function init() {
     document.addEventListener("keydown", function (event) {
         if (event.key === "E" || event.key === 'e') {
             let tester1 = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
-            currentAngle -= 2;
+            currentAngle -= 4;
 
             let backToOrigin = translate(-cameraPosition[0], -cameraPosition[1], -cameraPosition[2]);
             let backToOriginal = translate(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
 
-            let finalMatrix = mult(backToOriginal, rotateY(-2));
+            let finalMatrix = mult(backToOriginal, rotateY(-4));
             finalMatrix = mult(finalMatrix, backToOrigin);
 
             tester1 = mult(finalMatrix, tester1);
@@ -77,12 +77,12 @@ window.onload = function init() {
             cameraTarget[2] = tester1[2];
         } else if (event.key === "Q" || event.key === 'q') {
             let tester2 = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
-            currentAngle += 2;
+            currentAngle += 4;
 
             let backToOrigin = translate(-cameraPosition[0], -cameraPosition[1], -cameraPosition[2]);
             let backToOriginal = translate(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
 
-            let finalMatrix = mult(backToOriginal, rotateY(2));
+            let finalMatrix = mult(backToOriginal, rotateY(4));
             finalMatrix = mult(finalMatrix, backToOrigin);
 
             tester2 = mult(finalMatrix, tester2);
@@ -91,19 +91,33 @@ window.onload = function init() {
             cameraTarget[2] = tester2[2];
         } 
         // ! to walk straight, apply same values to both camera and target
-        else if (event.key === "W" || event.key === 'w') {            
-            cameraTarget[0] += 0.2 * Math.sin(radians(currentAngle));
-            cameraPosition[0] += 0.2 * Math.sin(radians(currentAngle));
+        else if (event.key === "W" || event.key === 'w') { // moving forward  
+            cameraTarget[0] += Math.sin(radians(currentAngle));
+            cameraPosition[0] += Math.sin(radians(currentAngle));
 
-            cameraTarget[2] += 0.2 * Math.cos(radians(currentAngle));
-            cameraPosition[2] += 0.2 * Math.cos(radians(currentAngle));
-        } else if (event.key === "S" || event.key === 's') {
-            cameraTarget[0] -= 0.2 * Math.sin(radians(currentAngle));
-            cameraPosition[0] -= 0.2 * Math.sin(radians(currentAngle));
+            cameraTarget[2] += Math.cos(radians(currentAngle));
+            cameraPosition[2] += Math.cos(radians(currentAngle));
+        } else if (event.key === "S" || event.key === 's') { // moving backwards
+            cameraTarget[0] -= Math.sin(radians(currentAngle));
+            cameraPosition[0] -= Math.sin(radians(currentAngle));
 
-            cameraTarget[2] -= 0.2 * Math.cos(radians(currentAngle));
-            cameraPosition[2] -= 0.2 * Math.cos(radians(currentAngle));
+            cameraTarget[2] -= Math.cos(radians(currentAngle));
+            cameraPosition[2] -= Math.cos(radians(currentAngle));
+        } else if (event.key === "A" || event.key === 'a') { // moving left
+            cameraTarget[0] += Math.sin(radians(currentAngle + 90));
+            cameraPosition[0] += Math.sin(radians(currentAngle + 90));
+
+            cameraTarget[2] += Math.cos(radians(currentAngle + 90));
+            cameraPosition[2] += Math.cos(radians(currentAngle + 90));
+        } else if (event.key === "D" || event.key === 'd') { // moving right
+            cameraTarget[0] += Math.sin(radians(currentAngle - 90));
+            cameraPosition[0] += Math.sin(radians(currentAngle - 90));
+
+            cameraTarget[2] += Math.cos(radians(currentAngle - 90));
+            cameraPosition[2] += Math.cos(radians(currentAngle - 90));
         }
+        console.log('Camera Position:');
+        console.log(cameraPosition);
     });
 
     render();
@@ -117,14 +131,14 @@ function getVertices() {
     let vertices = [];
 
     vertices.push( // vertices for walls of room
-        vec4(-10.0, -10.0,  10.0, 1.0), // 0
-        vec4(-10.0,  10.0,  10.0, 1.0), // 1
-        vec4( 10.0,  10.0,  10.0, 1.0), // 2
-        vec4( 10.0, -10.0,  10.0, 1.0), // 3
-        vec4(-10.0, -10.0, -10.0, 1.0), // 4
-        vec4(-10.0,  10.0, -10.0, 1.0), // 5
-        vec4( 10.0,  10.0, -10.0, 1.0), // 6
-        vec4( 10.0, -10.0, -10.0, 1.0)  // 7
+        vec4(-30.0, -10.0,  30.0, 1.0), // 0
+        vec4(-30.0,  10.0,  30.0, 1.0), // 1
+        vec4( 30.0,  10.0,  30.0, 1.0), // 2
+        vec4( 30.0, -10.0,  30.0, 1.0), // 3
+        vec4(-30.0, -10.0, -30.0, 1.0), // 4
+        vec4(-30.0,  10.0, -30.0, 1.0), // 5
+        vec4( 30.0,  10.0, -30.0, 1.0), // 6
+        vec4( 30.0, -10.0, -30.0, 1.0)  // 7
     );
 
     return vertices;
@@ -182,10 +196,6 @@ function getColors() {
 
 
 function room() {
-    // TODO this is wrong!!
-    let scaler = scale(2, 2, 2);
-    modelViewMatrix = mult(scaler, modelViewMatrix);
-
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
     for (let i = 0; i < 6; i++) {
