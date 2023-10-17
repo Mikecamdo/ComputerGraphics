@@ -7,6 +7,14 @@ var modelViewMatrix, projectionMatrix;
 
 var modelViewMatrixLoc;
 
+// Variables that keep track of the buttons that are currently being pressed
+var eActive = false;
+var qActive = false;
+var wActive = false;
+var sActive = false;
+var aActive = false;
+var dActive = false;
+
 window.onload = function init() {
 
     let points = getPoints();
@@ -58,95 +66,36 @@ window.onload = function init() {
 
     gl.uniformMatrix4fv( gl.getUniformLocation(program, "projectionMatrix"),  false, flatten(projectionMatrix) );
 
-    var currentAngle = 0;
-
     document.addEventListener("keydown", function (event) {
         if (event.key === "E" || event.key === 'e') {
-            let tester1 = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
-            currentAngle -= 4;
-
-            let backToOrigin = translate(-cameraPosition[0], -cameraPosition[1], -cameraPosition[2]);
-            let backToOriginal = translate(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
-
-            let finalMatrix = mult(backToOriginal, rotateY(-4));
-            finalMatrix = mult(finalMatrix, backToOrigin);
-
-            tester1 = mult(finalMatrix, tester1);
-            cameraTarget[0] = tester1[0];
-            cameraTarget[1] = tester1[1];
-            cameraTarget[2] = tester1[2];
+            eActive = true;
         } else if (event.key === "Q" || event.key === 'q') {
-            let tester2 = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
-            currentAngle += 4;
-
-            let backToOrigin = translate(-cameraPosition[0], -cameraPosition[1], -cameraPosition[2]);
-            let backToOriginal = translate(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
-
-            let finalMatrix = mult(backToOriginal, rotateY(4));
-            finalMatrix = mult(finalMatrix, backToOrigin);
-
-            tester2 = mult(finalMatrix, tester2);
-            cameraTarget[0] = tester2[0];
-            cameraTarget[1] = tester2[1];
-            cameraTarget[2] = tester2[2];
-        } 
-        // ! to walk straight, apply same values to both camera and target
-        else if (event.key === "W" || event.key === 'w') { // moving forward 
-            if (cameraPosition[0] + Math.sin(radians(currentAngle)) <= 29.9 &&
-                cameraPosition[0] + Math.sin(radians(currentAngle)) >= -29.9) {
-                cameraTarget[0] += Math.sin(radians(currentAngle));
-                cameraPosition[0] += Math.sin(radians(currentAngle));
-            }
-            
-            if (cameraPosition[2] + Math.cos(radians(currentAngle)) <= 29.9 &&
-                cameraPosition[2] + Math.cos(radians(currentAngle)) >= -29.9) {
-                cameraTarget[2] += Math.cos(radians(currentAngle));
-                cameraPosition[2] += Math.cos(radians(currentAngle));
-            }
+            qActive = true;
+        } else if (event.key === "W" || event.key === 'w') { // moving forward 
+            wActive = true;
         } else if (event.key === "S" || event.key === 's') { // moving backwards
-            if (cameraPosition[0] - Math.sin(radians(currentAngle)) <= 29.9 &&
-                cameraPosition[0] - Math.sin(radians(currentAngle)) >= -29.9) {
-                cameraTarget[0] -= Math.sin(radians(currentAngle));
-                cameraPosition[0] -= Math.sin(radians(currentAngle));
-            }
-            
-            if (cameraPosition[2] - Math.cos(radians(currentAngle)) <= 29.9 &&
-                cameraPosition[2] - Math.cos(radians(currentAngle)) >= -29.9) {
-                cameraTarget[2] -= Math.cos(radians(currentAngle));
-                cameraPosition[2] -= Math.cos(radians(currentAngle));
-            }
+            sActive = true;
         } else if (event.key === "A" || event.key === 'a') { // moving left
-            if (cameraPosition[0] + Math.sin(radians(currentAngle + 90)) <= 29.9 &&
-                cameraPosition[0] + Math.sin(radians(currentAngle + 90)) >= -29.9) {
-                cameraTarget[0] += Math.sin(radians(currentAngle + 90));
-                cameraPosition[0] += Math.sin(radians(currentAngle + 90));
-            }
-            
-            if (cameraPosition[2] + Math.cos(radians(currentAngle + 90)) <= 29.9 &&
-                cameraPosition[2] + Math.cos(radians(currentAngle + 90)) >= -29.9) {
-                cameraTarget[2] += Math.cos(radians(currentAngle + 90));
-                cameraPosition[2] += Math.cos(radians(currentAngle + 90));
-            }
+            aActive = true;
         } else if (event.key === "D" || event.key === 'd') { // moving right
-            if (cameraPosition[0] + Math.sin(radians(currentAngle - 90)) <= 29.9 &&
-                cameraPosition[0] + Math.sin(radians(currentAngle - 90)) >= -29.9) {
-                cameraTarget[0] += Math.sin(radians(currentAngle - 90));
-                cameraPosition[0] += Math.sin(radians(currentAngle - 90));
-            }
-            
-            if (cameraPosition[2] + Math.cos(radians(currentAngle - 90)) <= 29.9 &&
-                cameraPosition[2] + Math.cos(radians(currentAngle - 90)) >= -29.9) {
-                cameraTarget[2] += Math.cos(radians(currentAngle - 90));
-                cameraPosition[2] += Math.cos(radians(currentAngle - 90));
-            }
-
-            
-
-            
+            dActive = true;
         }
-
-        console.log('Camera Position:');
-        console.log(cameraPosition);
+    });
+    
+    document.addEventListener("keyup", function (event) {
+        if (event.key === "E" || event.key === 'e') {
+            eActive = false;
+        } else if (event.key === "Q" || event.key === 'q') {
+            qActive = false;
+        } else if (event.key === "W" || event.key === 'w') { // moving forward 
+            wActive = false;
+        } else if (event.key === "S" || event.key === 's') { // moving backwards
+            sActive = false;
+        } else if (event.key === "A" || event.key === 'a') { // moving left
+            aActive = false;
+        } else if (event.key === "D" || event.key === 'd') { // moving right
+            dActive = false;
+        }
     });
 
     render();
@@ -222,7 +171,91 @@ function getColors() {
 }
 
 //----------------------------------------------------------------------------
+var currentAngle = 0;
 
+function moveCamera() {
+    let walkingSpeed = 0.5;
+
+    if (eActive) {
+        let tester1 = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
+        currentAngle -= 1.5;
+
+        let backToOrigin = translate(-cameraPosition[0], -cameraPosition[1], -cameraPosition[2]);
+        let backToOriginal = translate(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
+
+        let finalMatrix = mult(backToOriginal, rotateY(-1.5));
+        finalMatrix = mult(finalMatrix, backToOrigin);
+
+        tester1 = mult(finalMatrix, tester1);
+        cameraTarget[0] = tester1[0];
+        cameraTarget[1] = tester1[1];
+        cameraTarget[2] = tester1[2];
+    } else if (qActive) {
+        let tester2 = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
+        currentAngle += 1.5;
+
+        let backToOrigin = translate(-cameraPosition[0], -cameraPosition[1], -cameraPosition[2]);
+        let backToOriginal = translate(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
+
+        let finalMatrix = mult(backToOriginal, rotateY(1.5));
+        finalMatrix = mult(finalMatrix, backToOrigin);
+
+        tester2 = mult(finalMatrix, tester2);
+        cameraTarget[0] = tester2[0];
+        cameraTarget[1] = tester2[1];
+        cameraTarget[2] = tester2[2];
+    } 
+    // ! to walk straight, apply same values to both camera and target
+    else if (wActive) { // moving forward 
+        if (cameraPosition[0] + walkingSpeed * Math.sin(radians(currentAngle)) <= 29.9 &&
+            cameraPosition[0] + walkingSpeed * Math.sin(radians(currentAngle)) >= -29.9) {
+            cameraTarget[0] += walkingSpeed * Math.sin(radians(currentAngle));
+            cameraPosition[0] += walkingSpeed * Math.sin(radians(currentAngle));
+        }
+        
+        if (cameraPosition[2] + walkingSpeed * Math.cos(radians(currentAngle)) <= 29.9 &&
+            cameraPosition[2] + walkingSpeed * Math.cos(radians(currentAngle)) >= -29.9) {
+            cameraTarget[2] += walkingSpeed * Math.cos(radians(currentAngle));
+            cameraPosition[2] += walkingSpeed * Math.cos(radians(currentAngle));
+        }
+    } else if (sActive) { // moving backwards
+        if (cameraPosition[0] - walkingSpeed * Math.sin(radians(currentAngle)) <= 29.9 &&
+            cameraPosition[0] - walkingSpeed * Math.sin(radians(currentAngle)) >= -29.9) {
+            cameraTarget[0] -= walkingSpeed * Math.sin(radians(currentAngle));
+            cameraPosition[0] -= walkingSpeed * Math.sin(radians(currentAngle));
+        }
+        
+        if (cameraPosition[2] - walkingSpeed * Math.cos(radians(currentAngle)) <= 29.9 &&
+            cameraPosition[2] - walkingSpeed * Math.cos(radians(currentAngle)) >= -29.9) {
+            cameraTarget[2] -= walkingSpeed * Math.cos(radians(currentAngle));
+            cameraPosition[2] -= walkingSpeed * Math.cos(radians(currentAngle));
+        }
+    } else if (aActive) { // moving left
+        if (cameraPosition[0] + walkingSpeed * Math.sin(radians(currentAngle + 90)) <= 29.9 &&
+            cameraPosition[0] + walkingSpeed * Math.sin(radians(currentAngle + 90)) >= -29.9) {
+            cameraTarget[0] += walkingSpeed * Math.sin(radians(currentAngle + 90));
+            cameraPosition[0] += walkingSpeed * Math.sin(radians(currentAngle + 90));
+        }
+        
+        if (cameraPosition[2] + walkingSpeed * Math.cos(radians(currentAngle + 90)) <= 29.9 &&
+            cameraPosition[2] + walkingSpeed * Math.cos(radians(currentAngle + 90)) >= -29.9) {
+            cameraTarget[2] += walkingSpeed * Math.cos(radians(currentAngle + 90));
+            cameraPosition[2] += walkingSpeed * Math.cos(radians(currentAngle + 90));
+        }
+    } else if (dActive) { // moving right
+        if (cameraPosition[0] + walkingSpeed * Math.sin(radians(currentAngle - 90)) <= 29.9 &&
+            cameraPosition[0] + walkingSpeed * Math.sin(radians(currentAngle - 90)) >= -29.9) {
+            cameraTarget[0] += walkingSpeed * Math.sin(radians(currentAngle - 90));
+            cameraPosition[0] += walkingSpeed * Math.sin(radians(currentAngle - 90));
+        }
+        
+        if (cameraPosition[2] + walkingSpeed * Math.cos(radians(currentAngle - 90)) <= 29.9 &&
+            cameraPosition[2] + walkingSpeed * Math.cos(radians(currentAngle - 90)) >= -29.9) {
+            cameraTarget[2] += walkingSpeed * Math.cos(radians(currentAngle - 90));
+            cameraPosition[2] += walkingSpeed * Math.cos(radians(currentAngle - 90));
+        }            
+    }
+}
 
 function room() {
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
@@ -239,8 +272,9 @@ var cameraTarget = vec3(0, 0, 10);
 var cameraUp = vec3(0, 1, 0);
 
 function render() {
-
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
+
+    moveCamera();
 
     modelViewMatrix = lookAt(cameraPosition, cameraTarget, cameraUp);
     room();
