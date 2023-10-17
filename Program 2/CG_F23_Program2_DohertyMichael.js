@@ -190,7 +190,8 @@ function moveCamera() {
         cameraTarget[0] = tester1[0];
         cameraTarget[1] = tester1[1];
         cameraTarget[2] = tester1[2];
-    } else if (qActive) {
+    } 
+    if (qActive) {
         let tester2 = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
         currentAngle += 1.5;
 
@@ -206,7 +207,7 @@ function moveCamera() {
         cameraTarget[2] = tester2[2];
     } 
     // ! to walk straight, apply same values to both camera and target
-    else if (wActive) { // moving forward 
+    if (wActive) { // moving forward 
         if (cameraPosition[0] + walkingSpeed * Math.sin(radians(currentAngle)) <= 29.9 &&
             cameraPosition[0] + walkingSpeed * Math.sin(radians(currentAngle)) >= -29.9) {
             cameraTarget[0] += walkingSpeed * Math.sin(radians(currentAngle));
@@ -218,7 +219,8 @@ function moveCamera() {
             cameraTarget[2] += walkingSpeed * Math.cos(radians(currentAngle));
             cameraPosition[2] += walkingSpeed * Math.cos(radians(currentAngle));
         }
-    } else if (sActive) { // moving backwards
+    } 
+    if (sActive) { // moving backwards
         if (cameraPosition[0] - walkingSpeed * Math.sin(radians(currentAngle)) <= 29.9 &&
             cameraPosition[0] - walkingSpeed * Math.sin(radians(currentAngle)) >= -29.9) {
             cameraTarget[0] -= walkingSpeed * Math.sin(radians(currentAngle));
@@ -230,7 +232,8 @@ function moveCamera() {
             cameraTarget[2] -= walkingSpeed * Math.cos(radians(currentAngle));
             cameraPosition[2] -= walkingSpeed * Math.cos(radians(currentAngle));
         }
-    } else if (aActive) { // moving left
+    } 
+    if (aActive) { // moving left
         if (cameraPosition[0] + walkingSpeed * Math.sin(radians(currentAngle + 90)) <= 29.9 &&
             cameraPosition[0] + walkingSpeed * Math.sin(radians(currentAngle + 90)) >= -29.9) {
             cameraTarget[0] += walkingSpeed * Math.sin(radians(currentAngle + 90));
@@ -242,7 +245,8 @@ function moveCamera() {
             cameraTarget[2] += walkingSpeed * Math.cos(radians(currentAngle + 90));
             cameraPosition[2] += walkingSpeed * Math.cos(radians(currentAngle + 90));
         }
-    } else if (dActive) { // moving right
+    }
+     if (dActive) { // moving right
         if (cameraPosition[0] + walkingSpeed * Math.sin(radians(currentAngle - 90)) <= 29.9 &&
             cameraPosition[0] + walkingSpeed * Math.sin(radians(currentAngle - 90)) >= -29.9) {
             cameraTarget[0] += walkingSpeed * Math.sin(radians(currentAngle - 90));
