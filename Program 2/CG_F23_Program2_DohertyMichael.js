@@ -91,31 +91,60 @@ window.onload = function init() {
             cameraTarget[2] = tester2[2];
         } 
         // ! to walk straight, apply same values to both camera and target
-        else if (event.key === "W" || event.key === 'w') { // moving forward  
-            cameraTarget[0] += Math.sin(radians(currentAngle));
-            cameraPosition[0] += Math.sin(radians(currentAngle));
-
-            cameraTarget[2] += Math.cos(radians(currentAngle));
-            cameraPosition[2] += Math.cos(radians(currentAngle));
+        else if (event.key === "W" || event.key === 'w') { // moving forward 
+            if (cameraPosition[0] + Math.sin(radians(currentAngle)) <= 29.9 &&
+                cameraPosition[0] + Math.sin(radians(currentAngle)) >= -29.9) {
+                cameraTarget[0] += Math.sin(radians(currentAngle));
+                cameraPosition[0] += Math.sin(radians(currentAngle));
+            }
+            
+            if (cameraPosition[2] + Math.cos(radians(currentAngle)) <= 29.9 &&
+                cameraPosition[2] + Math.cos(radians(currentAngle)) >= -29.9) {
+                cameraTarget[2] += Math.cos(radians(currentAngle));
+                cameraPosition[2] += Math.cos(radians(currentAngle));
+            }
         } else if (event.key === "S" || event.key === 's') { // moving backwards
-            cameraTarget[0] -= Math.sin(radians(currentAngle));
-            cameraPosition[0] -= Math.sin(radians(currentAngle));
-
-            cameraTarget[2] -= Math.cos(radians(currentAngle));
-            cameraPosition[2] -= Math.cos(radians(currentAngle));
+            if (cameraPosition[0] - Math.sin(radians(currentAngle)) <= 29.9 &&
+                cameraPosition[0] - Math.sin(radians(currentAngle)) >= -29.9) {
+                cameraTarget[0] -= Math.sin(radians(currentAngle));
+                cameraPosition[0] -= Math.sin(radians(currentAngle));
+            }
+            
+            if (cameraPosition[2] - Math.cos(radians(currentAngle)) <= 29.9 &&
+                cameraPosition[2] - Math.cos(radians(currentAngle)) >= -29.9) {
+                cameraTarget[2] -= Math.cos(radians(currentAngle));
+                cameraPosition[2] -= Math.cos(radians(currentAngle));
+            }
         } else if (event.key === "A" || event.key === 'a') { // moving left
-            cameraTarget[0] += Math.sin(radians(currentAngle + 90));
-            cameraPosition[0] += Math.sin(radians(currentAngle + 90));
-
-            cameraTarget[2] += Math.cos(radians(currentAngle + 90));
-            cameraPosition[2] += Math.cos(radians(currentAngle + 90));
+            if (cameraPosition[0] + Math.sin(radians(currentAngle + 90)) <= 29.9 &&
+                cameraPosition[0] + Math.sin(radians(currentAngle + 90)) >= -29.9) {
+                cameraTarget[0] += Math.sin(radians(currentAngle + 90));
+                cameraPosition[0] += Math.sin(radians(currentAngle + 90));
+            }
+            
+            if (cameraPosition[2] + Math.cos(radians(currentAngle + 90)) <= 29.9 &&
+                cameraPosition[2] + Math.cos(radians(currentAngle + 90)) >= -29.9) {
+                cameraTarget[2] += Math.cos(radians(currentAngle + 90));
+                cameraPosition[2] += Math.cos(radians(currentAngle + 90));
+            }
         } else if (event.key === "D" || event.key === 'd') { // moving right
-            cameraTarget[0] += Math.sin(radians(currentAngle - 90));
-            cameraPosition[0] += Math.sin(radians(currentAngle - 90));
+            if (cameraPosition[0] + Math.sin(radians(currentAngle - 90)) <= 29.9 &&
+                cameraPosition[0] + Math.sin(radians(currentAngle - 90)) >= -29.9) {
+                cameraTarget[0] += Math.sin(radians(currentAngle - 90));
+                cameraPosition[0] += Math.sin(radians(currentAngle - 90));
+            }
+            
+            if (cameraPosition[2] + Math.cos(radians(currentAngle - 90)) <= 29.9 &&
+                cameraPosition[2] + Math.cos(radians(currentAngle - 90)) >= -29.9) {
+                cameraTarget[2] += Math.cos(radians(currentAngle - 90));
+                cameraPosition[2] += Math.cos(radians(currentAngle - 90));
+            }
 
-            cameraTarget[2] += Math.cos(radians(currentAngle - 90));
-            cameraPosition[2] += Math.cos(radians(currentAngle - 90));
+            
+
+            
         }
+
         console.log('Camera Position:');
         console.log(cameraPosition);
     });
