@@ -149,6 +149,8 @@ function init() {
     modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
 
     projectionMatrix = ortho(-10, 10, -10, 10, -10, 10);
+    console.log('THE PROJECTION MATRIX');
+    console.log(projectionMatrix);
     gl.uniformMatrix4fv( gl.getUniformLocation(program, "projectionMatrix"),  false, flatten(projectionMatrix) );
 
     render();
@@ -223,8 +225,8 @@ function render() {
     modelViewMatrix = mult(modelViewMatrix, translate(0.0, BASE_HEIGHT, 0.0));
     modelViewMatrix = mult(modelViewMatrix, rotate(theta[LowerArm], vec3(0, 0, 1 )));
     lowerArm();
-    printm( translate(0.0, BASE_HEIGHT, 0.0));
-    printm(modelViewMatrix);
+    //printm( translate(0.0, BASE_HEIGHT, 0.0));
+    //printm(modelViewMatrix);
 
     modelViewMatrix  = mult(modelViewMatrix, translate(0.0, LOWER_ARM_HEIGHT, 0.0));
     modelViewMatrix  = mult(modelViewMatrix, rotate(theta[UpperArm], vec3(0, 0, 1)) );
