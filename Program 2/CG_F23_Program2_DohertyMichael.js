@@ -85,7 +85,9 @@ window.onload = function init() {
 
     // ! this is how you change the coordinates that you're working with
     // ! currently set to 0-100 for X, Y, and Z axes
-    projectionMatrix = ortho(0, 100, 0, 100, 0, 100);
+    projectionMatrix = ortho(-10, 10, -10, 10, -10, 10);
+    console.log('PROJECTIOJ')
+    console.log(projectionMatrix)
 
     gl.uniformMatrix4fv( gl.getUniformLocation(program, "projectionMatrix"),  false, flatten(projectionMatrix) );
 
@@ -100,14 +102,14 @@ function getVertices() {
     let vertices = [];
 
     vertices.push( // vertices for walls of room
-        vec4( 10.0, 10.0, -10.0, 1.0), // 0
-        vec4( 10.0, 90.0, -10.0, 1.0), // 1
-        vec4( 90.0, 90.0, -10.0, 1.0), // 2
-        vec4( 90.0, 10.0, -10.0, 1.0), // 3
-        vec4( 10.0, 10.0, -90.0, 1.0), // 4
-        vec4( 10.0, 90.0, -90.0, 1.0), // 5
-        vec4( 90.0, 90.0, -90.0, 1.0), // 6
-        vec4( 90.0, 10.0, -90.0, 1.0)  // 7
+        vec4(-10.0, -10.0, -10.0, 1.0), // 0
+        vec4(-10.0,  10.0, -10.0, 1.0), // 1
+        vec4( 10.0,  10.0, -10.0, 1.0), // 2
+        vec4( 10.0, -10.0, -10.0, 1.0), // 3
+        vec4(-10.0, -10.0,  10.0, 1.0), // 4
+        vec4(-10.0,  10.0,  10.0, 1.0), // 5
+        vec4( 10.0,  10.0,  10.0, 1.0), // 6
+        vec4( 10.0, -10.0,  10.0, 1.0)  // 7
     );
 
     return vertices;
@@ -176,13 +178,16 @@ function render() {
 
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 
-    // const cameraPosition = vec3(50, 50, 50);
-    // const cameraTarget = vec3(50, 50, 100);
-    // const cameraUp = vec3(0, 1, 0);
+    const cameraPosition = vec3(0, 0, 0);
+    const cameraTarget = vec3(0, 0, 1);
+    const cameraUp = vec3(0, 1, 0);
 
-    // modelViewMatrix = lookAt(cameraPosition, cameraTarget, cameraUp);
+    // modelViewMatrix = translate(0, 0, 30);
     // console.log(modelViewMatrix);
     // gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+
+    modelViewMatrix = lookAt(cameraPosition, cameraTarget, cameraUp);
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     
     room();
 
