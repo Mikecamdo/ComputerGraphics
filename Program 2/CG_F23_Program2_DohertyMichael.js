@@ -31,8 +31,6 @@ window.onload = function init() {
 
     let points = getPoints();
 
-    let colors = getColors(); // TODO get rid of colors!!
-
     canvas = document.getElementById("gl-canvas");
 
     gl = canvas.getContext('webgl2');
@@ -55,14 +53,6 @@ window.onload = function init() {
     let diffuseProduct = mult(lightDiffuse, materialDiffuse);
     let specularProduct = mult(lightSpecular, materialSpecular);
 
-    console.log('Normals Array:');
-    console.log(normalsArray);
-    console.log('Points:');
-    console.log(points);
-
-
-
-
     var nBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
@@ -80,16 +70,7 @@ window.onload = function init() {
     gl.vertexAttribPointer(positionLoc, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionLoc);
 
-    // let cBuffer = gl.createBuffer();
-    // gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-    // gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
-
-    // var colorLoc = gl.getAttribLocation(program, "aColor");
-    // gl.vertexAttribPointer(colorLoc, 4, gl.FLOAT, false, 0, 0);
-    // gl.enableVertexAttribArray(colorLoc);
-
     modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
-    //nMatrixLoc = gl.getUniformLocation(program, "normalMatrix");
 
     // ! change first value to change how much you can see in the field of view
     projectionMatrix = perspective(70, 1, 0.1, 90);
@@ -154,7 +135,7 @@ window.onload = function init() {
     render();
 }
 
-var angles = { //TODO eventually need to change 'angles.y' to use this instead
+var angles = {
     x: 0,
     y: 0,
     z: 0
@@ -183,15 +164,12 @@ function moveCameraWithMouse(event) {
 
     let finalMatrix = mult(backToOriginal, rotateX(xChange));
     finalMatrix = mult(finalMatrix, rotateY(yChange));
-    //finalMatrix = mult(finalMatrix, rotateZ(zChange));
     finalMatrix = mult(finalMatrix, backToOrigin);
 
     tester1 = mult(finalMatrix, tester1);
     cameraTarget[0] = tester1[0];
     cameraTarget[1] = tester1[1];
     cameraTarget[2] = tester1[2];
-
-    console.log('Angles:', angles);
 }
 
 //----------------------------------------------------------------------------
@@ -277,32 +255,6 @@ function getNormal(a, b, c) {
     normalsArray.push(normal);
 }
 
-function getColors() {
-    let vertexColors = [
-        vec4( 0.0, 0.0, 0.0, 1.0 ),  // black
-        vec4( 1.0, 0.0, 0.0, 1.0 ),  // red
-        vec4( 1.0, 1.0, 0.0, 1.0 ),  // yellow
-        vec4( 0.0, 1.0, 0.0, 1.0 ),  // green
-        vec4( 0.0, 0.0, 1.0, 1.0 ),  // blue
-        vec4( 1.0, 0.0, 1.0, 1.0 ),  // magenta
-        vec4( 1.0, 1.0, 1.0, 1.0 ),  // white
-        vec4( 0.0, 1.0, 1.0, 1.0 )   // cyan
-    ];
-
-    let colors = [];
-
-    colors.push(
-        vertexColors[0], vertexColors[0], vertexColors[0], vertexColors[0],
-        vertexColors[1], vertexColors[1], vertexColors[1], vertexColors[1],
-        vertexColors[2], vertexColors[2], vertexColors[2], vertexColors[2],
-        vertexColors[3], vertexColors[3], vertexColors[3], vertexColors[3],
-        vertexColors[4], vertexColors[4], vertexColors[4], vertexColors[4],
-        vertexColors[5], vertexColors[5], vertexColors[5], vertexColors[5]
-    );
-
-    return colors;
-}
-
 //----------------------------------------------------------------------------
 
 function moveCamera() {
@@ -344,16 +296,12 @@ function moveCamera() {
             cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y)) >= -29.9) {
             cameraTarget[0] += walkingSpeed * Math.sin(radians(angles.y));
             cameraPosition[0] += walkingSpeed * Math.sin(radians(angles.y));
-            
-            //lightPosition[0] += walkingSpeed * Math.sin(radians(angles.y));
         }
         
         if (cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y)) <= 29.9 &&
             cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y)) >= -29.9) {
             cameraTarget[2] += walkingSpeed * Math.cos(radians(angles.y));
             cameraPosition[2] += walkingSpeed * Math.cos(radians(angles.y));
-
-            //lightPosition[2] += walkingSpeed * Math.cos(radians(angles.y));
         }
     } 
     if (sActive) { // moving backwards
@@ -361,16 +309,12 @@ function moveCamera() {
             cameraPosition[0] - walkingSpeed * Math.sin(radians(angles.y)) >= -29.9) {
             cameraTarget[0] -= walkingSpeed * Math.sin(radians(angles.y));
             cameraPosition[0] -= walkingSpeed * Math.sin(radians(angles.y));
-
-            //lightPosition[0] -= walkingSpeed * Math.sin(radians(angles.y));
         }
         
         if (cameraPosition[2] - walkingSpeed * Math.cos(radians(angles.y)) <= 29.9 &&
             cameraPosition[2] - walkingSpeed * Math.cos(radians(angles.y)) >= -29.9) {
             cameraTarget[2] -= walkingSpeed * Math.cos(radians(angles.y));
             cameraPosition[2] -= walkingSpeed * Math.cos(radians(angles.y));
-
-            //lightPosition[2] -= walkingSpeed * Math.cos(radians(angles.y));
         }
     } 
     if (aActive) { // moving left
@@ -378,16 +322,12 @@ function moveCamera() {
             cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y + 90)) >= -29.9) {
             cameraTarget[0] += walkingSpeed * Math.sin(radians(angles.y + 90));
             cameraPosition[0] += walkingSpeed * Math.sin(radians(angles.y + 90));
-
-            //lightPosition[0] += walkingSpeed * Math.sin(radians(angles.y + 90));
         }
         
         if (cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y + 90)) <= 29.9 &&
             cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y + 90)) >= -29.9) {
             cameraTarget[2] += walkingSpeed * Math.cos(radians(angles.y + 90));
             cameraPosition[2] += walkingSpeed * Math.cos(radians(angles.y + 90));
-
-            //lightPosition[2] += walkingSpeed * Math.cos(radians(angles.y + 90));
         }
     }
      if (dActive) { // moving right
@@ -395,24 +335,15 @@ function moveCamera() {
             cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y - 90)) >= -29.9) {
             cameraTarget[0] += walkingSpeed * Math.sin(radians(angles.y - 90));
             cameraPosition[0] += walkingSpeed * Math.sin(radians(angles.y - 90));
-
-            //lightPosition[0] += walkingSpeed * Math.sin(radians(angles.y - 90));
         }
         
         if (cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y - 90)) <= 29.9 &&
             cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y - 90)) >= -29.9) {
             cameraTarget[2] += walkingSpeed * Math.cos(radians(angles.y - 90));
             cameraPosition[2] += walkingSpeed * Math.cos(radians(angles.y - 90));
-
-            //lightPosition[2] += walkingSpeed * Math.cos(radians(angles.y - 90));
         }            
     }
-
-    //console.log('Light Position:', lightPosition);
-    //gl.uniform4fv( gl.getUniformLocation(program, "lightPosition"),flatten(lightPosition));
 }
-
-//TODO change rotating camera to be based on mouse movement (??) (make controls similiar to minecraft)
 
 function room() {
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
@@ -434,15 +365,6 @@ function render() {
     moveCamera();
 
     modelViewMatrix = lookAt(cameraPosition, cameraTarget, cameraUp);
-    // console.log('HUh??');
-    // let HUh = getPoints();
-    // console.log(mult(modelViewMatrix, HUh[0]));
-    //nMatrix = normalMatrix(modelViewMatrix, true);
-
-    //console.log('Normal Matrix:', nMatrix);
-
-    //gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-    //gl.uniformMatrix3fv(nMatrixLoc, false, flatten(nMatrix));
 
     room();
 
