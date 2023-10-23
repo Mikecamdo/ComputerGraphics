@@ -40,6 +40,9 @@ window.onload = function init() {
 
     gl.clearColor(0.8, 0.8, 0.8, 1.0);
     gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
+    gl.enable(gl.POLYGON_OFFSET_FILL);
+    gl.polygonOffset(1.0, 2.0);
 
     // ? enable backface culling for efficiency(??)
     // gl.enable(gl.CULL_FACE);
@@ -143,9 +146,7 @@ var angles = {
 
 var theta = 0, phi = 0;
 
-function moveCameraWithMouse(event) {
-    // ! cos(0) = 1, cos(90) = 0
-
+function moveCameraWithMouse(event) { //TODO clean up code, rename variables to make more sense (don't have "tester1")
     let tester1 = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
     let xChange =  0.5 * event.movementY;
     let yChange = -0.5 * event.movementX;
@@ -204,11 +205,11 @@ function getPoints() {
         // front wall
         vertices[0], vertices[1], vertices[2], vertices[3],
 
-        // floor
-        vertices[0], vertices[3], vertices[7], vertices[4],
-
         // back wall
         vertices[4], vertices[7], vertices[6], vertices[5],
+
+        // floor
+        vertices[0], vertices[3], vertices[7], vertices[4],
 
         // ceiling
         vertices[1], vertices[5], vertices[6], vertices[2],
@@ -223,11 +224,11 @@ function getPoints() {
     // front wall
     getNormal(0, 2, 1);
 
-    // floor
-    getNormal(0, 7, 3);
-
     // back wall
     getNormal(4, 6, 7);
+
+    // floor
+    getNormal(0, 7, 3);
 
     // ceiling
     getNormal(1, 2, 6);
@@ -237,6 +238,15 @@ function getPoints() {
 
     // left wall
     getNormal(3, 7, 6);
+
+    let temp = doHatStuff();
+
+    for (let something of temp) {
+        points.push(something);
+    }
+
+    console.log('Points:');
+    console.log(points);
 
     return points;
 }
@@ -346,8 +356,6 @@ function moveCamera() {
 }
 
 function room() {
-    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-
     for (let i = 0; i < 6; i++) {
         gl.drawArrays(gl.TRIANGLE_FAN, i * 4, 4);
     }
@@ -355,6 +363,7 @@ function room() {
 
 //----------------------------------------------------------------------------
 
+// ! change y values of cameraPosition and cameraTarget to make yourself "shrink"
 var cameraPosition = vec3(0, 0, 0);
 var cameraTarget = vec3(0, 0, 10);
 var cameraUp = vec3(0, 1, 0);
@@ -365,8 +374,51 @@ function render() {
     moveCamera();
 
     modelViewMatrix = lookAt(cameraPosition, cameraTarget, cameraUp);
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
     room();
 
+    renderHat();
+
     requestAnimationFrame(render);
+}
+
+function doHatStuff() {
+    var nRows = 50;
+    var nColumns = 50;
+
+    // data for radial hat function: sin(Pi*r)/(Pi*r)
+
+    var data = [];
+    for(var i = 0; i < nRows; ++i) {
+        data.push([]);
+        var x = Math.PI*(4*i/nRows-2.0);
+
+        for(var j = 0; j < nColumns; ++j) {
+            var y = Math.PI*(4*j/nRows-2.0);
+            var r = Math.sqrt(x*x+y*y);
+
+            // take care of 0/0 for r = 0
+
+            data[i][j] = r ? Math.sin(r) / r : 1.0;
+        }
+    }
+
+    let points = [];
+    for(var i=0; i<nRows-1; i++) {
+        for(var j=0; j<nColumns-1;j++) {
+            points.push( vec4(2*i/nRows-1, data[i][j] - 8, 2*j/nColumns-1, 1.0));
+            points.push( vec4(2*(i+1)/nRows-1, data[i+1][j] - 8, 2*j/nColumns-1, 1.0));
+            points.push( vec4(2*(i+1)/nRows-1, data[i+1][j+1] - 8, 2*(j+1)/nColumns-1, 1.0));
+            points.push( vec4(2*i/nRows-1, data[i][j+1] - 8, 2*(j+1)/nColumns-1, 1.0) );
+        }
+    }
+    return points;
+}
+
+function renderHat() {
+    for(var i=24; i<9628; i+=4) {
+        gl.drawArrays( gl.TRIANGLE_FAN, i, 4 );
+        gl.drawArrays( gl.LINE_LOOP, i, 4 );
+    }
 }
