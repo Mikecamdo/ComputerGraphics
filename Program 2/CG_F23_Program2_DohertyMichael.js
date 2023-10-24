@@ -64,6 +64,12 @@ window.onload = function init() {
     gl.vertexAttribPointer(normalLoc, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(normalLoc);
 
+    //!
+    console.log('Begin');
+    let testing = parseOBJ(tableObj);
+    console.log('End');
+    console.log(testing);
+    //!
     // Create and initialize  buffer objects
     let vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
