@@ -56,6 +56,22 @@ window.onload = function init() {
     let diffuseProduct = mult(lightDiffuse, materialDiffuse);
     let specularProduct = mult(lightSpecular, materialSpecular);
 
+    //!
+    console.log('Begin');
+    let testing = parseOBJ(tableObj);
+    console.log('End');
+    testing = scaleObjectCoordinates(0.1, testing);
+    testing = translateObjectCoordinates(0, -10, 0, testing);
+    //!
+
+    normalsArray = normalsArray.concat(testing.geometries[0].data.normal);
+    normalsArray = normalsArray.concat(testing.geometries[1].data.normal);
+    normalsArray = normalsArray.concat(testing.geometries[2].data.normal);
+
+    points = points.concat(testing.geometries[0].data.position);
+    points = points.concat(testing.geometries[1].data.position);
+    points = points.concat(testing.geometries[2].data.position);
+
     var nBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
@@ -64,12 +80,6 @@ window.onload = function init() {
     gl.vertexAttribPointer(normalLoc, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(normalLoc);
 
-    //!
-    console.log('Begin');
-    let testing = parseOBJ(tableObj);
-    console.log('End');
-    console.log(testing);
-    //!
     // Create and initialize  buffer objects
     let vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
@@ -245,14 +255,14 @@ function getPoints() {
     // left wall
     getNormal(3, 7, 6);
 
-    let temp = doHatStuff();
+    // let temp = doHatStuff();
 
-    for (let something of temp) {
-        points.push(something);
-    }
+    // for (let something of temp) {
+    //     points.push(something);
+    // }
 
-    console.log('Points:');
-    console.log(points);
+    // console.log('Points:');
+    // console.log(points);
 
     return points;
 }
@@ -384,7 +394,8 @@ function render() {
 
     room();
 
-    renderHat();
+    // renderHat();
+    renderTable();
 
     requestAnimationFrame(render);
 }
@@ -426,5 +437,12 @@ function renderHat() {
     for(var i=24; i<9628; i+=4) {
         gl.drawArrays( gl.TRIANGLE_FAN, i, 4 );
         gl.drawArrays( gl.LINE_LOOP, i, 4 );
+    }
+}
+
+function renderTable() {
+    //console.log('Rendering table', normalsArray.length);
+    for (let i = 24; i < normalsArray.length; i+=3) {
+        gl.drawArrays(gl.TRIANGLES, i, 3);
     }
 }
