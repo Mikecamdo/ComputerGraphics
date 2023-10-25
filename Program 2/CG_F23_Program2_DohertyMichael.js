@@ -79,6 +79,65 @@ window.onload = function init() {
     points = points.concat(testing.geometries[1].data.position);
     points = points.concat(testing.geometries[2].data.position);
 
+
+
+    let tempBefore = points.length;
+
+
+    //! mesh coordinates:
+    for (let i = 0; i < 119; i++) {
+        let x1 = -5.95 + i * 0.1;
+        let x2 = -5.95 + i * 0.1;
+        let x3 = -5.95 + (i + 1) * 0.1;
+        let x4 = -5.95 + (i + 1) * 0.1;
+
+        for (let j = 0; j < 59; j++) {
+            let z1 = 2.95 - j * 0.1;
+            let z2 = 2.95 - (j + 1) * 0.1;
+            let z3 = 2.95 - (j + 1) * 0.1;
+            let z4 = 2.95 - j * 0.1;
+
+            let y1 = (5.95 - Math.abs(x1)) * (2.95 - Math.abs(z1)) / 17 - 5.999;
+            let y2 = (5.95 - Math.abs(x2)) * (2.95 - Math.abs(z2)) / 17 - 5.999;
+            let y3 = (5.95 - Math.abs(x3)) * (2.95 - Math.abs(z3)) / 17 - 5.999;
+            let y4 = (5.95 - Math.abs(x4)) * (2.95 - Math.abs(z4)) / 17 - 5.999;
+
+            points.push(
+                vec4(x1, y1, z1, 1.0),
+                vec4(x2, y2, z2, 1.0),
+                vec4(x3, y3, z3, 1.0),
+                vec4(x4, y4, z4, 1.0)
+            );
+
+            normalsArray.push( // ! FIXME need to actually calculate normals later
+                vec4(0.0, 1.0, 0.0, 0.0),
+                vec4(0.0, 1.0, 0.0, 0.0),
+                vec4(0.0, 1.0, 0.0, 0.0),
+                vec4(0.0, 1.0, 0.0, 0.0)
+            );
+        }
+    }
+
+    let tempAfter = points.length;
+    console.log('Change in size:', tempAfter - tempBefore);
+    console.log(tempBefore);
+    console.log(tempAfter);
+    
+    console.log('Final points:');
+    console.log(points);
+
+    console.log('Final Normals:');
+    console.log(normalsArray);
+    // -5.9, y, 2.9
+    // -5.9, y, 2.7
+    // -5.7, y, 2.9
+    // -5.7, y, 2.7
+
+
+
+
+
+
     var nBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
@@ -181,8 +240,8 @@ window.onload = function init() {
             minXRange = -5.9;
             maxZRange = 2.9;
             minZRange = -2.9;
-            cameraPosition = vec3(0, -5.8, 0);
-            cameraTarget = vec3(0, -5.8, 10);
+            cameraPosition = vec3(-5.9, -5.85, -2.9);
+            cameraTarget = vec3(-5.9, -5.85, 10);
 
             angles = {
                 x: 0,
@@ -296,15 +355,6 @@ function getPoints() {
     // left wall
     getNormal(3, 7, 6);
 
-    // let temp = doHatStuff();
-
-    // for (let something of temp) {
-    //     points.push(something);
-    // }
-
-    // console.log('Points:');
-    // console.log(points);
-
     return points;
 }
 
@@ -326,7 +376,6 @@ function getNormal(a, b, c) {
 
 var walkingSpeed = 0.5;
 function moveCamera() {
-    console.log('Walking speed:', walkingSpeed);
     if (eActive) {
         let tester1 = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
         angles.y -= 1.5;
@@ -370,6 +419,10 @@ function moveCamera() {
             cameraTarget[2] += walkingSpeed * Math.cos(radians(angles.y));
             cameraPosition[2] += walkingSpeed * Math.cos(radians(angles.y));
         }
+
+        if (!normalSize) {
+            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) / 17 - 5.85;
+        }
     } 
     if (sActive) { // moving backwards
         if (cameraPosition[0] - walkingSpeed * Math.sin(radians(angles.y)) <= maxXRange &&
@@ -382,6 +435,10 @@ function moveCamera() {
             cameraPosition[2] - walkingSpeed * Math.cos(radians(angles.y)) >= minZRange) {
             cameraTarget[2] -= walkingSpeed * Math.cos(radians(angles.y));
             cameraPosition[2] -= walkingSpeed * Math.cos(radians(angles.y));
+        }
+
+        if (!normalSize) {
+            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) / 17 - 5.85;
         }
     } 
     if (aActive) { // moving left
@@ -396,6 +453,10 @@ function moveCamera() {
             cameraTarget[2] += walkingSpeed * Math.cos(radians(angles.y + 90));
             cameraPosition[2] += walkingSpeed * Math.cos(radians(angles.y + 90));
         }
+
+        if (!normalSize) {
+            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) / 17 - 5.85;
+        }
     }
      if (dActive) { // moving right
         if (cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y - 90)) <= maxXRange &&
@@ -408,7 +469,11 @@ function moveCamera() {
             cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y - 90)) >= minZRange) {
             cameraTarget[2] += walkingSpeed * Math.cos(radians(angles.y - 90));
             cameraPosition[2] += walkingSpeed * Math.cos(radians(angles.y - 90));
-        }            
+        }
+        
+        if (!normalSize) {
+            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) / 17 - 5.85;
+        }
     }
 }
 
@@ -447,6 +512,7 @@ function render() {
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
     room();
+    renderMesh();
 
     // renderHat();
     renderTable();
@@ -507,7 +573,7 @@ function renderTable() {
     //     "uShininess"),materialShininess);
 
     for (let i = 24; i < 156; i+=3) { // tabletop
-        gl.drawArrays(gl.TRIANGLES, i, 3);
+        gl.drawArrays(gl.TRIANGLES, i, 3); // TODO do I even need this anymore, since the mesh is rendered directly on top???
     }
 
     // gl.uniform4fv( gl.getUniformLocation(program,
@@ -535,4 +601,27 @@ function renderTable() {
     for (let i = 1332; i < 3276; i+=3) { // wire
         gl.drawArrays(gl.TRIANGLES, i, 3);
     }
+}
+
+function renderMesh() {
+    for (let i = 3276; i < normalsArray.length; i+=4) {
+        gl.drawArrays(gl.TRIANGLE_FAN, i, 4);
+    }
+
+    gl.uniform4fv( gl.getUniformLocation(program,
+        "uAmbientProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
+    gl.uniform4fv( gl.getUniformLocation(program,
+        "uDiffuseProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
+    gl.uniform4fv( gl.getUniformLocation(program,
+        "uSpecularProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
+    gl.uniform1f( gl.getUniformLocation(program,
+        "uShininess"), 0);
+
+    for (let i = 3276; i < normalsArray.length; i+=4) {
+        gl.drawArrays(gl.LINE_LOOP, i, 4);
+    }
+
+
+    // gl.drawArrays(gl.TRIANGLE_FAN, 3276, 4);
+    // gl.drawArrays(gl.LINE_LOOP,    3276, 4);
 }
