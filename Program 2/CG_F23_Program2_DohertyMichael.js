@@ -79,7 +79,8 @@ window.onload = function init() {
     points = points.concat(testing.geometries[1].data.position);
     points = points.concat(testing.geometries[2].data.position);
 
-
+    console.log('Right after adding obj stuff:');
+    console.log(normalsArray);
 
     let tempBefore = points.length;
 
@@ -108,13 +109,19 @@ window.onload = function init() {
                 vec4(x3, y3, z3, 1.0),
                 vec4(x4, y4, z4, 1.0)
             );
-
-            normalsArray.push( // ! FIXME need to actually calculate normals later
-                vec4(0.0, 1.0, 0.0, 0.0),
-                vec4(0.0, 1.0, 0.0, 0.0),
-                vec4(0.0, 1.0, 0.0, 0.0),
-                vec4(0.0, 1.0, 0.0, 0.0)
+            
+            getNormal2(
+                vec4(x1, y1, z1, 1.0),
+                vec4(x2, y2, z2, 1.0),
+                vec4(x3, y3, z3, 1.0)
             );
+
+            // normalsArray.push( // ! FIXME need to actually calculate normals later
+            //     vec4(0.0, 1.0, 0.0, 0.0),
+            //     vec4(0.0, 1.0, 0.0, 0.0),
+            //     vec4(0.0, 1.0, 0.0, 0.0),
+            //     vec4(0.0, 1.0, 0.0, 0.0)
+            // );
         }
     }
 
@@ -372,6 +379,18 @@ function getNormal(a, b, c) {
     normalsArray.push(normal);
 }
 
+function getNormal2(a, b, c) { // TODO COMBINE BOTH OF THESE!!!
+    var t1 = subtract(b, a);
+    var t2 = subtract(c, a);
+    var normal = normalize(cross(t2, t1));
+    normal = vec4(normal[0], normal[1], normal[2], 0.0);
+
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+    normalsArray.push(normal);
+}
+
 //----------------------------------------------------------------------------
 
 var walkingSpeed = 0.5;
@@ -612,10 +631,10 @@ function renderMesh() {
         "uAmbientProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
     gl.uniform4fv( gl.getUniformLocation(program,
         "uDiffuseProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
-    gl.uniform4fv( gl.getUniformLocation(program,
-        "uSpecularProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
-    gl.uniform1f( gl.getUniformLocation(program,
-        "uShininess"), 0);
+    // gl.uniform4fv( gl.getUniformLocation(program,
+    //     "uSpecularProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
+    // gl.uniform1f( gl.getUniformLocation(program,
+    //     "uShininess"), 0);
 
     for (let i = 3276; i < normalsArray.length; i+=4) {
         gl.drawArrays(gl.LINE_LOOP, i, 4);
