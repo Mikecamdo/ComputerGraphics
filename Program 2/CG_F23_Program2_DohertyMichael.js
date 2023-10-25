@@ -27,6 +27,9 @@ var materialDiffuse = vec4(0.8, 0.8, 0.8, 1.0);
 var materialSpecular = vec4(0.3, 0.3, 0.3, 1.0);
 var materialShininess = 0.5;
 
+var ambientProduct, diffuseProduct, specularProduct;
+
+
 window.onload = function init() {
 
     let points = getPoints();
@@ -52,14 +55,15 @@ window.onload = function init() {
     program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
-    let ambientProduct = mult(lightAmbient, materialAmbient);
-    let diffuseProduct = mult(lightDiffuse, materialDiffuse);
-    let specularProduct = mult(lightSpecular, materialSpecular);
+    ambientProduct = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specularProduct = mult(lightSpecular, materialSpecular);
 
     //!
     console.log('Begin');
     let testing = parseOBJ(tableObj);
     console.log('End');
+    console.log(testing);
     testing = scaleObjectCoordinates(0.1, testing);
     testing = translateObjectCoordinates(0, -10, 0, testing);
     //!
@@ -372,6 +376,15 @@ function moveCamera() {
 }
 
 function room() {
+    gl.uniform4fv( gl.getUniformLocation(program,
+        "uAmbientProduct"),flatten(ambientProduct));
+    gl.uniform4fv( gl.getUniformLocation(program,
+        "uDiffuseProduct"),flatten(diffuseProduct));
+    gl.uniform4fv( gl.getUniformLocation(program,
+        "uSpecularProduct"),flatten(specularProduct));
+    gl.uniform1f( gl.getUniformLocation(program,
+        "uShininess"),materialShininess);
+
     for (let i = 0; i < 6; i++) {
         gl.drawArrays(gl.TRIANGLE_FAN, i * 4, 4);
     }
@@ -383,6 +396,10 @@ function room() {
 var cameraPosition = vec3(0, 0, 0);
 var cameraTarget = vec3(0, 0, 10);
 var cameraUp = vec3(0, 1, 0);
+
+// var cameraPosition = vec3(0, -5.8, 0);
+// var cameraTarget = vec3(0, -5.8, 10);
+// var cameraUp = vec3(0, 1, 0);
 
 function render() {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
@@ -440,9 +457,45 @@ function renderHat() {
     }
 }
 
+// 
 function renderTable() {
-    //console.log('Rendering table', normalsArray.length);
-    for (let i = 24; i < normalsArray.length; i+=3) {
+    //! different material/light stuff came from .mtl file
+    // gl.uniform4fv( gl.getUniformLocation(program,
+    //     "uAmbientProduct"),flatten(ambientProduct));
+    gl.uniform4fv( gl.getUniformLocation(program,
+        "uDiffuseProduct"),flatten(vec4(0.4039, 0.4000, 0.3725, 0.0)));
+    gl.uniform4fv( gl.getUniformLocation(program,
+        "uSpecularProduct"),flatten(vec4(0.2980, 0.2980, 0.2980, 0.0)));
+    // gl.uniform1f( gl.getUniformLocation(program,
+    //     "uShininess"),materialShininess);
+
+    for (let i = 24; i < 156; i+=3) { // tabletop
+        gl.drawArrays(gl.TRIANGLES, i, 3);
+    }
+
+    // gl.uniform4fv( gl.getUniformLocation(program,
+    //     "uAmbientProduct"),flatten(ambientProduct));
+    gl.uniform4fv( gl.getUniformLocation(program,
+        "uDiffuseProduct"),flatten(vec4(0.0039, 0.0039, 0.0039, 0.0)));
+    gl.uniform4fv( gl.getUniformLocation(program,
+        "uSpecularProduct"),flatten(vec4(0.0200, 0.0200, 0.0200, 0.0)));
+    // gl.uniform1f( gl.getUniformLocation(program,
+    //     "uShininess"),materialShininess);
+
+    for (let i = 156; i < 1332; i+=3) { //metal legs
+        gl.drawArrays(gl.TRIANGLES, i, 3);
+    }
+
+    gl.uniform4fv( gl.getUniformLocation(program,
+        "uAmbientProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
+    gl.uniform4fv( gl.getUniformLocation(program,
+        "uDiffuseProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
+    gl.uniform4fv( gl.getUniformLocation(program,
+        "uSpecularProduct"),flatten(vec4(0.3500, 0.3500, 0.3500, 0.0)));
+    gl.uniform1f( gl.getUniformLocation(program,
+        "uShininess"), 32);
+
+    for (let i = 1332; i < 3276; i+=3) { // wire
         gl.drawArrays(gl.TRIANGLES, i, 3);
     }
 }
