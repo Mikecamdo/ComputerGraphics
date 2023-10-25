@@ -29,6 +29,9 @@ var materialShininess = 0.5;
 
 var ambientProduct, diffuseProduct, specularProduct;
 
+var maxXRange = 29.9, minXRange = -29.9;
+var maxZRange = 29.9, minZRange = -29.9;
+var normalSize = true;
 
 window.onload = function init() {
 
@@ -154,6 +157,40 @@ window.onload = function init() {
           document.removeEventListener("mousemove", moveCameraWithMouse);
         }
     });
+
+    document.getElementById("sizeButton").onclick = function () { // ! FIXME temporary??
+        normalSize = !normalSize;
+
+        if (normalSize) {
+            walkingSpeed = 0.5;
+            maxXRange = 29.9;
+            minXRange = -29.9;
+            maxZRange = 29.9;
+            minZRange = -29.9;
+            cameraPosition = vec3(0, 0, -20);
+            cameraTarget = vec3(0, 0, 10);
+
+            angles = {
+                x: 0,
+                y: 0,
+                z: 0
+            }
+        } else {
+            walkingSpeed = 0.03;
+            maxXRange = 5.9;
+            minXRange = -5.9;
+            maxZRange = 2.9;
+            minZRange = -2.9;
+            cameraPosition = vec3(0, -5.8, 0);
+            cameraTarget = vec3(0, -5.8, 10);
+
+            angles = {
+                x: 0,
+                y: 0,
+                z: 0
+            }
+        }
+    };
 
     render();
 }
@@ -287,9 +324,9 @@ function getNormal(a, b, c) {
 
 //----------------------------------------------------------------------------
 
+var walkingSpeed = 0.5;
 function moveCamera() {
-    let walkingSpeed = 0.5;
-
+    console.log('Walking speed:', walkingSpeed);
     if (eActive) {
         let tester1 = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
         angles.y -= 1.5;
@@ -322,53 +359,53 @@ function moveCamera() {
     } 
     // ! to walk straight, apply same values to both camera and target
     if (wActive) { // moving forward 
-        if (cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y)) <= 29.9 &&
-            cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y)) >= -29.9) {
+        if (cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y)) <= maxXRange &&
+            cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y)) >= minXRange) {
             cameraTarget[0] += walkingSpeed * Math.sin(radians(angles.y));
             cameraPosition[0] += walkingSpeed * Math.sin(radians(angles.y));
         }
         
-        if (cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y)) <= 29.9 &&
-            cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y)) >= -29.9) {
+        if (cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y)) <= maxZRange &&
+            cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y)) >= minZRange) {
             cameraTarget[2] += walkingSpeed * Math.cos(radians(angles.y));
             cameraPosition[2] += walkingSpeed * Math.cos(radians(angles.y));
         }
     } 
     if (sActive) { // moving backwards
-        if (cameraPosition[0] - walkingSpeed * Math.sin(radians(angles.y)) <= 29.9 &&
-            cameraPosition[0] - walkingSpeed * Math.sin(radians(angles.y)) >= -29.9) {
+        if (cameraPosition[0] - walkingSpeed * Math.sin(radians(angles.y)) <= maxXRange &&
+            cameraPosition[0] - walkingSpeed * Math.sin(radians(angles.y)) >= minXRange) {
             cameraTarget[0] -= walkingSpeed * Math.sin(radians(angles.y));
             cameraPosition[0] -= walkingSpeed * Math.sin(radians(angles.y));
         }
         
-        if (cameraPosition[2] - walkingSpeed * Math.cos(radians(angles.y)) <= 29.9 &&
-            cameraPosition[2] - walkingSpeed * Math.cos(radians(angles.y)) >= -29.9) {
+        if (cameraPosition[2] - walkingSpeed * Math.cos(radians(angles.y)) <= maxZRange &&
+            cameraPosition[2] - walkingSpeed * Math.cos(radians(angles.y)) >= minZRange) {
             cameraTarget[2] -= walkingSpeed * Math.cos(radians(angles.y));
             cameraPosition[2] -= walkingSpeed * Math.cos(radians(angles.y));
         }
     } 
     if (aActive) { // moving left
-        if (cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y + 90)) <= 29.9 &&
-            cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y + 90)) >= -29.9) {
+        if (cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y + 90)) <= maxXRange &&
+            cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y + 90)) >= minXRange) {
             cameraTarget[0] += walkingSpeed * Math.sin(radians(angles.y + 90));
             cameraPosition[0] += walkingSpeed * Math.sin(radians(angles.y + 90));
         }
         
-        if (cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y + 90)) <= 29.9 &&
-            cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y + 90)) >= -29.9) {
+        if (cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y + 90)) <= maxZRange &&
+            cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y + 90)) >= minZRange) {
             cameraTarget[2] += walkingSpeed * Math.cos(radians(angles.y + 90));
             cameraPosition[2] += walkingSpeed * Math.cos(radians(angles.y + 90));
         }
     }
      if (dActive) { // moving right
-        if (cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y - 90)) <= 29.9 &&
-            cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y - 90)) >= -29.9) {
+        if (cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y - 90)) <= maxXRange &&
+            cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y - 90)) >= minXRange) {
             cameraTarget[0] += walkingSpeed * Math.sin(radians(angles.y - 90));
             cameraPosition[0] += walkingSpeed * Math.sin(radians(angles.y - 90));
         }
         
-        if (cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y - 90)) <= 29.9 &&
-            cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y - 90)) >= -29.9) {
+        if (cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y - 90)) <= maxZRange &&
+            cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y - 90)) >= minZRange) {
             cameraTarget[2] += walkingSpeed * Math.cos(radians(angles.y - 90));
             cameraPosition[2] += walkingSpeed * Math.cos(radians(angles.y - 90));
         }            
@@ -393,7 +430,7 @@ function room() {
 //----------------------------------------------------------------------------
 
 // ! change y values of cameraPosition and cameraTarget to make yourself "shrink"
-var cameraPosition = vec3(0, 0, 0);
+var cameraPosition = vec3(0, 0, -20);
 var cameraTarget = vec3(0, 0, 10);
 var cameraUp = vec3(0, 1, 0);
 
