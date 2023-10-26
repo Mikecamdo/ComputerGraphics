@@ -129,31 +129,23 @@ window.onload = function init() {
 
 //----------------------------------------------------------------------------
 
-// vertices are defined from 0-100 for X, Y, and Z axes
-// ! z coordinate needs to be negative (flipped)
-function getVertices() {
-    let vertices = [];
+var vertices = [];
 
-    vertices.push( // vertices for walls of room
-        vec4(-30.0, -10.0,  30.0, 1.0), // 0
-        vec4(-30.0,  10.0,  30.0, 1.0), // 1
-        vec4( 30.0,  10.0,  30.0, 1.0), // 2
-        vec4( 30.0, -10.0,  30.0, 1.0), // 3
-        vec4(-30.0, -10.0, -30.0, 1.0), // 4
-        vec4(-30.0,  10.0, -30.0, 1.0), // 5
-        vec4( 30.0,  10.0, -30.0, 1.0), // 6
-        vec4( 30.0, -10.0, -30.0, 1.0)  // 7
-    );
+vertices.push( // vertices for walls of room
+    vec4(-30.0, -10.0,  30.0, 1.0), // 0
+    vec4(-30.0,  10.0,  30.0, 1.0), // 1
+    vec4( 30.0,  10.0,  30.0, 1.0), // 2
+    vec4( 30.0, -10.0,  30.0, 1.0), // 3
+    vec4(-30.0, -10.0, -30.0, 1.0), // 4
+    vec4(-30.0,  10.0, -30.0, 1.0), // 5
+    vec4( 30.0,  10.0, -30.0, 1.0), // 6
+    vec4( 30.0, -10.0, -30.0, 1.0)  // 7
+);
 
-    return vertices;
-}
-
-// ! define points in counter clockwise (??)
 var normalsArray = []; // TODO clean this code up later!!
 
 function getPoints() {
     let points = [];
-    let vertices = getVertices();
 
     points.push(
         // front wall
@@ -176,22 +168,22 @@ function getPoints() {
     );
 
     // front wall
-    getNormal(0, 2, 1);
+    getNormal(0, 2, 1, "1");
 
     // back wall
-    getNormal(4, 6, 7);
+    getNormal(4, 6, 7, "1");
 
     // floor
-    getNormal(0, 7, 3);
+    getNormal(0, 7, 3, "1");
 
     // ceiling
-    getNormal(1, 2, 6);
+    getNormal(1, 2, 6, "1");
 
     // right wall
-    getNormal(0, 5, 4);
+    getNormal(0, 5, 4, "1");
 
     // left wall
-    getNormal(3, 7, 6);
+    getNormal(3, 7, 6, "1");
 
     let tableObject = parseOBJ(tableObj);
     tableObject = scaleObjectCoordinates(0.1, tableObject);
@@ -230,10 +222,11 @@ function getPoints() {
                 vec4(x4, y4, z4, 1.0)
             );
             
-            getNormal2(
+            getNormal(
                 vec4(x1, y1, z1, 1.0),
                 vec4(x2, y2, z2, 1.0),
-                vec4(x4, y4, z4, 1.0)
+                vec4(x4, y4, z4, 1.0),
+                "2"
             );
         }
     }
@@ -241,30 +234,28 @@ function getPoints() {
     return points;
 }
 
-function getNormal(a, b, c) {
-    let vertices = getVertices(); // TODO just make this a global variable??
-
-    var t1 = subtract(normalize(vertices[b]), normalize(vertices[a]));
-    var t2 = subtract(normalize(vertices[c]), normalize(vertices[a]));
-    var normal = cross(t2, t1);
-    normal = vec4(normal[0], normal[1], normal[2], 0.0);
-
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-}
-
-function getNormal2(a, b, c) { // TODO COMBINE BOTH OF THESE!!!
-    var t1 = subtract(b, a);
-    var t2 = subtract(c, a);
-    var normal = normalize(cross(t2, t1));
-    normal = vec4(normal[0], normal[1], normal[2], 0.0);
-
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
-    normalsArray.push(normal);
+function getNormal(a, b, c, type) {
+    if (type === "1") {
+        var t1 = subtract(normalize(vertices[b]), normalize(vertices[a]));
+        var t2 = subtract(normalize(vertices[c]), normalize(vertices[a]));
+        var normal = cross(t2, t1);
+        normal = vec4(normal[0], normal[1], normal[2], 0.0);
+    
+        normalsArray.push(normal);
+        normalsArray.push(normal);
+        normalsArray.push(normal);
+        normalsArray.push(normal);    
+    } else { // type === "2"
+        var t1 = subtract(b, a);
+        var t2 = subtract(c, a);
+        var normal = normalize(cross(t2, t1));
+        normal = vec4(normal[0], normal[1], normal[2], 0.0);
+    
+        normalsArray.push(normal);
+        normalsArray.push(normal);
+        normalsArray.push(normal);
+        normalsArray.push(normal);    
+    }
 }
 
 //----------------------------------------------------------------------------
