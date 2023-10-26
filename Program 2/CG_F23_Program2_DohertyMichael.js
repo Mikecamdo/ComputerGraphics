@@ -139,7 +139,16 @@ vertices.push( // vertices for walls of room
     vec4(-30.0, -10.0, -30.0, 1.0), // 4
     vec4(-30.0,  10.0, -30.0, 1.0), // 5
     vec4( 30.0,  10.0, -30.0, 1.0), // 6
-    vec4( 30.0, -10.0, -30.0, 1.0)  // 7
+    vec4( 30.0, -10.0, -30.0, 1.0), // 7
+
+    vec4(-6.5, -9.9,  0.5, 1.0), // 8
+    vec4(-6.5, -9.9, -0.5, 1.0), // 9
+    vec4(-7.5, -9.9,  0.5, 1.0), // 10
+    vec4(-7.5, -9.9, -0.5, 1.0), // 11
+    vec4(-6.5, -2.9,  0.5, 1.0), // 12
+    vec4(-6.5, -2.9, -0.5, 1.0), // 13
+    vec4(-7.5, -2.9,  0.5, 1.0), // 14
+    vec4(-7.5, -2.9, -0.5, 1.0), // 15
 );
 
 var normalsArray = []; // TODO clean this code up later!!
@@ -200,7 +209,7 @@ function getPoints() {
     console.log(buttonObject);
 
     // buttonObject = scaleObjectCoordinates(0.1, buttonObject);
-    buttonObject = translateObjectCoordinates(0, -3, 0, buttonObject);
+    buttonObject = translateObjectCoordinates(-7, -2.78, 0, buttonObject);
     normalsArray = normalsArray.concat(buttonObject.geometries[0].data.normal);
     points = points.concat(buttonObject.geometries[0].data.position);
 
@@ -237,6 +246,36 @@ function getPoints() {
             );
         }
     }
+
+    // vec4(6.5, -9.9,  0.25, 1.0), // 8
+    // vec4(6.5, -9.9, -0.25, 1.0), // 9
+    // vec4(7.0, -9.9,  0.25, 1.0), // 10
+    // vec4(7.0, -9.9, -0.25, 1.0), // 11
+    // vec4(6.5, -2.9,  0.25, 1.0), // 12
+    // vec4(6.5, -2.9, -0.25, 1.0), // 13
+    // vec4(7.0, -2.9,  0.25, 1.0), // 14
+    // vec4(7.0, -2.9, -0.25, 1.0), // 15
+    
+    points.push(
+        vertices[8], vertices[9], vertices[10], vertices[11],
+
+        vertices[12], vertices[13], vertices[14], vertices[15],
+
+        vertices[14], vertices[10], vertices[8], vertices[12],
+
+        vertices[13], vertices[9], vertices[11], vertices[15],
+
+        vertices[15], vertices[11], vertices[10], vertices[14],
+
+        vertices[12], vertices[8], vertices[9], vertices[13],
+    );
+
+    getNormal(8, 9, 10, "1");
+    getNormal(12, 13, 14, "1");
+    getNormal(14, 10, 8, "1");
+    getNormal(13, 9, 11, "1");
+    getNormal(15, 11, 10, "1");
+    getNormal(12, 8, 9, "1");
 
     console.log('weeewoo');
     console.log(tableObject);
@@ -342,6 +381,10 @@ function renderMesh() {
 
 function renderButton() {
     gl.drawArrays(gl.TRIANGLES, 1332, 546);
+
+    for (let i = 8722; i < 8746; i+=4) {
+        gl.drawArrays(gl.TRIANGLE_FAN, i, 4);
+    }
 }
 
 // articulated motion idea: PERSON ON TABLE 
