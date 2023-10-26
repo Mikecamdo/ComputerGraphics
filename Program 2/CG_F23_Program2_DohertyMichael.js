@@ -248,12 +248,12 @@ window.onload = function init() {
             }
         } else {
             walkingSpeed = 0.03;
-            maxXRange = 5.9;
-            minXRange = -5.9;
-            maxZRange = 2.9;
-            minZRange = -2.9;
-            cameraPosition = vec3(-5.9, -5.85, -2.9);
-            cameraTarget = vec3(-5.9, -5.85, 10);
+            maxXRange = 5.95;
+            minXRange = -5.95;
+            maxZRange = 2.95;
+            minZRange = -2.95;
+            cameraPosition = vec3(-5.95, -5.8, -2.95);
+            cameraTarget = vec3(-5.95, -5.8, 10);
 
             angles = {
                 x: 0,
@@ -279,7 +279,7 @@ function moveCameraWithMouse(event) { //TODO clean up code, rename variables to 
     let xChange =  0.5 * event.movementY;
     let yChange = -0.5 * event.movementX;
 
-    if (angles.x + xChange > 90 || angles.x + xChange < -90) {
+    if (angles.x + xChange >= 90 || angles.x + xChange <= -90) {
         xChange = 0;
     }
 
@@ -296,6 +296,10 @@ function moveCameraWithMouse(event) { //TODO clean up code, rename variables to 
     finalMatrix = mult(finalMatrix, backToOrigin);
 
     tester1 = mult(finalMatrix, tester1);
+
+    console.log('X axis rotation:');
+    console.log(angles.x);
+
     cameraTarget[0] = tester1[0];
     cameraTarget[1] = tester1[1];
     cameraTarget[2] = tester1[2];
