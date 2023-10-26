@@ -17,7 +17,7 @@
 
             vec3 light = lightPosition.xyz;
 
-            vL = normalize(light - pos);
+            vL = normalize(light - pos); // FIXME get euclidean distance, use inverse of that to make light stronger closer to the light
             vE = -pos;
             vN = aNormal.xyz;
             //vN = normalize((projectionMatrix * aNormal).xyz);
@@ -53,7 +53,7 @@
             if(dot(vL, vN) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
             //diffuse = vec4(0.0, 0.0, 0.0, 1.0);
 
-            fColor = ambient + diffuse + specular;
+            fColor = ambient + diffuse + specular; //FIXME can multiply inverse of euclidean distance by whole thing, just diffuse, etc.
             fColor.a = 1.0;
         }
     </script>

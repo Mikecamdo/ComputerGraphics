@@ -309,6 +309,19 @@ function add3DMouseMovement() {
     canvas.onclick = function() {
         canvas.requestPointerLock();
     }
+
+    canvas.onmousedown = function(event) {
+        if (event.button === 0 && document.pointerLockElement === canvas) {
+            // const x = event.clientX - canvas.getBoundingClientRect().left;
+            // const y = event.clientY - canvas.getBoundingClientRect().top;    
+            // console.log('Left click at x:', x, 'y:', y);
+            let direction = subtract(cameraTarget, cameraPosition);
+            let tempPoint = vec3(0, 0, 30);
+            let secondVector = subtract(tempPoint, cameraPosition);
+
+            console.log('Dot product:', dot(direction, secondVector));
+        }
+    }
     
     document.addEventListener("pointerlockchange", function () {
         if (document.pointerLockElement === canvas) {
@@ -325,7 +338,7 @@ var angles = {
     z: 0
 }
 
-function moveCameraWithMouse(event) { //TODO clean up code, rename variables to make more sense (don't have "tester1")
+function moveCameraWithMouse(event) {
     let targetPosition = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
     let xAxisChange =  0.5 * event.movementY;
     let yAxisChange = -0.5 * event.movementX;

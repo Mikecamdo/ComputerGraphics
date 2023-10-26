@@ -231,6 +231,19 @@ function getPoints() {
         }
     }
 
+    let buttonObject = parseOBJ(buttonObj);
+    console.log('Button object:');
+    console.log(buttonObject);
+
+    // buttonObject = scaleObjectCoordinates(0.1, buttonObject);
+    buttonObject = translateObjectCoordinates(0, -3, 0, buttonObject);
+    normalsArray = normalsArray.concat(buttonObject.geometries[0].data.normal);
+    points = points.concat(buttonObject.geometries[0].data.position);
+
+    console.log('Normals:');
+    console.log(normalsArray);
+    console.log(normalsArray.length);
+
     return points;
 }
 
@@ -292,6 +305,8 @@ function render() {
 
     renderTable();
 
+    renderButton();
+
     requestAnimationFrame(render);
 }
 
@@ -326,10 +341,16 @@ function renderTable() {
 }
 
 function renderMesh() {
-    gl.drawArrays(gl.TRIANGLE_STRIP, 3276, normalsArray.length - 3276);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 3276, 28084);
 
     gl.uniform4fv(ambientProductLoc, flatten(vec4(0.0, 0.0, 0.0, 0.0)));
     gl.uniform4fv(diffuseProductLoc, flatten(vec4(0.0, 0.0, 0.0, 0.0)));
 
-    gl.drawArrays(gl.LINE_STRIP, 3276, normalsArray.length - 3276);
+    gl.drawArrays(gl.LINE_STRIP, 3276, 28084);
 }
+
+function renderButton() {
+    gl.drawArrays(gl.TRIANGLES, 31360, 31906);
+}
+
+// articulated motion idea: PERSON ON TABLE 
