@@ -191,24 +191,31 @@ function getPoints() {
 
     normalsArray = normalsArray.concat(tableObject.geometries[0].data.normal);
     normalsArray = normalsArray.concat(tableObject.geometries[1].data.normal);
-    normalsArray = normalsArray.concat(tableObject.geometries[2].data.normal);
 
     points = points.concat(tableObject.geometries[0].data.position);
     points = points.concat(tableObject.geometries[1].data.position);
-    points = points.concat(tableObject.geometries[2].data.position);
+
+    let buttonObject = parseOBJ(buttonObj);
+    console.log('Button object:');
+    console.log(buttonObject);
+
+    // buttonObject = scaleObjectCoordinates(0.1, buttonObject);
+    buttonObject = translateObjectCoordinates(0, -3, 0, buttonObject);
+    normalsArray = normalsArray.concat(buttonObject.geometries[0].data.normal);
+    points = points.concat(buttonObject.geometries[0].data.position);
 
     //! mesh coordinates:
-    for (let i = 0; i < 119; i++) {
-        let x1 = -5.95 + i * 0.1;
-        let x2 = -5.95 + i * 0.1;
-        let x3 = -5.95 + (i + 1) * 0.1;
-        let x4 = -5.95 + (i + 1) * 0.1;
+    for (let i = 0; i < 59; i++) {
+        let x1 = -5.9 + i * 0.2;
+        let x2 = -5.9 + i * 0.2;
+        let x3 = -5.9 + (i + 1) * 0.2;
+        let x4 = -5.9 + (i + 1) * 0.2;
 
-        for (let j = 0; j < 59; j++) {
-            let z1 = 2.95 - j * 0.1;
-            let z2 = 2.95 - (j + 1) * 0.1;
-            let z3 = 2.95 - j * 0.1;
-            let z4 = 2.95 - (j + 1) * 0.1;
+        for (let j = 0; j < 29; j++) {
+            let z1 = 2.9 - j * 0.2;
+            let z2 = 2.9 - (j + 1) * 0.2;
+            let z3 = 2.9 - j * 0.2;
+            let z4 = 2.9 - (j + 1) * 0.2;
 
             let y1 = (5.95 - Math.abs(x1)) * (2.95 - Math.abs(z1)) * (Math.abs((2.44 - x1)) + Math.abs((0 - z1))) / 23 - 5.999;
             let y2 = (5.95 - Math.abs(x2)) * (2.95 - Math.abs(z2)) * (Math.abs((2.44 - x2)) + Math.abs((0 - z2))) / 23 - 5.999;
@@ -231,14 +238,12 @@ function getPoints() {
         }
     }
 
-    let buttonObject = parseOBJ(buttonObj);
-    console.log('Button object:');
-    console.log(buttonObject);
+    console.log('weeewoo');
+    console.log(tableObject);
 
-    // buttonObject = scaleObjectCoordinates(0.1, buttonObject);
-    buttonObject = translateObjectCoordinates(0, -3, 0, buttonObject);
-    normalsArray = normalsArray.concat(buttonObject.geometries[0].data.normal);
-    points = points.concat(buttonObject.geometries[0].data.position);
+    console.log('Points:');
+    console.log(points);
+    console.log(points.length);
 
     console.log('Normals:');
     console.log(normalsArray);
@@ -301,11 +306,11 @@ function render() {
 
     room();
 
+    renderButton();
+
     renderMesh();
 
-    renderTable();
-
-    renderButton();
+    renderTable();    
 
     requestAnimationFrame(render);
 }
@@ -324,33 +329,19 @@ function renderTable() {
 
     //metal legs
     gl.drawArrays(gl.TRIANGLES, 156, 1176);
-
-    // TODO keep or remove the following: ??
-    // gl.uniform4fv( gl.getUniformLocation(program,
-    //     "uAmbientProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
-    // gl.uniform4fv( gl.getUniformLocation(program,
-    //     "uDiffuseProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
-    // gl.uniform4fv( gl.getUniformLocation(program,
-    //     "uSpecularProduct"),flatten(vec4(0.3500, 0.3500, 0.3500, 0.0)));
-    // gl.uniform1f( gl.getUniformLocation(program,
-    //     "uShininess"), 32);
-
-    // for (let i = 1332; i < 3276; i+=3) { // wire
-    //     gl.drawArrays(gl.TRIANGLES, i, 3);
-    // }
 }
 
 function renderMesh() {
-    gl.drawArrays(gl.TRIANGLE_STRIP, 3276, 28084);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 1878, 6844);
 
     gl.uniform4fv(ambientProductLoc, flatten(vec4(0.0, 0.0, 0.0, 0.0)));
     gl.uniform4fv(diffuseProductLoc, flatten(vec4(0.0, 0.0, 0.0, 0.0)));
 
-    gl.drawArrays(gl.LINE_STRIP, 3276, 28084);
+    gl.drawArrays(gl.LINE_STRIP, 1878, 6844);
 }
 
 function renderButton() {
-    gl.drawArrays(gl.TRIANGLES, 31360, 31906);
+    gl.drawArrays(gl.TRIANGLES, 1332, 546);
 }
 
 // articulated motion idea: PERSON ON TABLE 
