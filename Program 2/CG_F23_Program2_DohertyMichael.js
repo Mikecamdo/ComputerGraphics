@@ -98,10 +98,15 @@ window.onload = function init() {
             let z3 = 2.95 - (j + 1) * 0.1;
             let z4 = 2.95 - j * 0.1;
 
-            let y1 = (5.95 - Math.abs(x1)) * (2.95 - Math.abs(z1)) / 17 - 5.999;
-            let y2 = (5.95 - Math.abs(x2)) * (2.95 - Math.abs(z2)) / 17 - 5.999;
-            let y3 = (5.95 - Math.abs(x3)) * (2.95 - Math.abs(z3)) / 17 - 5.999;
-            let y4 = (5.95 - Math.abs(x4)) * (2.95 - Math.abs(z4)) / 17 - 5.999;
+            // let y1 = (5.95 - Math.abs(x1)) * (2.95 - Math.abs(z1)) * Math.abs((3.0 - x1)) * Math.abs((0.5 - z1)) / 23 - 5.999;
+            // let y2 = (5.95 - Math.abs(x2)) * (2.95 - Math.abs(z2)) * Math.abs((3.0 - x2)) * Math.abs((0.5 - z2)) / 23 - 5.999;
+            // let y3 = (5.95 - Math.abs(x3)) * (2.95 - Math.abs(z3)) * Math.abs((3.0 - x3)) * Math.abs((0.5 - z3)) / 23 - 5.999;
+            // let y4 = (5.95 - Math.abs(x4)) * (2.95 - Math.abs(z4)) * Math.abs((3.0 - x4)) * Math.abs((0.5 - z4)) / 23 - 5.999;
+
+            let y1 = (5.95 - Math.abs(x1)) * (2.95 - Math.abs(z1)) * (Math.abs((2.44 - x1)) + Math.abs((0 - z1))) / 23 - 5.999;
+            let y2 = (5.95 - Math.abs(x2)) * (2.95 - Math.abs(z2)) * (Math.abs((2.44 - x2)) + Math.abs((0 - z2))) / 23 - 5.999;
+            let y3 = (5.95 - Math.abs(x3)) * (2.95 - Math.abs(z3)) * (Math.abs((2.44 - x3)) + Math.abs((0 - z3))) / 23 - 5.999;
+            let y4 = (5.95 - Math.abs(x4)) * (2.95 - Math.abs(z4)) * (Math.abs((2.44 - x4)) + Math.abs((0 - z4))) / 23 - 5.999;
 
             points.push(
                 vec4(x1, y1, z1, 1.0),
@@ -440,7 +445,7 @@ function moveCamera() {
         }
 
         if (!normalSize) {
-            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) / 17 - 5.85;
+            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) * (Math.abs((2.44 - cameraPosition[0])) + Math.abs((0 - cameraPosition[2]))) / 23 - 5.8;
         }
     } 
     if (sActive) { // moving backwards
@@ -457,7 +462,7 @@ function moveCamera() {
         }
 
         if (!normalSize) {
-            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) / 17 - 5.85;
+            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) * (Math.abs((2.44 - cameraPosition[0])) + Math.abs((0 - cameraPosition[2]))) / 23 - 5.8;
         }
     } 
     if (aActive) { // moving left
@@ -474,7 +479,7 @@ function moveCamera() {
         }
 
         if (!normalSize) {
-            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) / 17 - 5.85;
+            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) * (Math.abs((2.44 - cameraPosition[0])) + Math.abs((0 - cameraPosition[2]))) / 23 - 5.8;
         }
     }
      if (dActive) { // moving right
@@ -491,7 +496,7 @@ function moveCamera() {
         }
         
         if (!normalSize) {
-            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) / 17 - 5.85;
+            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) * (Math.abs((2.44 - cameraPosition[0])) + Math.abs((0 - cameraPosition[2]))) / 23 - 5.8;
         }
     }
 }
