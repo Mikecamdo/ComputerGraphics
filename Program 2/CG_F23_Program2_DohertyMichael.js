@@ -95,13 +95,8 @@ window.onload = function init() {
         for (let j = 0; j < 59; j++) {
             let z1 = 2.95 - j * 0.1;
             let z2 = 2.95 - (j + 1) * 0.1;
-            let z3 = 2.95 - (j + 1) * 0.1;
-            let z4 = 2.95 - j * 0.1;
-
-            // let y1 = (5.95 - Math.abs(x1)) * (2.95 - Math.abs(z1)) * Math.abs((3.0 - x1)) * Math.abs((0.5 - z1)) / 23 - 5.999;
-            // let y2 = (5.95 - Math.abs(x2)) * (2.95 - Math.abs(z2)) * Math.abs((3.0 - x2)) * Math.abs((0.5 - z2)) / 23 - 5.999;
-            // let y3 = (5.95 - Math.abs(x3)) * (2.95 - Math.abs(z3)) * Math.abs((3.0 - x3)) * Math.abs((0.5 - z3)) / 23 - 5.999;
-            // let y4 = (5.95 - Math.abs(x4)) * (2.95 - Math.abs(z4)) * Math.abs((3.0 - x4)) * Math.abs((0.5 - z4)) / 23 - 5.999;
+            let z3 = 2.95 - j * 0.1;
+            let z4 = 2.95 - (j + 1) * 0.1;
 
             let y1 = (5.95 - Math.abs(x1)) * (2.95 - Math.abs(z1)) * (Math.abs((2.44 - x1)) + Math.abs((0 - z1))) / 23 - 5.999;
             let y2 = (5.95 - Math.abs(x2)) * (2.95 - Math.abs(z2)) * (Math.abs((2.44 - x2)) + Math.abs((0 - z2))) / 23 - 5.999;
@@ -118,17 +113,44 @@ window.onload = function init() {
             getNormal2(
                 vec4(x1, y1, z1, 1.0),
                 vec4(x2, y2, z2, 1.0),
-                vec4(x3, y3, z3, 1.0)
+                vec4(x4, y4, z4, 1.0)
             );
-
-            // normalsArray.push( // ! FIXME need to actually calculate normals later
-            //     vec4(0.0, 1.0, 0.0, 0.0),
-            //     vec4(0.0, 1.0, 0.0, 0.0),
-            //     vec4(0.0, 1.0, 0.0, 0.0),
-            //     vec4(0.0, 1.0, 0.0, 0.0)
-            // );
         }
     }
+
+    // //! mesh coordinates:
+    // for (let i = 0; i < 119; i+=2) {
+    //     let x1 = -5.95 + i * 0.1;
+    //     let x2 = -5.95 + i * 0.1;
+    //     let x3 = -5.95 + (i + 1) * 0.1;
+    //     let x4 = -5.95 + (i + 1) * 0.1;
+
+    //     for (let j = 0; j < 59; j+=2) {
+    //         let z1 = 2.95 - j * 0.1;
+    //         let z2 = 2.95 - (j + 1) * 0.1;
+    //         let z3 = 2.95 - (j + 1) * 0.1;
+    //         let z4 = 2.95 - j * 0.1;
+
+    //         let y1 = (5.95 - Math.abs(x1)) * (2.95 - Math.abs(z1)) * (Math.abs((2.44 - x1)) + Math.abs((0 - z1))) / 23 - 5.999;
+    //         let y2 = (5.95 - Math.abs(x2)) * (2.95 - Math.abs(z2)) * (Math.abs((2.44 - x2)) + Math.abs((0 - z2))) / 23 - 5.999;
+    //         let y3 = (5.95 - Math.abs(x3)) * (2.95 - Math.abs(z3)) * (Math.abs((2.44 - x3)) + Math.abs((0 - z3))) / 23 - 5.999;
+    //         let y4 = (5.95 - Math.abs(x4)) * (2.95 - Math.abs(z4)) * (Math.abs((2.44 - x4)) + Math.abs((0 - z4))) / 23 - 5.999;
+
+    //         points.push(
+    //             vec4(x1, y1, z1, 1.0),
+    //             vec4(x2, y2, z2, 1.0),
+    //             vec4(x3, y3, z3, 1.0),
+    //             vec4(x4, y4, z4, 1.0)
+    //         );
+            
+    //         getNormal2(
+    //             vec4(x1, y1, z1, 1.0),
+    //             vec4(x2, y2, z2, 1.0),
+    //             vec4(x3, y3, z3, 1.0)
+    //         );
+    //     }
+    // }
+
 
     let tempAfter = points.length;
     console.log('Change in size:', tempAfter - tempBefore);
@@ -279,8 +301,12 @@ function moveCameraWithMouse(event) { //TODO clean up code, rename variables to 
     let xChange =  0.5 * event.movementY;
     let yChange = -0.5 * event.movementX;
 
-    if (angles.x + xChange >= 90 || angles.x + xChange <= -90) {
+    if (angles.x + xChange >= 90 || angles.x + xChange <= -90 || xChange >= 25) {
         xChange = 0;
+    }
+
+    if (yChange >= 100 || yChange <= -100) { // needed, as sometimes the event movements can be super high for no apparent reason
+        yChange = 0;
     }
 
     angles.x += xChange;
@@ -297,8 +323,18 @@ function moveCameraWithMouse(event) { //TODO clean up code, rename variables to 
 
     tester1 = mult(finalMatrix, tester1);
 
-    console.log('X axis rotation:');
-    console.log(angles.x);
+    // console.log('X axis rotation:');
+    // console.log(angles.x);
+    // console.log('X axis rotation:', angles.x);
+    // console.log('Change:', xChange, 'Raw Movement:', event.movementY);
+
+    if (Math.abs(event.movementX) > 25) {
+        console.log('Extreme Y axis change:', event.movementX);
+    }
+
+    if (Math.abs(event.movementY) > 25) {
+        console.log('Extreme X axis change:', event.movementY);
+    }
 
     cameraTarget[0] = tester1[0];
     cameraTarget[1] = tester1[1];
@@ -517,6 +553,9 @@ function room() {
 
     for (let i = 0; i < 6; i++) {
         gl.drawArrays(gl.TRIANGLE_FAN, i * 4, 4);
+        if (otherFirstTime) {
+            moreCounting += 1;
+        }
     }
 }
 
@@ -544,6 +583,12 @@ function render() {
 
     // renderHat();
     renderTable();
+
+    if (otherFirstTime) {
+        otherFirstTime = false;
+        console.log('Number of other gl.drawArrays calls:');
+        console.log(moreCounting);
+    }
 
     requestAnimationFrame(render);
 }
@@ -602,7 +647,12 @@ function renderTable() {
 
     for (let i = 24; i < 156; i+=3) { // tabletop
         gl.drawArrays(gl.TRIANGLES, i, 3); // TODO do I even need this anymore, since the mesh is rendered directly on top???
+        if (otherFirstTime) {
+            moreCounting += 1;
+        }
     }
+    // gl.drawArrays(gl.TRIANGLES, 24, 132);
+    
 
     // gl.uniform4fv( gl.getUniformLocation(program,
     //     "uAmbientProduct"),flatten(ambientProduct));
@@ -615,26 +665,49 @@ function renderTable() {
 
     for (let i = 156; i < 1332; i+=3) { //metal legs
         gl.drawArrays(gl.TRIANGLES, i, 3);
+        if (otherFirstTime) {
+            moreCounting += 1;
+        }
     }
+    // gl.drawArrays(gl.TRIANGLES, 156, 1176);
 
-    gl.uniform4fv( gl.getUniformLocation(program,
-        "uAmbientProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
-    gl.uniform4fv( gl.getUniformLocation(program,
-        "uDiffuseProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
-    gl.uniform4fv( gl.getUniformLocation(program,
-        "uSpecularProduct"),flatten(vec4(0.3500, 0.3500, 0.3500, 0.0)));
-    gl.uniform1f( gl.getUniformLocation(program,
-        "uShininess"), 32);
+    // gl.uniform4fv( gl.getUniformLocation(program,
+    //     "uAmbientProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
+    // gl.uniform4fv( gl.getUniformLocation(program,
+    //     "uDiffuseProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
+    // gl.uniform4fv( gl.getUniformLocation(program,
+    //     "uSpecularProduct"),flatten(vec4(0.3500, 0.3500, 0.3500, 0.0)));
+    // gl.uniform1f( gl.getUniformLocation(program,
+    //     "uShininess"), 32);
 
-    for (let i = 1332; i < 3276; i+=3) { // wire
-        gl.drawArrays(gl.TRIANGLES, i, 3);
-    }
+    // for (let i = 1332; i < 3276; i+=3) { // wire
+    //     gl.drawArrays(gl.TRIANGLES, i, 3);
+    // }
 }
 
+var firstTime = true;
+var aLittleCounting = 0;
+
+var otherFirstTime = true;
+var moreCounting = 0;
+
 function renderMesh() {
-    for (let i = 3276; i < normalsArray.length; i+=4) {
-        gl.drawArrays(gl.TRIANGLE_FAN, i, 4);
-    }
+    // for (let i = 3276; i < normalsArray.length; i+=4) {
+    //     gl.drawArrays(gl.TRIANGLE_FAN, i, 4);
+    //     if (firstTime) {
+    //         aLittleCounting += 1;
+    //     }
+    // }
+    gl.drawArrays(gl.TRIANGLE_STRIP, 3276, normalsArray.length - 3276);
+
+    // gl.drawArrays(gl.TRIANGLE_STRIP, 3276, 8);
+    
+
+    // if (firstTime) {
+    //     firstTime = false;
+    //     console.log('Number of gl.drawArrays calls:');
+    //     console.log(aLittleCounting);
+    // }
 
     gl.uniform4fv( gl.getUniformLocation(program,
         "uAmbientProduct"),flatten(vec4(0.0, 0.0, 0.0, 0.0)));
@@ -645,10 +718,12 @@ function renderMesh() {
     // gl.uniform1f( gl.getUniformLocation(program,
     //     "uShininess"), 0);
 
-    for (let i = 3276; i < normalsArray.length; i+=4) {
-        gl.drawArrays(gl.LINE_LOOP, i, 4);
-    }
-
+    // for (let i = 3276; i < normalsArray.length; i+=4) {
+    //     gl.drawArrays(gl.LINE_LOOP, i, 4);
+    // }
+    
+    // gl.drawArrays(gl.LINE_LOOP, 3276, 8);
+    gl.drawArrays(gl.LINE_STRIP, 3276, normalsArray.length - 3276);
 
     // gl.drawArrays(gl.TRIANGLE_FAN, 3276, 4);
     // gl.drawArrays(gl.LINE_LOOP,    3276, 4);
