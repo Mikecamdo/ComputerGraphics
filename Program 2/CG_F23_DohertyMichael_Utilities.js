@@ -1,7 +1,9 @@
-// Utility functions that I created
-// TODO should I rename this file??
+// This file contains utility functions that I created or adapted from online sources
 
-// code found at: https://webglfundamentals.org/webgl/lessons/webgl-load-obj.html
+/*----------------------------------------------------------------------------*/
+// Functions for loading in .obj files
+// Heavily inspired by code found at: https://webglfundamentals.org/webgl/lessons/webgl-load-obj.html
+
 function parseOBJ(text) {
     // because indices are base 1 let's just fill in the 0th data
     const objPositions = [[0, 0, 0]];
@@ -216,6 +218,9 @@ function getGeometriesExtents(geometries) {
     });
 }
 
+/*----------------------------------------------------------------------------*/
+// Functions for applying matrix transformations to .obj models
+
 function scaleObjectCoordinates(scaleFactor, object) {
     let scalingMatrix = mat4(
         scaleFactor, 0, 0, 0,
@@ -252,4 +257,209 @@ function translateObjectCoordinates(xTranslate, yTranslate, zTranslate, object) 
     }
 
     return object;
+}
+
+/*----------------------------------------------------------------------------*/
+
+
+
+// Variables that keep track of the buttons that are currently being pressed
+var eActive = false;
+var qActive = false;
+var wActive = false;
+var sActive = false;
+var aActive = false;
+var dActive = false;
+
+function add3DKeyboardMovement () {
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "E" || event.key === 'e') {
+            eActive = true;
+        } else if (event.key === "Q" || event.key === 'q') {
+            qActive = true;
+        } else if (event.key === "W" || event.key === 'w') { // moving forward 
+            wActive = true;
+        } else if (event.key === "S" || event.key === 's') { // moving backwards
+            sActive = true;
+        } else if (event.key === "A" || event.key === 'a') { // moving left
+            aActive = true;
+        } else if (event.key === "D" || event.key === 'd') { // moving right
+            dActive = true;
+        }
+    });
+    
+    document.addEventListener("keyup", function (event) {
+        if (event.key === "E" || event.key === 'e') {
+            eActive = false;
+        } else if (event.key === "Q" || event.key === 'q') {
+            qActive = false;
+        } else if (event.key === "W" || event.key === 'w') { // moving forward 
+            wActive = false;
+        } else if (event.key === "S" || event.key === 's') { // moving backwards
+            sActive = false;
+        } else if (event.key === "A" || event.key === 'a') { // moving left
+            aActive = false;
+        } else if (event.key === "D" || event.key === 'd') { // moving right
+            dActive = false;
+        }
+    });    
+}
+
+function add3DMouseMovement() {
+    canvas.onclick = function() {
+        canvas.requestPointerLock();
+    }
+    
+    document.addEventListener("pointerlockchange", function () {
+        if (document.pointerLockElement === canvas) {
+          document.addEventListener("mousemove", moveCameraWithMouse);
+        } else {
+          document.removeEventListener("mousemove", moveCameraWithMouse);
+        }
+    });    
+}
+
+var angles = {
+    x: 0,
+    y: 0,
+    z: 0
+}
+
+function moveCameraWithMouse(event) { //TODO clean up code, rename variables to make more sense (don't have "tester1")
+    let targetPosition = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
+    let xAxisChange =  0.5 * event.movementY;
+    let yAxisChange = -0.5 * event.movementX;
+
+    if (angles.x + xAxisChange >= 90 || angles.x + xAxisChange <= -90 || xAxisChange >= 25) {
+        xAxisChange = 0;
+    }
+
+    if (yAxisChange >= 100 || yAxisChange <= -100) { // needed, as sometimes the event movements can be super high for no apparent reason
+        yAxisChange = 0;
+    }
+
+    angles.x += xAxisChange;
+    angles.y += yAxisChange;
+
+    let backToOrigin = translate(-cameraPosition[0], -cameraPosition[1], -cameraPosition[2]);
+    backToOrigin = mult(rotateY(-angles.y), backToOrigin);
+    
+    let backToOriginal = translate(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
+    backToOriginal = mult(backToOriginal, rotateY(angles.y));
+
+    let finalMatrix = mult(backToOriginal, rotateX(xAxisChange));
+    finalMatrix = mult(finalMatrix, rotateY(yAxisChange));
+    finalMatrix = mult(finalMatrix, backToOrigin);
+
+    targetPosition = mult(finalMatrix, targetPosition);
+
+    cameraTarget[0] = targetPosition[0];
+    cameraTarget[1] = targetPosition[1];
+    cameraTarget[2] = targetPosition[2];
+}
+
+var walkingSpeed = 0.5;
+var normalSize = true;
+
+function moveCamera() {
+    if (eActive) {
+        let targetPosition = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
+        angles.y -= 1.5;
+
+        let backToOrigin = translate(-cameraPosition[0], -cameraPosition[1], -cameraPosition[2]);
+        let backToOriginal = translate(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
+
+        let finalMatrix = mult(backToOriginal, rotateY(-1.5));
+        finalMatrix = mult(finalMatrix, backToOrigin);
+
+        targetPosition = mult(finalMatrix, targetPosition);
+        cameraTarget[0] = targetPosition[0];
+        cameraTarget[1] = targetPosition[1];
+        cameraTarget[2] = targetPosition[2];
+    }
+    if (qActive) {
+        let targetPosition = vec4(cameraTarget[0], cameraTarget[1], cameraTarget[2], 1);
+        angles.y += 1.5;
+
+        let backToOrigin = translate(-cameraPosition[0], -cameraPosition[1], -cameraPosition[2]);
+        let backToOriginal = translate(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
+
+        let finalMatrix = mult(backToOriginal, rotateY(1.5));
+        finalMatrix = mult(finalMatrix, backToOrigin);
+
+        targetPosition = mult(finalMatrix, targetPosition);
+        cameraTarget[0] = targetPosition[0];
+        cameraTarget[1] = targetPosition[1];
+        cameraTarget[2] = targetPosition[2];
+    }
+
+    // to walk straight, apply same values to both camera and target
+    if (wActive) { // moving forward 
+        if (cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y)) <= maxXRange &&
+            cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y)) >= minXRange) {
+            cameraTarget[0] += walkingSpeed * Math.sin(radians(angles.y));
+            cameraPosition[0] += walkingSpeed * Math.sin(radians(angles.y));
+        }
+        
+        if (cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y)) <= maxZRange &&
+            cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y)) >= minZRange) {
+            cameraTarget[2] += walkingSpeed * Math.cos(radians(angles.y));
+            cameraPosition[2] += walkingSpeed * Math.cos(radians(angles.y));
+        }
+
+        if (!normalSize) {
+            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) * (Math.abs((2.44 - cameraPosition[0])) + Math.abs((0 - cameraPosition[2]))) / 23 - 5.8;
+        }
+    }
+    if (sActive) { // moving backwards
+        if (cameraPosition[0] - walkingSpeed * Math.sin(radians(angles.y)) <= maxXRange &&
+            cameraPosition[0] - walkingSpeed * Math.sin(radians(angles.y)) >= minXRange) {
+            cameraTarget[0] -= walkingSpeed * Math.sin(radians(angles.y));
+            cameraPosition[0] -= walkingSpeed * Math.sin(radians(angles.y));
+        }
+        
+        if (cameraPosition[2] - walkingSpeed * Math.cos(radians(angles.y)) <= maxZRange &&
+            cameraPosition[2] - walkingSpeed * Math.cos(radians(angles.y)) >= minZRange) {
+            cameraTarget[2] -= walkingSpeed * Math.cos(radians(angles.y));
+            cameraPosition[2] -= walkingSpeed * Math.cos(radians(angles.y));
+        }
+
+        if (!normalSize) {
+            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) * (Math.abs((2.44 - cameraPosition[0])) + Math.abs((0 - cameraPosition[2]))) / 23 - 5.8;
+        }
+    } 
+    if (aActive) { // moving left
+        if (cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y + 90)) <= maxXRange &&
+            cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y + 90)) >= minXRange) {
+            cameraTarget[0] += walkingSpeed * Math.sin(radians(angles.y + 90));
+            cameraPosition[0] += walkingSpeed * Math.sin(radians(angles.y + 90));
+        }
+        
+        if (cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y + 90)) <= maxZRange &&
+            cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y + 90)) >= minZRange) {
+            cameraTarget[2] += walkingSpeed * Math.cos(radians(angles.y + 90));
+            cameraPosition[2] += walkingSpeed * Math.cos(radians(angles.y + 90));
+        }
+
+        if (!normalSize) {
+            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) * (Math.abs((2.44 - cameraPosition[0])) + Math.abs((0 - cameraPosition[2]))) / 23 - 5.8;
+        }
+    }
+     if (dActive) { // moving right
+        if (cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y - 90)) <= maxXRange &&
+            cameraPosition[0] + walkingSpeed * Math.sin(radians(angles.y - 90)) >= minXRange) {
+            cameraTarget[0] += walkingSpeed * Math.sin(radians(angles.y - 90));
+            cameraPosition[0] += walkingSpeed * Math.sin(radians(angles.y - 90));
+        }
+        
+        if (cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y - 90)) <= maxZRange &&
+            cameraPosition[2] + walkingSpeed * Math.cos(radians(angles.y - 90)) >= minZRange) {
+            cameraTarget[2] += walkingSpeed * Math.cos(radians(angles.y - 90));
+            cameraPosition[2] += walkingSpeed * Math.cos(radians(angles.y - 90));
+        }
+        
+        if (!normalSize) {
+            cameraPosition[1] = (5.95 - Math.abs(cameraPosition[0])) * (2.95 - Math.abs(cameraPosition[2])) * (Math.abs((2.44 - cameraPosition[0])) + Math.abs((0 - cameraPosition[2]))) / 23 - 5.8;
+        }
+    }
 }
