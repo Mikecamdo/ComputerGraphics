@@ -91,40 +91,6 @@ window.onload = function init() {
     add3DKeyboardMovement();
     add3DMouseMovement();
 
-    document.getElementById("sizeButton").onclick = function () { // ! FIXME temporary??
-        normalSize = !normalSize;
-
-        if (normalSize) {
-            walkingSpeed = 0.5;
-            maxXRange = 29.9;
-            minXRange = -29.9;
-            maxZRange = 29.9;
-            minZRange = -29.9;
-            cameraPosition = vec3(0, 0, -20);
-            cameraTarget = vec3(0, 0, 10);
-
-            angles = {
-                x: 0,
-                y: 0,
-                z: 0
-            }
-        } else {
-            walkingSpeed = 0.03;
-            maxXRange = 5.95;
-            minXRange = -5.95;
-            maxZRange = 2.95;
-            minZRange = -2.95;
-            cameraPosition = vec3(-5.95, -5.8, -2.95);
-            cameraTarget = vec3(-5.95, -5.8, 10);
-
-            angles = {
-                x: 0,
-                y: 0,
-                z: 0
-            }
-        }
-    };
-
     render();
 }
 
@@ -216,7 +182,6 @@ function getPoints() {
 
     let buttonObject = parseOBJ(buttonObj);
 
-    // buttonObject = scaleObjectCoordinates(0.1, buttonObject);
     let firstButton = translateObjectCoordinates(-7, -2.78, 0, buttonObject);
 
     normalsArray = normalsArray.concat(firstButton.geometries[0].data.normal);
@@ -257,25 +222,56 @@ function getPoints() {
     }
     
     points.push(
-        vertices[8], vertices[9], vertices[10], vertices[11],
+        //bottom
+        vertices[8], vertices[9], vertices[11], vertices[10],
 
-        vertices[12], vertices[13], vertices[14], vertices[15],
+        //top
+        vertices[12], vertices[14], vertices[15], vertices[13],
 
-        vertices[14], vertices[10], vertices[8], vertices[12],
+        //left
+        vertices[8], vertices[10], vertices[14], vertices[12],
 
-        vertices[13], vertices[9], vertices[11], vertices[15],
+        //right
+        vertices[13], vertices[15], vertices[11], vertices[9],
 
-        vertices[15], vertices[11], vertices[10], vertices[14],
+        //front
+        vertices[15], vertices[14], vertices[10], vertices[11],
 
-        vertices[12], vertices[8], vertices[9], vertices[13],
+        //back
+        vertices[12], vertices[13], vertices[9], vertices[8],        
     );
 
-    getNormal(8, 9, 10, "1");
-    getNormal(12, 13, 14, "1");
-    getNormal(14, 10, 8, "1");
-    getNormal(13, 9, 11, "1");
-    getNormal(15, 11, 10, "1");
-    getNormal(12, 8, 9, "1");
+    normalsArray.push(
+        vec4(0, -1, 0, 0),
+        vec4(0, -1, 0, 0),
+        vec4(0, -1, 0, 0),
+        vec4(0, -1, 0, 0),
+
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+
+        vec4(0.5, 0.5, 1, 0),
+        vec4(0.5, 0.5, 1, 0),
+        vec4(0.5, 0.5, 1, 0),
+        vec4(0.5, 0.5, 1, 0),
+
+        vec4(0.5, 0.5, -1, 0),
+        vec4(0.5, 0.5, -1, 0),
+        vec4(0.5, 0.5, -1, 0),
+        vec4(0.5, 0.5, -1, 0),
+
+        vec4(-1, 1, 1, 0),
+        vec4(-1, 1, 1, 0),
+        vec4(-1, 1, 1, 0),
+        vec4(-1, 1, 1, 0),
+
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0)
+    );
 
     points.push( // the crosshair
         vec4(0, 0, 0, 1),
@@ -304,7 +300,7 @@ function getPoints() {
     for (let i = 0; i < 17; i++) {
         normalsArray.push(vec4(1, 1, 1, 0));
     }
-    //!!
+
     let secondButton = parseOBJ(buttonObj);
 
     secondButton = scaleObjectCoordinates(0.1, secondButton);
@@ -313,50 +309,63 @@ function getPoints() {
     normalsArray = normalsArray.concat(secondButton.geometries[0].data.normal);
     points = points.concat(secondButton.geometries[0].data.position);
 
-    let tempMin_X = secondButton.geometries[0].data.position[0][0];
-    let tempMax_X = secondButton.geometries[0].data.position[0][0];
-    let tempMin_Z = secondButton.geometries[0].data.position[0][2];
-    let tempMax_Z = secondButton.geometries[0].data.position[0][2];
-
-    for (let temp of secondButton.geometries[0].data.position) {
-        if (temp[0] > tempMax_X) {
-            tempMax_X = temp[0];
-        } else if (temp[0] < tempMin_X) {
-            tempMin_X = temp[0];
-        }
-
-        if (temp[2] > tempMax_Z) {
-            tempMax_Z = temp[2];
-        } else if (temp[2] < tempMin_Z) {
-            tempMin_Z = temp[2];
-        }
-    }
-
-    console.log('Min X:', tempMin_X, 'Max X:', tempMax_X);
-    console.log('Difference:', tempMax_X - tempMin_X);
-    console.log('Min Z:', tempMin_Z, 'Max Z:', tempMax_Z);
-    console.log('Difference:', tempMax_Z - tempMin_Z);
-
     points.push(
-        vertices[16], vertices[17], vertices[18], vertices[19],
+        //bottom
+        vertices[16], vertices[17], vertices[19], vertices[18],
 
-        vertices[20], vertices[21], vertices[22], vertices[23],
+        //top
+        vertices[20], vertices[22], vertices[23], vertices[21],
 
-        vertices[22], vertices[18], vertices[16], vertices[20],
+        //left
+        vertices[16], vertices[18], vertices[22], vertices[20],
 
-        vertices[21], vertices[17], vertices[19], vertices[23],
+        //right
+        vertices[21], vertices[23], vertices[19], vertices[17],
 
-        vertices[23], vertices[19], vertices[18], vertices[22],
+        //front
+        vertices[23], vertices[22], vertices[18], vertices[19],
 
-        vertices[20], vertices[16], vertices[17], vertices[21],
+        //back
+        vertices[20], vertices[21], vertices[17], vertices[16],
     );
 
-    getNormal(16, 17, 18, "1");
-    getNormal(20, 21, 22, "1");
-    getNormal(22, 18, 16, "1");
-    getNormal(21, 17, 19, "1");
-    getNormal(23, 19, 18, "1");
-    getNormal(20, 16, 17, "1");
+    normalsArray.push(
+        vec4(0, -1, 0, 0),
+        vec4(0, -1, 0, 0),
+        vec4(0, -1, 0, 0),
+        vec4(0, -1, 0, 0),
+
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+
+        vec4(0.5, 0.5, 1, 0),
+        vec4(0.5, 0.5, 1, 0),
+        vec4(0.5, 0.5, 1, 0),
+        vec4(0.5, 0.5, 1, 0),
+
+        vec4(0.5, 0.5, -1, 0),
+        vec4(0.5, 0.5, -1, 0),
+        vec4(0.5, 0.5, -1, 0),
+        vec4(0.5, 0.5, -1, 0),
+
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+
+        vec4(-1, 1, 1, 0),
+        vec4(-1, 1, 1, 0),
+        vec4(-1, 1, 1, 0),
+        vec4(-1, 1, 1, 0),
+    );
+
+    console.log('The Normals:');
+    console.log(normalsArray);
+
+    console.log("The points:");
+    console.log(points);
 
     return points;
 }
@@ -371,8 +380,8 @@ function getNormal(a, b, c, type) {
         normalsArray.push(normal);
         normalsArray.push(normal);
         normalsArray.push(normal);
-        normalsArray.push(normal);    
-    } else { // type === "2"
+        normalsArray.push(normal);
+    } else if (type === "2") {
         var t1 = subtract(b, a);
         var t2 = subtract(c, a);
         var normal = normalize(cross(t2, t1));
