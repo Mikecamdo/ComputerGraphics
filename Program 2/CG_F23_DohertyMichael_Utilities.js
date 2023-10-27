@@ -312,14 +312,55 @@ function add3DMouseMovement() {
 
     canvas.onmousedown = function(event) {
         if (event.button === 0 && document.pointerLockElement === canvas) {
-            // const x = event.clientX - canvas.getBoundingClientRect().left;
-            // const y = event.clientY - canvas.getBoundingClientRect().top;    
-            // console.log('Left click at x:', x, 'y:', y);
-            let direction = subtract(cameraTarget, cameraPosition);
-            let tempPoint = vec3(0, 0, 30);
-            let secondVector = subtract(tempPoint, cameraPosition);
+            let direction = normalize(subtract(cameraTarget, cameraPosition));
 
-            console.log('Dot product:', dot(direction, secondVector));
+            if (normalSize) {
+                var alpha = (-cameraPosition[1] - 2.9) / direction[1];
+            } else {
+                var alpha = (-cameraPosition[1] - 5.9) / direction[1];
+            }
+            
+            let xValue = cameraPosition[0] + alpha * direction[0];
+            let zValue = cameraPosition[2] + alpha * direction[2];
+
+            if (xValue >= -7.55 && xValue <= -6.30
+             && zValue >= -0.60 && zValue <= 0.60
+             && alpha < 7.0 && normalSize) {
+                normalSize = false;
+
+                walkingSpeed = 0.03;
+                maxXRange = 5.95;
+                minXRange = -5.95;
+                maxZRange = 2.95;
+                minZRange = -2.95;
+                cameraPosition = vec3(-5.95, -5.8, -2.95);
+                cameraTarget = vec3(-5.95, -5.8, 10);
+
+                angles = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                }
+            } else if (xValue >= -6.28 && xValue <= -6.20
+                    && zValue >= -0.06 && zValue <= 0.06
+                    && alpha <= 0.7 && !normalSize) {
+                    
+                normalSize = true;
+
+                walkingSpeed = 0.5;
+                maxXRange = 29.9;
+                minXRange = -29.9;
+                maxZRange = 29.9;
+                minZRange = -29.9;
+                cameraPosition = vec3(0, 0, -20);
+                cameraTarget = vec3(0, 0, 10);
+
+                angles = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                }
+            }
         }
     }
     

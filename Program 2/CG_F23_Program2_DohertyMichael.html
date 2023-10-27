@@ -23,6 +23,7 @@
             //vN = normalize((projectionMatrix * aNormal).xyz);
 
             gl_Position = projectionMatrix * modelViewMatrix * aPosition;
+            gl_PointSize = 3.0;
         }
     </script>
         

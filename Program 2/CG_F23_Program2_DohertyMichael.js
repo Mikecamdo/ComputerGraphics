@@ -5,7 +5,7 @@ var canvas, gl, program;
 // Shader transformation matrices
 var modelViewMatrix, projectionMatrix;
 
-var modelViewMatrixLoc;
+var modelViewMatrixLoc, projectionMatrixLoc;
 
 var lightPosition = vec4(0.0, 10.0, 0.0, 1.0);
 var lightAmbient = vec4(0.05, 0.05, 0.05, 1.0);
@@ -73,8 +73,9 @@ window.onload = function init() {
 
     // ! change first value to change how much you can see in the field of view
     projectionMatrix = perspective(70, 1, 0.1, 90);
+    projectionMatrixLoc = gl.getUniformLocation(program, "projectionMatrix");
 
-    gl.uniformMatrix4fv(gl.getUniformLocation(program, "projectionMatrix"),  false, flatten(projectionMatrix));
+    gl.uniformMatrix4fv(projectionMatrixLoc,  false, flatten(projectionMatrix));
 
     ambientProductLoc = gl.getUniformLocation(program, "uAmbientProduct");
     diffuseProductLoc = gl.getUniformLocation(program, "uDiffuseProduct");
@@ -149,6 +150,15 @@ vertices.push( // vertices for walls of room
     vec4(-6.5, -2.9, -0.5, 1.0), // 13
     vec4(-7.5, -2.9,  0.5, 1.0), // 14
     vec4(-7.5, -2.9, -0.5, 1.0), // 15
+
+    vec4(-6.5, -6.1,  0.1, 1.0), // 16
+    vec4(-6.5, -6.1, -0.1, 1.0), // 17
+    vec4(-6.15, -6.1,  0.1, 1.0), // 18
+    vec4(-6.15, -6.1, -0.1, 1.0), // 19
+    vec4(-6.5, -5.92,  0.1, 1.0), // 20
+    vec4(-6.5, -5.92, -0.1, 1.0), // 21
+    vec4(-6.15, -5.92,  0.1, 1.0), // 22
+    vec4(-6.15, -5.92, -0.1, 1.0), // 23
 );
 
 var normalsArray = []; // TODO clean this code up later!!
@@ -205,13 +215,12 @@ function getPoints() {
     points = points.concat(tableObject.geometries[1].data.position);
 
     let buttonObject = parseOBJ(buttonObj);
-    console.log('Button object:');
-    console.log(buttonObject);
 
     // buttonObject = scaleObjectCoordinates(0.1, buttonObject);
-    buttonObject = translateObjectCoordinates(-7, -2.78, 0, buttonObject);
-    normalsArray = normalsArray.concat(buttonObject.geometries[0].data.normal);
-    points = points.concat(buttonObject.geometries[0].data.position);
+    let firstButton = translateObjectCoordinates(-7, -2.78, 0, buttonObject);
+
+    normalsArray = normalsArray.concat(firstButton.geometries[0].data.normal);
+    points = points.concat(firstButton.geometries[0].data.position);
 
     //! mesh coordinates:
     for (let i = 0; i < 59; i++) {
@@ -246,15 +255,6 @@ function getPoints() {
             );
         }
     }
-
-    // vec4(6.5, -9.9,  0.25, 1.0), // 8
-    // vec4(6.5, -9.9, -0.25, 1.0), // 9
-    // vec4(7.0, -9.9,  0.25, 1.0), // 10
-    // vec4(7.0, -9.9, -0.25, 1.0), // 11
-    // vec4(6.5, -2.9,  0.25, 1.0), // 12
-    // vec4(6.5, -2.9, -0.25, 1.0), // 13
-    // vec4(7.0, -2.9,  0.25, 1.0), // 14
-    // vec4(7.0, -2.9, -0.25, 1.0), // 15
     
     points.push(
         vertices[8], vertices[9], vertices[10], vertices[11],
@@ -277,16 +277,86 @@ function getPoints() {
     getNormal(15, 11, 10, "1");
     getNormal(12, 8, 9, "1");
 
-    console.log('weeewoo');
-    console.log(tableObject);
+    points.push( // the crosshair
+        vec4(0, 0, 0, 1),
 
-    console.log('Points:');
-    console.log(points);
-    console.log(points.length);
+        vec4(0.03, 0, 0, 1),
+        vec4(0.04, 0, 0, 1),
+        vec4(0.05, 0, 0, 1),
+        vec4(0.06, 0, 0, 1),
 
-    console.log('Normals:');
-    console.log(normalsArray);
-    console.log(normalsArray.length);
+        vec4(-0.03, 0, 0, 1),
+        vec4(-0.04, 0, 0, 1),
+        vec4(-0.05, 0, 0, 1),
+        vec4(-0.06, 0, 0, 1),
+
+        vec4(0, 0.03, 0, 1),
+        vec4(0, 0.04, 0, 1),
+        vec4(0, 0.05, 0, 1),
+        vec4(0, 0.06, 0, 1),
+
+        vec4(0, -0.03, 0, 1),
+        vec4(0, -0.04, 0, 1),
+        vec4(0, -0.05, 0, 1),
+        vec4(0, -0.06, 0, 1),
+    );
+
+    for (let i = 0; i < 17; i++) {
+        normalsArray.push(vec4(1, 1, 1, 0));
+    }
+    //!!
+    let secondButton = parseOBJ(buttonObj);
+
+    secondButton = scaleObjectCoordinates(0.1, secondButton);
+    secondButton = translateObjectCoordinates(-6.25, -5.9, 0, secondButton);
+
+    normalsArray = normalsArray.concat(secondButton.geometries[0].data.normal);
+    points = points.concat(secondButton.geometries[0].data.position);
+
+    let tempMin_X = secondButton.geometries[0].data.position[0][0];
+    let tempMax_X = secondButton.geometries[0].data.position[0][0];
+    let tempMin_Z = secondButton.geometries[0].data.position[0][2];
+    let tempMax_Z = secondButton.geometries[0].data.position[0][2];
+
+    for (let temp of secondButton.geometries[0].data.position) {
+        if (temp[0] > tempMax_X) {
+            tempMax_X = temp[0];
+        } else if (temp[0] < tempMin_X) {
+            tempMin_X = temp[0];
+        }
+
+        if (temp[2] > tempMax_Z) {
+            tempMax_Z = temp[2];
+        } else if (temp[2] < tempMin_Z) {
+            tempMin_Z = temp[2];
+        }
+    }
+
+    console.log('Min X:', tempMin_X, 'Max X:', tempMax_X);
+    console.log('Difference:', tempMax_X - tempMin_X);
+    console.log('Min Z:', tempMin_Z, 'Max Z:', tempMax_Z);
+    console.log('Difference:', tempMax_Z - tempMin_Z);
+
+    points.push(
+        vertices[16], vertices[17], vertices[18], vertices[19],
+
+        vertices[20], vertices[21], vertices[22], vertices[23],
+
+        vertices[22], vertices[18], vertices[16], vertices[20],
+
+        vertices[21], vertices[17], vertices[19], vertices[23],
+
+        vertices[23], vertices[19], vertices[18], vertices[22],
+
+        vertices[20], vertices[16], vertices[17], vertices[21],
+    );
+
+    getNormal(16, 17, 18, "1");
+    getNormal(20, 21, 22, "1");
+    getNormal(22, 18, 16, "1");
+    getNormal(21, 17, 19, "1");
+    getNormal(23, 19, 18, "1");
+    getNormal(20, 16, 17, "1");
 
     return points;
 }
@@ -340,7 +410,13 @@ function render() {
 
     moveCamera();
 
+    gl.uniformMatrix4fv(projectionMatrixLoc,  false, flatten(ortho(-1, 1, -1, 1, -1, 1)));
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(mat4()));
+    
+    renderCrosshair();
+
     modelViewMatrix = lookAt(cameraPosition, cameraTarget, cameraUp);
+    gl.uniformMatrix4fv(projectionMatrixLoc,  false, flatten(projectionMatrix));
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
     room();
@@ -385,6 +461,18 @@ function renderButton() {
     for (let i = 8722; i < 8746; i+=4) {
         gl.drawArrays(gl.TRIANGLE_FAN, i, 4);
     }
+
+    gl.drawArrays(gl.TRIANGLES, 8763, 546);
+
+    for (let i = 9309; i < 9333; i+=4) {
+        gl.drawArrays(gl.TRIANGLE_FAN, i, 4);
+    }
+}
+
+function renderCrosshair() {
+    gl.uniform4fv(ambientProductLoc, flatten(vec4(1.0, 1.0, 1.0, 1.0)));
+
+    gl.drawArrays(gl.POINTS, 8746, 17);
 }
 
 // articulated motion idea: PERSON ON TABLE 
