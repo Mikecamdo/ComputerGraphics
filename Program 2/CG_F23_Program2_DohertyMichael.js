@@ -98,7 +98,8 @@ window.onload = function init() {
 
 var vertices = [];
 
-vertices.push( // vertices for walls of room
+vertices.push( 
+    // vertices for walls of room
     vec4(-30.0, -10.0,  30.0, 1.0), // 0
     vec4(-30.0,  10.0,  30.0, 1.0), // 1
     vec4( 30.0,  10.0,  30.0, 1.0), // 2
@@ -108,6 +109,7 @@ vertices.push( // vertices for walls of room
     vec4( 30.0,  10.0, -30.0, 1.0), // 6
     vec4( 30.0, -10.0, -30.0, 1.0), // 7
 
+    // vertices for big pillar
     vec4(-6.5, -9.9,  0.5, 1.0), // 8
     vec4(-6.5, -9.9, -0.5, 1.0), // 9
     vec4(-7.5, -9.9,  0.5, 1.0), // 10
@@ -117,6 +119,7 @@ vertices.push( // vertices for walls of room
     vec4(-7.5, -2.9,  0.5, 1.0), // 14
     vec4(-7.5, -2.9, -0.5, 1.0), // 15
 
+    // vertices for little pillar
     vec4(-6.5, -6.1,  0.1, 1.0), // 16
     vec4(-6.5, -6.1, -0.1, 1.0), // 17
     vec4(-6.15, -6.1,  0.1, 1.0), // 18
@@ -125,6 +128,23 @@ vertices.push( // vertices for walls of room
     vec4(-6.5, -5.92, -0.1, 1.0), // 21
     vec4(-6.15, -5.92,  0.1, 1.0), // 22
     vec4(-6.15, -5.92, -0.1, 1.0), // 23
+
+    // vertices for little person
+    vec4(5.95, -5.85, 2.95, 1.0), // 24
+    vec4(5.95, -5.85, 2.80, 1.0), // 25
+    vec4(5.80, -5.85, 2.80, 1.0), // 26
+    vec4(5.80, -5.85, 2.95, 1.0), // 27
+    vec4(5.875, -5.75, 2.875, 1.0), // 28
+
+    vec4(5.92, -5.85, 2.92, 1.0), // 29
+    vec4(5.92, -5.85, 2.83, 1.0), // 30
+    vec4(5.83, -5.85, 2.83, 1.0), // 31
+    vec4(5.83, -5.85, 2.92, 1.0), // 32
+
+    vec4(5.92, -6.0, 2.92, 1.0), // 33
+    vec4(5.92, -6.0, 2.83, 1.0), // 34
+    vec4(5.83, -6.0, 2.83, 1.0), // 35
+    vec4(5.83, -6.0, 2.92, 1.0), // 36
 );
 
 var normalsArray = []; // TODO clean this code up later!!
@@ -360,6 +380,41 @@ function getPoints() {
         vec4(-1, 1, 1, 0),
         vec4(-1, 1, 1, 0),
     );
+    
+    points.push(
+        vertices[24], vertices[25], vertices[26], vertices[27],
+
+        vertices[24], vertices[25], vertices[28],
+        vertices[25], vertices[26], vertices[28],
+        vertices[26], vertices[27], vertices[28],
+        vertices[27], vertices[24], vertices[28],
+
+        vertices[29], vertices[30], vertices[31], vertices[32],
+        vertices[33], vertices[34], vertices[35], vertices[36],
+
+        vertices[29], vertices[30], vertices[34], vertices[33],
+        vertices[31], vertices[32], vertices[36], vertices[35],
+
+        vertices[30], vertices[31], vertices[35], vertices[34],
+        vertices[29], vertices[32], vertices[36], vertices[33]
+    );
+
+    normalsArray.push(
+        vec4(0, -1, 0, 0), vec4(0, -1, 0, 0), vec4(0, -1, 0, 0), vec4(0, -1, 0, 0),
+
+        vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0),
+        vec4(1, 2, 1, 0), vec4(1, 2, 1, 0), vec4(1, 2, 1, 0),
+        vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0),
+        vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0),
+
+        vec4(0, 1, 0, 0), vec4(0, 1, 0, 0), vec4(0, 1, 0, 0), vec4(0, 1, 0, 0),
+        vec4(0, -1, 0, 0), vec4(0, -1, 0, 0), vec4(0, -1, 0, 0), vec4(0, -1, 0, 0),
+
+        vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0),
+        vec4(1, 2, 1, 0), vec4(1, 2, 1, 0), vec4(1, 2, 1, 0), vec4(1, 2, 1, 0),
+        vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0),
+    );
 
     console.log('The Normals:');
     console.log(normalsArray);
@@ -432,6 +487,8 @@ function render() {
 
     renderButton();
 
+    renderPeople();
+
     renderMesh();
 
     renderTable();    
@@ -482,6 +539,16 @@ function renderCrosshair() {
     gl.uniform4fv(ambientProductLoc, flatten(vec4(1.0, 1.0, 1.0, 1.0)));
 
     gl.drawArrays(gl.POINTS, 8746, 17);
+}
+
+function renderPeople() {
+    gl.drawArrays(gl.TRIANGLE_FAN, 9333, 4);
+
+    gl.drawArrays(gl.TRIANGLES, 9337, 12);
+
+    for (let i = 0; i < 6; i++) {
+        gl.drawArrays(gl.TRIANGLE_FAN, 9349 + (i * 4), 4);
+    }
 }
 
 // articulated motion idea: PERSON ON TABLE 
