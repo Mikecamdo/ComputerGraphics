@@ -129,7 +129,7 @@ vertices.push(
     vec4(-6.15, -5.92,  0.1, 1.0), // 22
     vec4(-6.15, -5.92, -0.1, 1.0), // 23
 
-    // vertices for little person
+    // vertices for Bob (the little person model on the table)
     vec4(5.95, -5.85, 2.95, 1.0), // 24
     vec4(5.95, -5.85, 2.80, 1.0), // 25
     vec4(5.80, -5.85, 2.80, 1.0), // 26
@@ -382,6 +382,7 @@ function getPoints() {
     );
     
     points.push(
+        // Bob's head
         vertices[24], vertices[25], vertices[26], vertices[27],
 
         vertices[24], vertices[25], vertices[28],
@@ -389,6 +390,16 @@ function getPoints() {
         vertices[26], vertices[27], vertices[28],
         vertices[27], vertices[24], vertices[28],
 
+        vec4(5.85, -5.80, 2.833, 1.0), // Bob's eyes
+        vec4(5.90, -5.80, 2.833, 1.0),
+
+        vec4(5.855, -5.82, 2.82, 1.0), // Bob's smile
+        vec4(5.860, -5.827, 2.815, 1.0),
+        vec4(5.875, -5.83, 2.812, 1.0),
+        vec4(5.890, -5.827, 2.815, 1.0),
+        vec4(5.895, -5.82, 2.82, 1.0),
+
+        // Bob's body
         vertices[29], vertices[30], vertices[31], vertices[32],
         vertices[33], vertices[34], vertices[35], vertices[36],
 
@@ -400,6 +411,7 @@ function getPoints() {
     );
 
     normalsArray.push(
+        // Bob's head
         vec4(0, -1, 0, 0), vec4(0, -1, 0, 0), vec4(0, -1, 0, 0), vec4(0, -1, 0, 0),
 
         vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0),
@@ -407,11 +419,22 @@ function getPoints() {
         vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0),
         vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0),
 
+        vec4(1, 1, 1, 0), // Bob's eyes
+        vec4(1, 1, 1, 0),
+
+        vec4(1, 1, 1, 0), // Bob's smile
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+        vec4(1, 1, 1, 0),
+
+        // Bob's body
         vec4(0, 1, 0, 0), vec4(0, 1, 0, 0), vec4(0, 1, 0, 0), vec4(0, 1, 0, 0),
         vec4(0, -1, 0, 0), vec4(0, -1, 0, 0), vec4(0, -1, 0, 0), vec4(0, -1, 0, 0),
 
         vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0),
         vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0),
+
         vec4(1, 2, 1, 0), vec4(1, 2, 1, 0), vec4(1, 2, 1, 0), vec4(1, 2, 1, 0),
         vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0),
     );
@@ -492,7 +515,6 @@ function render() {
     renderTable();    
 
     renderPeople();
-
 
     requestAnimationFrame(render);
 }
@@ -597,11 +619,7 @@ function renderPeople() {
         }
     }
 
-    // let xRotate = 0;
-    // let yRotate = 0;
-
     if (Math.random() > 0.99) {
-        console.log('Rotating head!!');
         let type = Math.random();
         if (type > 0.66) { // rotate only Y axis
             yRotationTarget += (Math.random() * 2 - 1) * 60;
@@ -640,21 +658,6 @@ function renderPeople() {
         }
     }
 
-    // xPosition = bobPositionOriginal.x + bobPositionOffset.x;
-    // let yPosition = bobPositionOriginal.y + bobPositionOffset.y;
-    // zPosition = bobPositionOriginal.z + bobPositionOffset.z;
-
-    // modelViewMatrix = mult(modelViewMatrix, translate(-bobPositionOriginal.x, -bobPositionOriginal.y, -bobPositionOriginal.z));
-    // modelViewMatrix = mult(modelViewMatrix, rotateX(bobHeadRotation.x));
-    // modelViewMatrix = mult(modelViewMatrix, rotateY(bobHeadRotation.y));
-    // modelViewMatrix = mult(modelViewMatrix, translate(xPosition, yPosition, zPosition));
-    // gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-
-    // modelViewMatrix = mult(modelViewMatrix, translate(bobPositionOffset.x, bobPositionOffset.y, bobPositionOffset.z));
-
-    // vec4(5.80, -5.85, 2.95, 1.0), // 27
-    // vec4(5.875, -5.75, 2.875, 1.0), // 28
-
     let headViewMatrix = translate(-5.875, 5.85, -2.875);
     headViewMatrix = mult(rotateX(bobHeadRotation.x), headViewMatrix);
     headViewMatrix = mult(rotateY(bobHeadRotation.y), headViewMatrix);
@@ -667,18 +670,14 @@ function renderPeople() {
     // draw Bob's head
     gl.drawArrays(gl.TRIANGLE_FAN, 9333, 4);
     gl.drawArrays(gl.TRIANGLES, 9337, 12);
+    gl.drawArrays(gl.POINTS, 9349, 7);
 
     modelViewMatrix = mult(modelViewMatrix, translate(bobPositionOffset.x, bobPositionOffset.y, bobPositionOffset.z));
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
-    // modelViewMatrix = mult(modelViewMatrix, translate(-xPosition, -yPosition, -zPosition));
-    // modelViewMatrix = mult(modelViewMatrix, rotateY(-bobHeadRotation.y));
-    // modelViewMatrix = mult(modelViewMatrix, rotateX(-bobHeadRotation.x));
-    // modelViewMatrix = mult(modelViewMatrix, translate(xPosition, yPosition, zPosition));
-
     // draw Bob's body
     for (let i = 0; i < 6; i++) {
-        gl.drawArrays(gl.TRIANGLE_FAN, 9349 + (i * 4), 4);
+        gl.drawArrays(gl.TRIANGLE_FAN, 9356 + (i * 4), 4);
     }
 
     if (Math.random() > changeStateProbability) { // change from moving to standing still, and vice-versa
@@ -703,5 +702,3 @@ function renderPeople() {
         changeStateProbability -= 0.00001;
     }
 }
-
-// articulated motion idea: PERSON ON TABLE 
