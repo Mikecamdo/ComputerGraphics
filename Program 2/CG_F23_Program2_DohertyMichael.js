@@ -479,19 +479,20 @@ function render() {
     
     renderCrosshair();
 
-    modelViewMatrix = lookAt(cameraPosition, cameraTarget, cameraUp);
     gl.uniformMatrix4fv(projectionMatrixLoc,  false, flatten(projectionMatrix));
+    modelViewMatrix = lookAt(cameraPosition, cameraTarget, cameraUp);
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
     room();
 
     renderButton();
 
-    renderPeople();
-
     renderMesh();
 
     renderTable();    
+
+    renderPeople();
+
 
     requestAnimationFrame(render);
 }
@@ -541,13 +542,165 @@ function renderCrosshair() {
     gl.drawArrays(gl.POINTS, 8746, 17);
 }
 
-function renderPeople() {
-    gl.drawArrays(gl.TRIANGLE_FAN, 9333, 4);
+var bobPositionOffset = {
+    x: -5.83,
+    y: 0,
+    z: -2.83
+}
 
+var bobPositionOriginal = {
+    x: 5.83,
+    y: -6.0,
+    z: 2.83
+}
+
+var bobHeadRotation = {
+    x: 0,
+    y: 0
+}
+
+var xRotationTarget = 0;
+var yRotationTarget = 0;
+
+var moving = false;
+var changeStateProbability = 1.0;
+var xSpeed = 0;
+var zSpeed = 0;
+
+var weewoo = 0;
+
+function renderPeople() {
+    gl.uniform4fv(ambientProductLoc, flatten(ambientProduct)); //TODO do I need these??
+    gl.uniform4fv(diffuseProductLoc, flatten(diffuseProduct));
+    gl.uniform4fv(specularProductLoc, flatten(specularProduct));
+    gl.uniform1f(shininessLoc, materialShininess);
+
+    let xPosition = bobPositionOriginal.x + bobPositionOffset.x;
+    let zPosition = bobPositionOriginal.z + bobPositionOffset.z;
+
+    bobPositionOffset.y = (5.95 - Math.abs(xPosition)) * (2.95 - Math.abs(zPosition)) * (Math.abs((2.44 - xPosition)) + Math.abs((0 - zPosition))) / 23;
+
+    if (moving) {
+        let newXPosition = xPosition + (0.005 * xSpeed);
+        let newZPosition = zPosition + (0.005 * zSpeed);
+        
+        if (newXPosition <= 5.86 && newXPosition >= -5.95) {
+            bobPositionOffset.x += 0.005 * xSpeed;
+        } else {
+            xSpeed *= -1;
+        }
+
+        if (newZPosition <= 2.86 && newZPosition >= -2.95) {
+            bobPositionOffset.z += 0.005 * zSpeed;
+        } else {
+            zSpeed *= -1;
+        }
+    }
+
+    // let xRotate = 0;
+    // let yRotate = 0;
+
+    if (Math.random() > 0.99) {
+        console.log('Rotating head!!');
+        let type = Math.random();
+        if (type > 0.66) { // rotate only Y axis
+            yRotationTarget += (Math.random() * 2 - 1) * 60;
+        } else if (type > 0.33) { // rotate only X axis
+            let additionalRotation = (Math.random() * 2 - 1) * 45;
+            if (xRotationTarget + additionalRotation < 90 &&
+                xRotationTarget + additionalRotation > -90) {
+                    xRotationTarget += additionalRotation;
+            }
+        } else { // rotate both X and Y axis
+            let additionalRotation = (Math.random() * 2 - 1) * 45;
+            if (xRotationTarget + additionalRotation < 90 &&
+                xRotationTarget + additionalRotation > -90) {
+                    xRotationTarget += additionalRotation;
+            }
+            yRotationTarget += (Math.random() * 2 - 1) * 60;
+        }
+    }
+
+    let xRotationDifference = bobHeadRotation.x - xRotationTarget;
+    let yRotationDifference = bobHeadRotation.y - yRotationTarget;
+
+    if (Math.abs(xRotationDifference) >= 0.5) {
+        if (bobHeadRotation.x > xRotationTarget) {
+            bobHeadRotation.x -= 0.5;
+        } else {
+            bobHeadRotation.x += 0.5;
+        }
+    }
+
+    if (Math.abs(yRotationDifference) >= 0.5) {
+        if (bobHeadRotation.y > yRotationTarget) {
+            bobHeadRotation.y -= 0.5;
+        } else {
+            bobHeadRotation.y += 0.5;
+        }
+    }
+
+    // xPosition = bobPositionOriginal.x + bobPositionOffset.x;
+    // let yPosition = bobPositionOriginal.y + bobPositionOffset.y;
+    // zPosition = bobPositionOriginal.z + bobPositionOffset.z;
+
+    // modelViewMatrix = mult(modelViewMatrix, translate(-bobPositionOriginal.x, -bobPositionOriginal.y, -bobPositionOriginal.z));
+    // modelViewMatrix = mult(modelViewMatrix, rotateX(bobHeadRotation.x));
+    // modelViewMatrix = mult(modelViewMatrix, rotateY(bobHeadRotation.y));
+    // modelViewMatrix = mult(modelViewMatrix, translate(xPosition, yPosition, zPosition));
+    // gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+
+    // modelViewMatrix = mult(modelViewMatrix, translate(bobPositionOffset.x, bobPositionOffset.y, bobPositionOffset.z));
+
+    // vec4(5.80, -5.85, 2.95, 1.0), // 27
+    // vec4(5.875, -5.75, 2.875, 1.0), // 28
+
+    let headViewMatrix = translate(-5.875, 5.85, -2.875);
+    headViewMatrix = mult(rotateX(bobHeadRotation.x), headViewMatrix);
+    headViewMatrix = mult(rotateY(bobHeadRotation.y), headViewMatrix);
+    headViewMatrix = mult(translate(5.875 + bobPositionOffset.x, -5.85 + bobPositionOffset.y, 2.875 + bobPositionOffset.z), headViewMatrix);
+    headViewMatrix = mult(modelViewMatrix, headViewMatrix);
+
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(headViewMatrix));
+    weewoo += 0.4;
+
+    // draw Bob's head
+    gl.drawArrays(gl.TRIANGLE_FAN, 9333, 4);
     gl.drawArrays(gl.TRIANGLES, 9337, 12);
 
+    modelViewMatrix = mult(modelViewMatrix, translate(bobPositionOffset.x, bobPositionOffset.y, bobPositionOffset.z));
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+
+    // modelViewMatrix = mult(modelViewMatrix, translate(-xPosition, -yPosition, -zPosition));
+    // modelViewMatrix = mult(modelViewMatrix, rotateY(-bobHeadRotation.y));
+    // modelViewMatrix = mult(modelViewMatrix, rotateX(-bobHeadRotation.x));
+    // modelViewMatrix = mult(modelViewMatrix, translate(xPosition, yPosition, zPosition));
+
+    // draw Bob's body
     for (let i = 0; i < 6; i++) {
         gl.drawArrays(gl.TRIANGLE_FAN, 9349 + (i * 4), 4);
+    }
+
+    if (Math.random() > changeStateProbability) { // change from moving to standing still, and vice-versa
+        console.log("Changing state when variable is:", changeStateProbability);
+        moving = !moving;
+
+        if (moving) { // get new speeds every time movement starts again
+            xSpeed = Math.random();
+            zSpeed = Math.random();
+
+            if (Math.random() < 0.5) { // random chance to go in negative direction
+                xSpeed *= -1;
+            }
+
+            if (Math.random() < 0.5) { // random chance to go in positive direction
+                zSpeed *= -1;
+            }
+        }
+
+        changeStateProbability = 1.0; // reset the probability
+    } else {
+        changeStateProbability -= 0.00001;
     }
 }
 
