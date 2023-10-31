@@ -1,3 +1,4 @@
+// Table object found at: https://www.turbosquid.com/3d-models/3d-censi-modern-industrial-rectangular-coffee-table-free-2117386
 let tableObj = 
 `# 3ds Max Wavefront OBJ Exporter v0.99 - (c)2007 guruware
 # File Created: 28.08.2023 14:04:15
