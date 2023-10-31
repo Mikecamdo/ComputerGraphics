@@ -10,15 +10,19 @@ var modelViewMatrixLoc, projectionMatrixLoc;
 var lightPosition = vec4(0.0, 10.0, 0.0, 1.0);
 var lightAmbient = vec4(0.05, 0.05, 0.05, 1.0);
 var lightDiffuse = vec4(0.2, 0.2, 0.2, 1.0);
-var lightSpecular = vec4(0.8, 0.8, 0.8, 1.0);
+var lightSpecular = vec4(0.1, 1.0, 1.0, 1.0);
 
 var materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
 var materialDiffuse = vec4(0.8, 0.8, 0.8, 1.0);
 var materialSpecular = vec4(0.3, 0.3, 0.3, 1.0);
-var materialShininess = 0.5;
+var materialShininess = 1.0;
 
 var ambientProduct, diffuseProduct, specularProduct;
 var ambientProductLoc, diffuseProductLoc, specularProductLoc, shininessLoc;
+
+var normalTransform = mat4();
+
+var normalTransformLoc;
 
 var maxXRange = 29.9, minXRange = -29.9;
 var maxZRange = 29.9, minZRange = -29.9;
@@ -81,6 +85,9 @@ window.onload = function init() {
     diffuseProductLoc = gl.getUniformLocation(program, "uDiffuseProduct");
     specularProductLoc = gl.getUniformLocation(program, "uSpecularProduct");
     shininessLoc = gl.getUniformLocation(program, "uShininess");
+
+    normalTransformLoc = gl.getUniformLocation(program, "normalTransform");
+    gl.uniformMatrix4fv(normalTransformLoc, false, flatten(mat4()));
 
     gl.uniform4fv(ambientProductLoc, flatten(ambientProduct));
     gl.uniform4fv(diffuseProductLoc, flatten(diffuseProduct));
@@ -410,15 +417,14 @@ function getPoints() {
         vertices[29], vertices[32], vertices[36], vertices[33]
     );
 
+    // Bob's head
+    getNormal(24, 25, 26, "1");
+    getNormal(24, 28, 25, "3");
+    getNormal(25, 28, 26, "3");
+    getNormal(26, 28, 27, "3");
+    getNormal(27, 28, 24, "3");
+
     normalsArray.push(
-        // Bob's head
-        vec4(0, -1, 0, 0), vec4(0, -1, 0, 0), vec4(0, -1, 0, 0), vec4(0, -1, 0, 0),
-
-        vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0),
-        vec4(1, 2, 1, 0), vec4(1, 2, 1, 0), vec4(1, 2, 1, 0),
-        vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0),
-        vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0),
-
         vec4(1, 1, 1, 0), // Bob's eyes
         vec4(1, 1, 1, 0),
 
@@ -432,18 +438,12 @@ function getPoints() {
         vec4(0, 1, 0, 0), vec4(0, 1, 0, 0), vec4(0, 1, 0, 0), vec4(0, 1, 0, 0),
         vec4(0, -1, 0, 0), vec4(0, -1, 0, 0), vec4(0, -1, 0, 0), vec4(0, -1, 0, 0),
 
-        vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0),
-        vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0), vec4(1, 1, 1, 0),
+        vec4(1, 1.75, 1, 0), vec4(1, 1.75, 1, 0), vec4(1, 1.75, 1, 0), vec4(1, 1.75, 1, 0),
+        vec4(1, 1.75, 1, 0), vec4(1, 1.75, 1, 0), vec4(1, 1.75, 1, 0), vec4(1, 1.75, 1, 0),
 
-        vec4(1, 2, 1, 0), vec4(1, 2, 1, 0), vec4(1, 2, 1, 0), vec4(1, 2, 1, 0),
-        vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0), vec4(0.5, 0.5, 0.5, 0),
+        vec4(1, 1.75, 1, 0), vec4(1, 1.75, 1, 0), vec4(1, 1.75, 1, 0), vec4(1, 1.75, 1, 0),
+        vec4(1, 1.75, 1, 0), vec4(1, 1.75, 1, 0), vec4(1, 1.75, 1, 0), vec4(1, 1.75, 1, 0),
     );
-
-    console.log('The Normals:');
-    console.log(normalsArray);
-
-    console.log("The points:");
-    console.log(points);
 
     return points;
 }
@@ -469,12 +469,30 @@ function getNormal(a, b, c, type) {
         normalsArray.push(normal);
         normalsArray.push(normal);
         normalsArray.push(normal);    
+    } else if (type === "3") {
+        var t1 = subtract(vertices[b], vertices[a]);
+        var t2 = subtract(vertices[c], vertices[a]);
+        var normal = normalize(cross(t2, t1));
+        normal = vec4(normal[0], normal[1], normal[2], 0.0);
+    
+        normalsArray.push(normal);
+        normalsArray.push(normal);
+        normalsArray.push(normal);
     }
 }
 
 //----------------------------------------------------------------------------
 
 function room() {
+    materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+    materialDiffuse = vec4(0.8, 0.8, 0.8, 1.0);
+    materialSpecular = vec4(0.4, 0.4, 0.4, 1.0);
+    materialShininess = 1.1;
+
+    ambientProduct = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specularProduct = mult(lightSpecular, materialSpecular);
+
     gl.uniform4fv(ambientProductLoc, flatten(ambientProduct));
     gl.uniform4fv(diffuseProductLoc, flatten(diffuseProduct));
     gl.uniform4fv(specularProductLoc, flatten(specularProduct));
@@ -536,6 +554,23 @@ function renderTable() {
 }
 
 function renderMesh() {
+    materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+    materialDiffuse = vec4(0.8, 0.8, 0.8, 1.0);
+    materialSpecular = vec4(0.4, 0.4, 0.4, 1.0);
+    materialShininess = 1.1;
+
+
+    ambientProduct = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specularProduct = mult(lightSpecular, materialSpecular);
+
+
+    gl.uniform4fv(ambientProductLoc, flatten(ambientProduct));
+    gl.uniform4fv(diffuseProductLoc, flatten(diffuseProduct));
+    gl.uniform4fv(specularProductLoc, flatten(specularProduct));
+    gl.uniform1f(shininessLoc, materialShininess);
+
+
     gl.drawArrays(gl.TRIANGLE_STRIP, 1878, 6844);
 
     gl.uniform4fv(ambientProductLoc, flatten(vec4(0.0, 0.0, 0.0, 0.0)));
@@ -545,13 +580,46 @@ function renderMesh() {
 }
 
 function renderButton() {
-    gl.drawArrays(gl.TRIANGLES, 1332, 546);
+    materialAmbient = vec4(0.0, 1.0, 0.0, 1.0);
+    materialDiffuse = vec4(0.0, 1.0, 0.0, 1.0);
+    materialSpecular = vec4(0.2, 1.0, 0.6, 1.0);
+    materialShininess = 1.0;
+
+    ambientProduct = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specularProduct = mult(lightSpecular, materialSpecular);
+
+    gl.uniform4fv(ambientProductLoc, flatten(ambientProduct));
+    gl.uniform4fv(diffuseProductLoc, flatten(diffuseProduct));
+    gl.uniform4fv(specularProductLoc, flatten(specularProduct));
+    gl.uniform1f(shininessLoc, materialShininess);
+
+    gl.drawArrays(gl.TRIANGLES, 1332, 444);
+
+    gl.drawArrays(gl.TRIANGLES, 8763, 444);
+
+    materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+    materialDiffuse = vec4(0.2, 0.2, 0.2, 1.0);
+    materialSpecular = vec4(0.4, 0.4, 0.4, 1.0);
+    materialShininess = 1.0;
+
+    ambientProduct = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specularProduct = mult(lightSpecular, materialSpecular);
+
+    gl.uniform4fv(ambientProductLoc, flatten(ambientProduct));
+    gl.uniform4fv(diffuseProductLoc, flatten(diffuseProduct));
+    gl.uniform4fv(specularProductLoc, flatten(specularProduct));
+    gl.uniform1f(shininessLoc, materialShininess);
+
+    gl.drawArrays(gl.TRIANGLES, 1734 + 42, 102);
+    gl.drawArrays(gl.TRIANGLES, 8763 + 444, 102);
+
 
     for (let i = 8722; i < 8746; i+=4) {
         gl.drawArrays(gl.TRIANGLE_FAN, i, 4);
     }
 
-    gl.drawArrays(gl.TRIANGLES, 8763, 546);
 
     for (let i = 9309; i < 9333; i+=4) {
         gl.drawArrays(gl.TRIANGLE_FAN, i, 4);
@@ -589,14 +657,7 @@ var changeStateProbability = 1.0;
 var xSpeed = 0;
 var zSpeed = 0;
 
-var weewoo = 0;
-
 function renderPeople() {
-    gl.uniform4fv(ambientProductLoc, flatten(ambientProduct)); //TODO do I need these??
-    gl.uniform4fv(diffuseProductLoc, flatten(diffuseProduct));
-    gl.uniform4fv(specularProductLoc, flatten(specularProduct));
-    gl.uniform1f(shininessLoc, materialShininess);
-
     let xPosition = bobPositionOriginal.x + bobPositionOffset.x;
     let zPosition = bobPositionOriginal.z + bobPositionOffset.z;
 
@@ -658,22 +719,42 @@ function renderPeople() {
         }
     }
 
+    gl.uniformMatrix4fv(normalTransformLoc, false, flatten(rotateY(bobHeadRotation.y)));
+
     let headViewMatrix = translate(-5.875, 5.85, -2.875);
     headViewMatrix = mult(rotateX(bobHeadRotation.x), headViewMatrix);
     headViewMatrix = mult(rotateY(bobHeadRotation.y), headViewMatrix);
+
+    
     headViewMatrix = mult(translate(5.875 + bobPositionOffset.x, -5.85 + bobPositionOffset.y, 2.875 + bobPositionOffset.z), headViewMatrix);
     headViewMatrix = mult(modelViewMatrix, headViewMatrix);
 
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(headViewMatrix));
-    weewoo += 0.4;
+
+    gl.drawArrays(gl.POINTS, 9349, 7);
+    
+    materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+    materialDiffuse = vec4(0.2, 0.2, 0.2, 1.0);
+    materialSpecular = vec4(0.4, 0.4, 0.4, 1.0);
+    materialShininess = 0.3;
+
+    ambientProduct = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specularProduct = mult(lightSpecular, materialSpecular);
+
+    gl.uniform4fv(ambientProductLoc, flatten(vec4(.961/2, .961/2, .863/2, 1.0)));
+    gl.uniform4fv(diffuseProductLoc, flatten(diffuseProduct));
+    gl.uniform4fv(specularProductLoc, flatten(specularProduct));
+    gl.uniform1f(shininessLoc, materialShininess);
 
     // draw Bob's head
     gl.drawArrays(gl.TRIANGLE_FAN, 9333, 4);
-    gl.drawArrays(gl.TRIANGLES, 9337, 12);
-    gl.drawArrays(gl.POINTS, 9349, 7);
+    gl.drawArrays(gl.TRIANGLES, 9337, 12);    
+
 
     modelViewMatrix = mult(modelViewMatrix, translate(bobPositionOffset.x, bobPositionOffset.y, bobPositionOffset.z));
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+    gl.uniformMatrix4fv(normalTransformLoc, false, flatten(mat4()));
 
     // draw Bob's body
     for (let i = 0; i < 6; i++) {
@@ -681,7 +762,6 @@ function renderPeople() {
     }
 
     if (Math.random() > changeStateProbability) { // change from moving to standing still, and vice-versa
-        console.log("Changing state when variable is:", changeStateProbability);
         moving = !moving;
 
         if (moving) { // get new speeds every time movement starts again

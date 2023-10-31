@@ -10,6 +10,8 @@
         uniform mat4 modelViewMatrix;
         uniform mat4 projectionMatrix;
         uniform vec4 lightPosition;
+
+        uniform mat4 normalTransform;
         
         void main()
         {
@@ -17,9 +19,9 @@
 
             vec3 light = lightPosition.xyz;
 
-            vL = normalize(light - pos); // FIXME get euclidean distance, use inverse of that to make light stronger closer to the light
+            vL = normalize(light - pos);
             vE = -pos;
-            vN = aNormal.xyz;
+            vN = (normalTransform * aNormal).xyz;
             //vN = normalize((projectionMatrix * aNormal).xyz);
 
             gl_Position = projectionMatrix * modelViewMatrix * aPosition;
@@ -54,130 +56,10 @@
             if(dot(vL, vN) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
             //diffuse = vec4(0.0, 0.0, 0.0, 1.0);
 
-            fColor = ambient + diffuse + specular; //FIXME can multiply inverse of euclidean distance by whole thing, just diffuse, etc.
-            fColor.a = 1.0;
-        }
-    </script>
-
-    <!-- <script id="vertex-shader" type="x-shader/x-vertex">
-        #version 300 es
-        
-        in vec4 aPosition;
-        in vec4 aNormal;
-        out vec3 vN, vL, vE;
-        
-        uniform mat4 modelViewMatrix;
-        uniform mat4 projectionMatrix;
-        uniform vec4 lightPosition;
-        
-        void main()
-        {
-            vec3 pos = aPosition.xyz;
-            vec3 light = lightPosition.xyz;
-
-            vL = normalize(light - pos);
-            vE = -pos;
-            vN = aNormal.xyz;
-
-            gl_Position = projectionMatrix * modelViewMatrix * aPosition;
-        }
-    </script>
-        
-    <script id="fragment-shader" type="x-shader/x-fragment">
-        #version 300 es
-        
-        precision mediump float;
-
-        uniform vec4 uAmbientProduct;
-        uniform vec4 uDiffuseProduct;
-        uniform vec4 uSpecularProduct;
-        uniform float uShininess;
-        
-        in vec3 vN, vL, vE;
-        out vec4 fColor;
-        
-        void main()
-        {
-            vec3 H = normalize(vL + vE);
-            vec4 ambient = uAmbientProduct;
-
-            float Kd = max(dot(vL, vN), 0.0);
-            vec4 diffuse = Kd * uDiffuseProduct;
-
-            float Ks = pow(max(dot(vN, H), 0.0), uShininess);
-            vec4 specular = Ks * uSpecularProduct;
-
-            if(dot(vL, vN) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
-
             fColor = ambient + diffuse + specular;
             fColor.a = 1.0;
         }
-    </script> -->
-
-    <!-- <script id="vertex-shader" type="x-shader/x-vertex">
-        #version 300 es
-        
-        in vec4 aPosition;
-        in vec4 aNormal;
-
-        //out vec4 vNormal;
-        out vec3 N, L, E;
-        
-        uniform mat4 modelViewMatrix;
-        uniform mat4 projectionMatrix;
-        uniform vec4 lightPosition;
-        //uniform mat3 normalMatrix;
-        
-        void main()
-        {
-            vec3 pos = (projectionMatrix * aPosition).xyz;
-            vec3 light = (projectionMatrix * lightPosition).xyz;
-
-            //if(light.z == 0.0)  
-            //    L = normalize(light.xyz);
-            //else  
-            //    L = normalize(light).xyz - pos;
-
-            L = normalize(light - pos);
-
-            E = -normalize(pos);
-            N = aNormal.xyz;
-
-            gl_Position = projectionMatrix * modelViewMatrix * aPosition;
-        }
     </script>
-        
-    <script id="fragment-shader" type="x-shader/x-fragment">
-        #version 300 es
-        
-        precision mediump float;
-
-        uniform vec4 uAmbientProduct;
-        uniform vec4 uDiffuseProduct;
-        uniform vec4 uSpecularProduct;
-        uniform float uShininess;
-        
-        in vec3 N, L, E;
-
-        out vec4 fColor;
-        
-        void main()
-        {
-            vec3 H = normalize( L + E );
-            vec4 ambient = uAmbientProduct;
-
-            float Kd = max( dot(L, N), 0.0 );
-            vec4  diffuse = Kd*uDiffuseProduct;
-
-            float Ks = pow( max(dot(N, H), 0.0), uShininess );
-            vec4  specular = Ks * uSpecularProduct;
-
-            if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
-
-            fColor = ambient + diffuse + specular;
-            fColor.a = 1.0;
-        }
-    </script> -->
 
     <body>
         <canvas id="gl-canvas" width="600" height="600">
