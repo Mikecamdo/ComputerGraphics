@@ -4,9 +4,9 @@ var canvas, gl, program;
 
 // Shader transformation matrices
 var modelViewMatrix, projectionMatrix;
-
 var modelViewMatrixLoc, projectionMatrixLoc;
 
+// variables controlling the lighting in the scene
 var lightPosition = vec4(0.0, 10.0, 0.0, 1.0);
 var lightAmbient = vec4(0.05, 0.05, 0.05, 1.0);
 var lightDiffuse = vec4(0.2, 0.2, 0.2, 1.0);
@@ -20,15 +20,20 @@ var materialShininess = 1.0;
 var ambientProduct, diffuseProduct, specularProduct;
 var ambientProductLoc, diffuseProductLoc, specularProductLoc, shininessLoc;
 
+// variables for normal vector transformations
 var normalTransform = mat4();
-
 var normalTransformLoc;
 
+// variables for constraining movement within the 3D world
 var maxXRange = 29.9, minXRange = -29.9;
 var maxZRange = 29.9, minZRange = -29.9;
 
-window.onload = function init() {
+// variables for the lookAt function
+var cameraPosition = vec3(0, 0, -20);
+var cameraTarget = vec3(0, 0, 10);
+var cameraUp = vec3(0, 1, 0);
 
+window.onload = function init() {
     let points = getPoints();
 
     canvas = document.getElementById("gl-canvas");
@@ -44,19 +49,12 @@ window.onload = function init() {
     gl.enable(gl.POLYGON_OFFSET_FILL);
     gl.polygonOffset(1.0, 2.0);
 
-    // ? enable backface culling for efficiency(??)
-    // gl.enable(gl.CULL_FACE);
-    // gl.cullFace(gl.BACK);
-
     // Load shaders and use the resulting shader program
     program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
-    ambientProduct = mult(lightAmbient, materialAmbient);
-    diffuseProduct = mult(lightDiffuse, materialDiffuse);
-    specularProduct = mult(lightSpecular, materialSpecular);
-
-    var nBuffer = gl.createBuffer();
+    // Create and initialize buffer objects
+    var nBuffer = gl.createBuffer(); // normals buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
 
@@ -64,8 +62,7 @@ window.onload = function init() {
     gl.vertexAttribPointer(normalLoc, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(normalLoc);
 
-    // Create and initialize  buffer objects
-    let vBuffer = gl.createBuffer();
+    let vBuffer = gl.createBuffer(); // vertices buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
 
@@ -73,37 +70,34 @@ window.onload = function init() {
     gl.vertexAttribPointer(positionLoc, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionLoc);
 
+    // get locations of uniform variables
     modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
-
-    // ! change first value to change how much you can see in the field of view
-    projectionMatrix = perspective(70, 1, 0.1, 90);
     projectionMatrixLoc = gl.getUniformLocation(program, "projectionMatrix");
-
-    gl.uniformMatrix4fv(projectionMatrixLoc,  false, flatten(projectionMatrix));
-
     ambientProductLoc = gl.getUniformLocation(program, "uAmbientProduct");
     diffuseProductLoc = gl.getUniformLocation(program, "uDiffuseProduct");
     specularProductLoc = gl.getUniformLocation(program, "uSpecularProduct");
     shininessLoc = gl.getUniformLocation(program, "uShininess");
-
     normalTransformLoc = gl.getUniformLocation(program, "normalTransform");
+
+    // set the projection matrix
+    projectionMatrix = perspective(70, 1, 0.1, 90);
+
+    // set normal transform matrix and light position
     gl.uniformMatrix4fv(normalTransformLoc, false, flatten(mat4()));
-
-    gl.uniform4fv(ambientProductLoc, flatten(ambientProduct));
-    gl.uniform4fv(diffuseProductLoc, flatten(diffuseProduct));
-    gl.uniform4fv(specularProductLoc, flatten(specularProduct));
     gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"), flatten(lightPosition));
-    gl.uniform1f(shininessLoc, materialShininess);
 
+    // add logic for 3D movement within the world
     add3DKeyboardMovement();
     add3DMouseMovement();
 
+    // begin rendering the scene
     render();
 }
 
 //----------------------------------------------------------------------------
 
-var vertices = [];
+var normalsArray = []; // variable for holding normal vectors
+var vertices = []; // vertices for objects I've defined
 
 vertices.push( 
     // vertices for walls of room
@@ -154,8 +148,7 @@ vertices.push(
     vec4(5.83, -6.0, 2.92, 1.0), // 36
 );
 
-var normalsArray = []; // TODO clean this code up later!!
-
+// function for intializing points and normal vectors
 function getPoints() {
     let points = [];
 
@@ -197,6 +190,7 @@ function getPoints() {
     // left wall
     getNormal(3, 7, 6, "1");
 
+    // adding the table object
     let tableObject = parseOBJ(tableObj);
     tableObject = scaleObjectCoordinates(0.1, tableObject);
     tableObject = translateObjectCoordinates(0, -10, 0, tableObject);
@@ -207,6 +201,7 @@ function getPoints() {
     points = points.concat(tableObject.geometries[0].data.position);
     points = points.concat(tableObject.geometries[1].data.position);
 
+    // adding the first button object
     let buttonObject = parseOBJ(buttonObj);
 
     let firstButton = translateObjectCoordinates(-7, -2.78, 0, buttonObject);
@@ -214,7 +209,7 @@ function getPoints() {
     normalsArray = normalsArray.concat(firstButton.geometries[0].data.normal);
     points = points.concat(firstButton.geometries[0].data.position);
 
-    //! mesh coordinates:
+    // adding the mesh
     for (let i = 0; i < 59; i++) {
         let x1 = -5.9 + i * 0.2;
         let x2 = -5.9 + i * 0.2;
@@ -248,6 +243,7 @@ function getPoints() {
         }
     }
     
+    // adding the big pillar
     points.push(
         //bottom
         vertices[8], vertices[9], vertices[11], vertices[10],
@@ -300,6 +296,7 @@ function getPoints() {
         vec4(1, 1, 1, 0)
     );
 
+    // adding the crosshair
     points.push( // the crosshair
         vec4(0, 0, 0, 1),
 
@@ -328,6 +325,7 @@ function getPoints() {
         normalsArray.push(vec4(1, 1, 1, 0));
     }
 
+    // adding the second button
     let secondButton = parseOBJ(buttonObj);
 
     secondButton = scaleObjectCoordinates(0.1, secondButton);
@@ -336,6 +334,7 @@ function getPoints() {
     normalsArray = normalsArray.concat(secondButton.geometries[0].data.normal);
     points = points.concat(secondButton.geometries[0].data.position);
 
+    // adding the small pillar
     points.push(
         //bottom
         vertices[16], vertices[17], vertices[19], vertices[18],
@@ -388,6 +387,7 @@ function getPoints() {
         vec4(-1, 1, 1, 0),
     );
     
+    // adding Bob
     points.push(
         // Bob's head
         vertices[24], vertices[25], vertices[26], vertices[27],
@@ -448,6 +448,7 @@ function getPoints() {
     return points;
 }
 
+// function for calculating the normal in various ways
 function getNormal(a, b, c, type) {
     if (type === "1") {
         var t1 = subtract(normalize(vertices[b]), normalize(vertices[a]));
@@ -483,7 +484,7 @@ function getNormal(a, b, c, type) {
 
 //----------------------------------------------------------------------------
 
-function room() {
+function renderRoom() {
     materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
     materialDiffuse = vec4(0.8, 0.8, 0.8, 1.0);
     materialSpecular = vec4(0.4, 0.4, 0.4, 1.0);
@@ -503,48 +504,12 @@ function room() {
     }
 }
 
-//----------------------------------------------------------------------------
-
-// ! change y values of cameraPosition and cameraTarget to make yourself "shrink"
-var cameraPosition = vec3(0, 0, -20);
-var cameraTarget = vec3(0, 0, 10);
-var cameraUp = vec3(0, 1, 0);
-
-function render() {
-    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
-
-    moveCamera();
-
-    gl.uniformMatrix4fv(projectionMatrixLoc,  false, flatten(ortho(-1, 1, -1, 1, -1, 1)));
-    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(mat4()));
-    
-    renderCrosshair();
-
-    gl.uniformMatrix4fv(projectionMatrixLoc,  false, flatten(projectionMatrix));
-    modelViewMatrix = lookAt(cameraPosition, cameraTarget, cameraUp);
-    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-
-    room();
-
-    renderButton();
-
-    renderMesh();
-
-    renderTable();    
-
-    renderPeople();
-
-    requestAnimationFrame(render);
-}
-
-// 
 function renderTable() {
-    //! different material/light stuff came from .mtl file
     gl.uniform4fv(diffuseProductLoc, flatten(vec4(0.4039, 0.4000, 0.3725, 0.0)));
     gl.uniform4fv(specularProductLoc, flatten(vec4(0.2980, 0.2980, 0.2980, 0.0)));
 
     // tabletop
-    gl.drawArrays(gl.TRIANGLES, 24, 132); // TODO do I even need this anymore, since the mesh is rendered directly on top???
+    gl.drawArrays(gl.TRIANGLES, 24, 132);
     
     gl.uniform4fv(diffuseProductLoc, flatten(vec4(0.0039, 0.0039, 0.0039, 0.0)));
     gl.uniform4fv(specularProductLoc, flatten(vec4(0.0200, 0.0200, 0.0200, 0.0)));
@@ -595,7 +560,6 @@ function renderButton() {
     gl.uniform1f(shininessLoc, materialShininess);
 
     gl.drawArrays(gl.TRIANGLES, 1332, 444);
-
     gl.drawArrays(gl.TRIANGLES, 8763, 444);
 
     materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
@@ -632,55 +596,62 @@ function renderCrosshair() {
     gl.drawArrays(gl.POINTS, 8746, 17);
 }
 
+// holds Bob's current offset
 var bobPositionOffset = {
     x: -5.83,
     y: 0,
     z: -2.83
 }
 
+// holds Bob's original coordinates
 var bobPositionOriginal = {
     x: 5.83,
     y: -6.0,
     z: 2.83
 }
 
+// holds Bob's rotation angles
 var bobHeadRotation = {
     x: 0,
     y: 0
 }
 
+// variables for randomly generated rotation angles that Bob slowly turns his head with
 var xRotationTarget = 0;
 var yRotationTarget = 0;
 
-var moving = false;
-var changeStateProbability = 1.0;
+var moving = false; // if Bob is moving around on the table
+var changeStateProbability = 1.0; // decreasing variable that controls when Bob starts and stops moving
+
+// Bob's movement speed
 var xSpeed = 0;
 var zSpeed = 0;
 
-function renderPeople() {
+function renderBob() {
     let xPosition = bobPositionOriginal.x + bobPositionOffset.x;
     let zPosition = bobPositionOriginal.z + bobPositionOffset.z;
 
+    // calculate Bob's y position based on mesh heightfield function
     bobPositionOffset.y = (5.95 - Math.abs(xPosition)) * (2.95 - Math.abs(zPosition)) * (Math.abs((2.44 - xPosition)) + Math.abs((0 - zPosition))) / 23;
 
-    if (moving) {
+    if (moving) { // if Bob is moving
         let newXPosition = xPosition + (0.005 * xSpeed);
         let newZPosition = zPosition + (0.005 * zSpeed);
         
-        if (newXPosition <= 5.86 && newXPosition >= -5.95) {
+        if (newXPosition <= 5.86 && newXPosition >= -5.95) { // set boundaries so Bob stays on table
             bobPositionOffset.x += 0.005 * xSpeed;
-        } else {
+        } else { // when Bob hits border, reverse direction
             xSpeed *= -1;
         }
 
-        if (newZPosition <= 2.86 && newZPosition >= -2.95) {
+        if (newZPosition <= 2.86 && newZPosition >= -2.95) { // set boundaries so Bob stays on table
             bobPositionOffset.z += 0.005 * zSpeed;
-        } else {
+        } else { // when Bob hits border, reverse direction
             zSpeed *= -1;
         }
     }
 
-    if (Math.random() > 0.99) {
+    if (Math.random() > 0.99) { // random chance to start rotating head
         let type = Math.random();
         if (type > 0.66) { // rotate only Y axis
             yRotationTarget += (Math.random() * 2 - 1) * 60;
@@ -703,6 +674,7 @@ function renderPeople() {
     let xRotationDifference = bobHeadRotation.x - xRotationTarget;
     let yRotationDifference = bobHeadRotation.y - yRotationTarget;
 
+    // rotate Bob's head based on randomly generated angles
     if (Math.abs(xRotationDifference) >= 0.5) {
         if (bobHeadRotation.x > xRotationTarget) {
             bobHeadRotation.x -= 0.5;
@@ -719,20 +691,21 @@ function renderPeople() {
         }
     }
 
+    // set normal transform matrix (for changing normals on Bob's head when it rotates)
     gl.uniformMatrix4fv(normalTransformLoc, false, flatten(rotateY(bobHeadRotation.y)));
 
+    // set matrices so Bob's head rotates properly
     let headViewMatrix = translate(-5.875, 5.85, -2.875);
     headViewMatrix = mult(rotateX(bobHeadRotation.x), headViewMatrix);
     headViewMatrix = mult(rotateY(bobHeadRotation.y), headViewMatrix);
-
-    
     headViewMatrix = mult(translate(5.875 + bobPositionOffset.x, -5.85 + bobPositionOffset.y, 2.875 + bobPositionOffset.z), headViewMatrix);
     headViewMatrix = mult(modelViewMatrix, headViewMatrix);
 
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(headViewMatrix));
 
-    gl.drawArrays(gl.POINTS, 9349, 7);
+    gl.drawArrays(gl.POINTS, 9349, 7); // draw Bob's eyes and smile
     
+    // set colors for Bob
     materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
     materialDiffuse = vec4(0.2, 0.2, 0.2, 1.0);
     materialSpecular = vec4(0.4, 0.4, 0.4, 1.0);
@@ -751,7 +724,7 @@ function renderPeople() {
     gl.drawArrays(gl.TRIANGLE_FAN, 9333, 4);
     gl.drawArrays(gl.TRIANGLES, 9337, 12);    
 
-
+    // set matrices for Bob's body
     modelViewMatrix = mult(modelViewMatrix, translate(bobPositionOffset.x, bobPositionOffset.y, bobPositionOffset.z));
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(normalTransformLoc, false, flatten(mat4()));
@@ -781,4 +754,35 @@ function renderPeople() {
     } else {
         changeStateProbability -= 0.00001;
     }
+}
+
+//----------------------------------------------------------------------------
+
+function render() {
+    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
+
+    moveCamera();
+
+    // set matrices for drawing persistent crosshair on the screen
+    gl.uniformMatrix4fv(projectionMatrixLoc,  false, flatten(ortho(-1, 1, -1, 1, -1, 1)));
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(mat4()));
+    
+    renderCrosshair();
+
+    // set matrices for 3D objects in the scene
+    gl.uniformMatrix4fv(projectionMatrixLoc,  false, flatten(projectionMatrix));
+    modelViewMatrix = lookAt(cameraPosition, cameraTarget, cameraUp);
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+
+    renderRoom();
+
+    renderButton();
+
+    renderMesh();
+
+    renderTable();    
+
+    renderBob();
+
+    requestAnimationFrame(render);
 }

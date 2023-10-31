@@ -260,8 +260,7 @@ function translateObjectCoordinates(xTranslate, yTranslate, zTranslate, object) 
 }
 
 /*----------------------------------------------------------------------------*/
-
-
+// Functions for controlling movement within the 3D world, including setting up event listeners and logic for camera placement
 
 // Variables that keep track of the buttons that are currently being pressed
 var eActive = false;
@@ -413,7 +412,7 @@ function moveCameraWithMouse(event) {
 }
 
 var walkingSpeed = 0.5;
-var normalSize = true;
+var normalSize = true; // true when not on table, false when small on table
 
 function moveCamera() {
     if (eActive) {

@@ -22,7 +22,6 @@
             vL = normalize(light - pos);
             vE = -pos;
             vN = (normalTransform * aNormal).xyz;
-            //vN = normalize((projectionMatrix * aNormal).xyz);
 
             gl_Position = projectionMatrix * modelViewMatrix * aPosition;
             gl_PointSize = 3.0;
@@ -54,7 +53,6 @@
             vec4 specular = Ks * uSpecularProduct;
 
             if(dot(vL, vN) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
-            //diffuse = vec4(0.0, 0.0, 0.0, 1.0);
 
             fColor = ambient + diffuse + specular;
             fColor.a = 1.0;
