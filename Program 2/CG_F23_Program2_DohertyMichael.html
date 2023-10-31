@@ -59,10 +59,32 @@
         }
     </script>
 
+    <head>
+        <style>
+            html {
+                text-align: center;
+            }
+        </style>
+    </head>      
+
     <body>
         <canvas id="gl-canvas" width="600" height="600">
             Oops ... your browser doesn't support the HTML5 canvas element
         </canvas>
+
+        <h2>Controls:</h2>
+        <p>
+            Use <b>W</b> <b>A</b> <b>S</b> <b>D</b> to move forward, left, backwards, and right (respectively)
+        </p>
+        <p>
+            Use <b>Q</b> and <b>E</b> to rotate the camera along the Y-axis
+        </p>
+        <p>
+            Click on the Canvas to change camera angle with your mouse. Hit <b>Esc</b> to exit this mode.
+        </p>
+        <p>
+            Click on the buttons within the world to change size!
+        </p>
     </body>
 
     <script type="text/javascript" src="../Common/initShaders.js"></script>
