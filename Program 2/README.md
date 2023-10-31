@@ -13,18 +13,18 @@ Your submission will include a working program, additional documentation describ
   - (10 points) At least one part must move in conjunction with an attached part (think an elbow moves a hand, but the hand can move separately at the wrist)
   - **NOTE:** Your object **SHOULD NOT** be substantially the same as the provided examples for robotarm.hml or figure.html in Textbook Chapter 9.
   - **NOTE:** Your figure **DOES NOT NEED** to be sufficiently complex so that you need to write or copy a lot of code to implement a tree or stack, although this does provide for more interesting figures, better control and cleaner code. But you MUST fully understand and explain what code you choose use or adapt if you do that.
--  **MESH LANDSCAPE:**
-  -  (5 points) Define a "landscape" as a mesh using a heightfield function defined on the XZ-plane.
-  -  The mesh should NOT move with the object but the camera should be able to view it from different positions.
--  **LIGHTING:**
+- **MESH LANDSCAPE:**
+  - (5 points) Define a "landscape" as a mesh using a heightfield function defined on the XZ-plane.
+  - The mesh should NOT move with the object but the camera should be able to view it from different positions.
+- **LIGHTING:**
   -  (10 points) Define at least one positional or directional light in your scene that will provide visible diffuse or specular shading effects.
--  **CAMERA POSITIONING:**
+- **CAMERA POSITIONING:**
   -  (10 points) Provide controls to change the viewing position (HINT: use the **lookAt** function)
--  **FUNCTIONALITY REQUIREMENTS and EXPECTATIONS:**
+- **FUNCTIONALITY REQUIREMENTS and EXPECTATIONS:**
   -  (5 points) The entire object must move within the scene. (e.g. figure "walks" on mesh or crane moves while axes stay fixed). Object motion can be animated or controlled by user interaction.
   -  (5 points) Motion is controlled and reasonable - i.e. good master and management of current transformation matrices for model components
   -  (5 points) Specify a **projection** using **one of the three methods (e.g. ortho, frustum, perspective)** for specifying a veiwing volume in **MVnew.js**.  You can set the view volume to use the units that are most convenient for your scene.
--  **EXCEPTIONAL WORK:** (10 points) Incorporate some additional element. Here are examples:
+- **EXCEPTIONAL WORK:** (10 points) Incorporate some additional element. Here are examples:
   -  Provide a way to move the light. (e.g. concepts -a "sun" that moves across the sky. a "flashlight" that can be directed) (MEDIUM)
   -  Cast a shadow using projection matrices (HARD)
   -  Create an "environment" that exists at a very large scale so that the camera is inside the environment and the interior surfaces show.  (E.G. A very large cube or sphere) or a simpler version is that there is a "wall" as a background. (TRICKY)
