@@ -3,15 +3,11 @@ var gl;	// Graphics context
 
 var vertices = new Float32Array ( [	// Use Javascript typed arrays for coordinates
 //    X     Y     Z
-   -0.5, -0.5,  0.0,
-   -0.5,  0.5,  0.0,
-    0.5,  0.5,  0.0,
-    0.5, -0.5,  0.0
+   -1.0, -1.0,  0.0,
+   -1.0,  1.0,  0.0,
+    1.0,  1.0,  0.0,
+    1.0, -1.0,  0.0
 ]);
-
-var uTexMapLoc;
-
-var tester = 'data:image/webp;base64,UklGRmAEAABXRUJQVlA4IFQEAACwIQCdASqAAIAAPp1InEolpKKhqJWsELATiWlj5x19XKMJIiG9y9+5yxmxVduDMBsGMyo8nQhjxRVsVAgRR57CmsN09T+Bd6WIBWLxTsS/PnC/fFJaWvu5fUrUUF9s+NUZ3fbHEih/aPWMQa2e3JigQ/S/8cjcYh10gy8BIMuzbGX93uyD5Mm5OlWZDOjoOTEJa0GIGGfchnfhDpFNUDXWfPdL/ufvwHBLV1wZGZ67sdk/Vryo3lOSajNhZ8ixkNTiPxizUFmsY/0aUUchAWeZGK/pzQ4z7OmdZz7707t02jS+96YgKMx1QD/WLbRSGYI64AuJx2ToefxEcuXZbY8bAoSCX0nNgckFqpBXmLJtjZK6LLLxpAD+4I2Yt6HJ/XUoxUjlagFQaw/r7yh2IJ/VlqIcWyKXsWziez3f8QMQ/AXpP+V51jQH1z/tsCrTX5Y1d7Spm1oAnLjQsOjbybkDyBewq1nczfpdv0ACYUJJIlQa3uW9ig3ZCPkjsX4iwvVXdSyBTKC+rlpVAWOvjo53HbXgQRTHt0wmbw+XM+fUr+LQpM5mp9inCAluRCpr/iLKtG+RIG6t4Honsbuye9LxjVvUsuyfOS9HxlTxR9pIvOGqHiembnC88+yCNlsWJjDt3aW6NRaXdufuuMXrsetq6fcomVO49fqugoRS6P3IRQ+BKVv7PB4oAmkuKzLK7RSM6G7y1zjj425a065tIJMVaCSDpSreTp5ElBjmJo9/I9od56g5pTvAXVQzdpR/AFce6ya5CC5XdEEky+NRF6+tAxfQzzgfNqjhBWWBmhIlvvnLIVFEfziMaWDUbO9DFTKKhu7Hnh3ULNHSulN5tEOA85l1oU+5f2jiNlCyd8iEzizOolDj96Mi9S2A/Fo2rUTJuvZx3efwJAY/bF8wDfm6gn3GdYTfWXX7tdCC76Dd1Wl5iAmcrrWq1ZaHR9nQknGdjziLWfQIG2ZN8q0fqPj6NjN2fACn+2TSnwIJqZhCt8Y7J3alz8KWd6QfugbsmprgCCpQT3mUtyMW04AFLL/lrMKrUgx3jPfDY09fRpd9SSD9R8+n5WX8AoQuOPAI8IEeIsXMcVnMuN16/315TLEhKom0riM+iqBT6x89Nt+baOndBNxvqBHpgtnWBr1Ri/qi4m+MflH/YUiANQCKCTotEv8pkQJ9lqfUHF/BrzSfvHx52IOp/kOQgyie7QUlHdcfHocmU7E2fL5DEsC9phaR8DVAo72xc3Fv9f/ipKyMmHj76aZynjaMGmVXp8bM14q9l6vCCGjzMiHzAqYgVmRYjs09n77AXtqLGzuj8/YSdNWn2TgynyE3ayn5d/9Cg7Alur8Hzs18iZmjdLNt9ovgTSPcL6MJyq9sUNlnnoUb1gdDfolI6mNkxaB85/W87jsrm9urjkozSH6xVjCxEzbAvwwmssM5eEevQsF7kcwSnYLeiwH5blkwkSebvyHfFk2PbAAA'
 
 //adapted from "Hello2DTexture_ImageFile.js" example
 function configureTexture(imgString) { 
@@ -29,12 +25,11 @@ function configureTexture(imgString) {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
             gl.NEAREST_MIPMAP_LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-        // console.log('The image!!');
-        // console.log(image);
     }
     image.src = imgString;
 }
+
+var program1, program2, program3;
 
 window.onload = function init()
 {
@@ -51,8 +46,11 @@ window.onload = function init()
     //
     //  Load shaders and initialize attribute buffers
     //
-    var program = initShaders(gl, "vertex-shader", "fragment-shader");
-    gl.useProgram(program);
+    program1 = initShaders(gl, "vertex-shader", "fragment-shader-1");
+    program2 = initShaders(gl, "vertex-shader", "fragment-shader-2");
+    program3 = initShaders(gl, "vertex-shader", "fragment-shader-3");
+
+    gl.useProgram(program1);
 
     // texture array atrribute buffer
 
@@ -69,7 +67,15 @@ window.onload = function init()
         gl.STATIC_DRAW
     );
 
-    var texCoordLoc = gl.getAttribLocation(program, "aTexCoord");
+    var texCoordLoc = gl.getAttribLocation(program1, "aTexCoord");
+    gl.vertexAttribPointer(texCoordLoc, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(texCoordLoc);
+
+    texCoordLoc = gl.getAttribLocation(program2, "aTexCoord");
+    gl.vertexAttribPointer(texCoordLoc, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(texCoordLoc);
+
+    texCoordLoc = gl.getAttribLocation(program3, "aTexCoord");
     gl.vertexAttribPointer(texCoordLoc, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(texCoordLoc);
 
@@ -80,12 +86,33 @@ window.onload = function init()
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
-    var positionLoc = gl.getAttribLocation(program, "aPosition");
+    var positionLoc = gl.getAttribLocation(program1, "aPosition");
     gl.vertexAttribPointer(positionLoc, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionLoc);
 
-    uTexMapLoc = gl.getUniformLocation(program, "uTexMap");
-    thetaLoc = gl.getUniformLocation(program, "uTheta");
+    positionLoc = gl.getAttribLocation(program2, "aPosition");
+    gl.vertexAttribPointer(positionLoc, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(positionLoc);
+
+    positionLoc = gl.getAttribLocation(program3, "aPosition");
+    gl.vertexAttribPointer(positionLoc, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(positionLoc);
+
+    document.getElementById("imageFilter").onchange = function (event) {
+        switch (event.target.value) {
+            case '1':
+                gl.useProgram(program1);
+                break;
+            case '2':
+                gl.useProgram(program2);
+                break;
+            case '3':
+                gl.useProgram(program3);
+                break;
+            default:
+                gl.useProgram(program1);
+        }
+    }
 
     render();
 }
@@ -94,8 +121,6 @@ function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // draw wood wall
-    gl.uniform1i(uTexMapLoc, 0);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
     requestAnimationFrame(render);	// Call to browser to refresh display

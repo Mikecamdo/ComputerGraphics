@@ -16,7 +16,7 @@
         }
     </script>
 
-    <script id="fragment-shader" type="x-shader/x-fragment">
+    <script id="fragment-shader-1" type="x-shader/x-fragment">
         #version 300 es
         precision mediump float;
 
@@ -31,14 +31,55 @@
         }
     </script>
 
+    <script id="fragment-shader-2" type="x-shader/x-fragment">
+        #version 300 es
+        precision mediump float;
+
+        in vec2 vTexCoord;
+        out vec4 fColor;
+
+        uniform sampler2D uTexMap;
+
+        void main()
+        {
+            vec4 color = texture(uTexMap, vTexCoord);
+            float gray = (color.r + color.g + color.b) / 3.0;
+            fColor = vec4(gray, gray, gray, 1.0);
+        }
+    </script>
+
+    <script id="fragment-shader-3" type="x-shader/x-fragment">
+        #version 300 es
+        precision mediump float;
+
+        in vec2 vTexCoord;
+        out vec4 fColor;
+
+        uniform sampler2D uTexMap;
+
+        void main()
+        {
+            vec4 color = texture(uTexMap, vTexCoord);
+            fColor = vec4(1.0 - color.r, 1.0 - color.g, 1.0 - color.b, 1.0);
+        }
+    </script>
+
     <script type="text/javascript" src="../Common/initShaders.js"></script>
     <script type="text/javascript" src="CG_HW5_FragmentShaderSelfie_DohertyMichael.js"></script>
 
     <body>
-        <canvas id="gl-canvas" width="512" height="512">
+        <canvas id="gl-canvas" width="640" height="360">
         Oops ... your browser doesn't support the HTML5 canvas element
         </canvas>
 
         <video></video>
+
+        <label for="imageFilter">Choose Filter:</label>
+
+        <select name="imageFilter" id="imageFilter">
+            <option selected value="1">None</option>
+            <option value="2">Grayscale</option>
+            <option value="3">Image Negative</option>
+        </select>
     </body>
 </html>
