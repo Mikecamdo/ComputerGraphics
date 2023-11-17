@@ -11,7 +11,7 @@
 
         void main()
         {
-            vTexCoord = aTexCoord;
+            vTexCoord = vec2(1.0 - aTexCoord.x, aTexCoord.y); // flips the orientation of the live video feed
             gl_Position = aPosition;
         }
     </script>
@@ -73,6 +73,8 @@
         </canvas>
 
         <video style="display: none;"></video>
+
+        <br/>
 
         <label for="imageFilter">Choose Filter:</label>
 
