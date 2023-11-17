@@ -1,7 +1,8 @@
 var canvas;	// Drawing surface 
 var gl;	// Graphics context
 
-var program1, program2, program3; // programs for each of the fragment shaders
+var program1, program2, program3, program4, 
+program5, program6, program7; // programs for each of the fragment shaders
 var videoFeed, videoTexture;
 
 var liveVideoFeed = true;
@@ -97,8 +98,12 @@ window.onload = function init()
     program1 = initShaders(gl, "vertex-shader", "fragment-shader-1");
     program2 = initShaders(gl, "vertex-shader", "fragment-shader-2");
     program3 = initShaders(gl, "vertex-shader", "fragment-shader-3");
+    program4 = initShaders(gl, "vertex-shader", "fragment-shader-4");
+    program5 = initShaders(gl, "vertex-shader", "fragment-shader-5");
+    program6 = initShaders(gl, "vertex-shader", "fragment-shader-6");
+    program7 = initShaders(gl, "vertex-shader", "fragment-shader-7");
 
-    gl.useProgram(program1);
+    gl.useProgram(program1); // default to no filter
 
     // texture array atrribute buffer
     var tBuffer = gl.createBuffer();
@@ -153,6 +158,18 @@ window.onload = function init()
                 break;
             case '3': // image negative filter
                 gl.useProgram(program3);
+                break;
+            case '4': // saturated filter
+                gl.useProgram(program4);
+                break;
+            case '5': // sepia filter
+                gl.useProgram(program5);
+                break;
+            case '6': // blurry filter
+                gl.useProgram(program6);
+                break;
+            case '7': // distortion filter
+                gl.useProgram(program7);
                 break;
             default:
                 gl.useProgram(program1);
