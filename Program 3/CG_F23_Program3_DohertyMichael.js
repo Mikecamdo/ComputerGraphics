@@ -20,6 +20,7 @@ var vertices = new Float32Array ( [	// Use Javascript typed arrays for coordinat
 
 var backgroundTexture;
 var distortionFilterTypeLocs = [undefined];
+var reflectionTypeLocs = [undefined];
 var currentProgram = 1;
 
 // adapted from "Hello2DTexture_ImageFile.js" example
@@ -199,6 +200,15 @@ window.onload = function init()
     distortionFilterTypeLocs.push(gl.getUniformLocation(programs[7], 'distortionFilterType'));
     distortionFilterTypeLocs.push(gl.getUniformLocation(programs[8], 'distortionFilterType'));
     
+    reflectionTypeLocs.push(gl.getUniformLocation(programs[1], 'reflectionType'));
+    reflectionTypeLocs.push(gl.getUniformLocation(programs[2], 'reflectionType'));
+    reflectionTypeLocs.push(gl.getUniformLocation(programs[3], 'reflectionType'));
+    reflectionTypeLocs.push(gl.getUniformLocation(programs[4], 'reflectionType'));
+    reflectionTypeLocs.push(gl.getUniformLocation(programs[5], 'reflectionType'));
+    reflectionTypeLocs.push(gl.getUniformLocation(programs[6], 'reflectionType'));
+    reflectionTypeLocs.push(gl.getUniformLocation(programs[7], 'reflectionType'));
+    reflectionTypeLocs.push(gl.getUniformLocation(programs[8], 'reflectionType'));
+
     // TODO either implement or remove:
     // distortionFilterTypeLocs.push(gl.getUniformLocation(programs[9], 'distortionFilterType'));
     // distortionFilterTypeLocs.push(gl.getUniformLocation(programs[10], 'distortionFilterType'));
@@ -206,6 +216,8 @@ window.onload = function init()
     // distortionFilterTypeLocs.push(gl.getUniformLocation(programs[12], 'distortionFilterType'));
 
     updateDistortionFilter(1);
+    updateReflectionType(1);
+
     gl.useProgram(programs[currentProgram]);
 
     document.getElementById("colorFilter").onchange = function (event) {
@@ -254,6 +266,16 @@ window.onload = function init()
                 updateDistortionFilter(1);
                 gl.useProgram(programs[currentProgram]);
         }
+
+        if (event.target.value == '4') {
+            document.getElementById("reflectionChoice").style.display = 'block';
+        } else {
+            document.getElementById("reflectionChoice").style.display = 'none';
+        }
+    }
+
+    document.getElementById("reflectionType").onchange = function (event) {
+        updateReflectionType(event.target.value);
     }
 
     videoFeed = document.querySelector('video');
@@ -323,4 +345,33 @@ function updateDistortionFilter(distortionFilterType) {
 
     // gl.useProgram(programs[12]);
     // gl.uniform1i(distortionFilterTypeLocs[12], distortionFilterType);
+    gl.useProgram(programs[currentProgram]);
+}
+
+function updateReflectionType(reflectionType) {
+    gl.useProgram(programs[1]);
+    gl.uniform1i(reflectionTypeLocs[1], reflectionType);
+
+    gl.useProgram(programs[2]);
+    gl.uniform1i(reflectionTypeLocs[2], reflectionType);
+
+    gl.useProgram(programs[3]);
+    gl.uniform1i(reflectionTypeLocs[3], reflectionType);
+
+    gl.useProgram(programs[4]);
+    gl.uniform1i(reflectionTypeLocs[4], reflectionType);
+
+    gl.useProgram(programs[5]);
+    gl.uniform1i(reflectionTypeLocs[5], reflectionType);
+
+    gl.useProgram(programs[6]);
+    gl.uniform1i(reflectionTypeLocs[6], reflectionType);
+
+    gl.useProgram(programs[7]);
+    gl.uniform1i(reflectionTypeLocs[7], reflectionType);
+
+    gl.useProgram(programs[8]);
+    gl.uniform1i(reflectionTypeLocs[8], reflectionType);
+
+    gl.useProgram(programs[currentProgram]);
 }

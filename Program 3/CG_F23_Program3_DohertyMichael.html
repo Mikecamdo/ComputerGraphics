@@ -24,6 +24,8 @@
         out vec4 fColor;
 
         uniform int distortionFilterType;
+        uniform int reflectionType;
+
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
 
@@ -56,10 +58,28 @@
 
                 fColor = vec4(rgb, 1.0);
             } else if (distortionFilterType == 4) { // reflection
-                if (vTexCoord.x < 0.5) { //FIXME maybe add interaction to flip along y axis too? flip along both??
-                    fColor = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                if (reflectionType == 1) {
+                    if (vTexCoord.x < 0.5) {
+                        fColor = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else {
+                        fColor = texture(uTexMap, vTexCoord);
+                    }
+                } else if (reflectionType == 2) {
+                    if (vTexCoord.y < 0.5) {
+                        fColor = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        fColor = texture(uTexMap, vTexCoord);
+                    }
                 } else {
-                    fColor = texture(uTexMap, vTexCoord);
+                    if (vTexCoord.x < 0.5 && vTexCoord.y < 0.5) {
+                        fColor = texture(uTexMap, vec2(1.0 - vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else if (vTexCoord.x < 0.5) {
+                        fColor = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else if (vTexCoord.y < 0.5) {
+                        fColor = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        fColor = texture(uTexMap, vTexCoord);
+                    }
                 }
             } else { // distortionFilterType == 5 or 6 (gorilla or christmas hat)
                 vec4 backgroundColor = texture(uBackgroundTexture, vTexCoord);
@@ -82,6 +102,8 @@
         out vec4 fColor;
 
         uniform int distortionFilterType;
+        uniform int reflectionType;
+
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
 
@@ -117,10 +139,28 @@
 
                 color = vec4(rgb, 1.0);
             } else if (distortionFilterType == 4) { // reflection
-                if (vTexCoord.x < 0.5) { //FIXME maybe add interaction to flip along y axis too? flip along both??
-                    color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                if (reflectionType == 1) {
+                    if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
+                } else if (reflectionType == 2) {
+                    if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 } else {
-                    color = texture(uTexMap, vTexCoord);
+                    if (vTexCoord.x < 0.5 && vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 }
             } else { // distortionFilterType == 5 or 6 (gorilla or christmas hat)
                 vec4 backgroundColor = texture(uBackgroundTexture, vTexCoord);
@@ -146,6 +186,8 @@
         out vec4 fColor;
 
         uniform int distortionFilterType;
+        uniform int reflectionType;
+
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
 
@@ -180,10 +222,28 @@
 
                 color = vec4(rgb, 1.0);
             } else if (distortionFilterType == 4) { // reflection
-                if (vTexCoord.x < 0.5) { //FIXME maybe add interaction to flip along y axis too? flip along both??
-                    color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                if (reflectionType == 1) {
+                    if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
+                } else if (reflectionType == 2) {
+                    if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 } else {
-                    color = texture(uTexMap, vTexCoord);
+                    if (vTexCoord.x < 0.5 && vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 }
             } else { // distortionFilterType == 5 or 6 (gorilla or christmas hat)
                 vec4 backgroundColor = texture(uBackgroundTexture, vTexCoord);
@@ -208,6 +268,8 @@
         out vec4 fColor;
 
         uniform int distortionFilterType;
+        uniform int reflectionType;
+
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
 
@@ -243,10 +305,28 @@
 
                 color = vec4(rgb, 1.0);
             } else if (distortionFilterType == 4) { // reflection
-                if (vTexCoord.x < 0.5) { //FIXME maybe add interaction to flip along y axis too? flip along both??
-                    color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                if (reflectionType == 1) {
+                    if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
+                } else if (reflectionType == 2) {
+                    if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 } else {
-                    color = texture(uTexMap, vTexCoord);
+                    if (vTexCoord.x < 0.5 && vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 }
             } else { // distortionFilterType == 5 or 6 (gorilla or christmas hat)
                 vec4 backgroundColor = texture(uBackgroundTexture, vTexCoord);
@@ -274,6 +354,8 @@
         out vec4 fColor;
 
         uniform int distortionFilterType;
+        uniform int reflectionType;
+
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
 
@@ -309,10 +391,28 @@
 
                 color = vec4(rgb, 1.0);
             } else if (distortionFilterType == 4) { // reflection
-                if (vTexCoord.x < 0.5) { //FIXME maybe add interaction to flip along y axis too? flip along both??
-                    color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                if (reflectionType == 1) {
+                    if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
+                } else if (reflectionType == 2) {
+                    if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 } else {
-                    color = texture(uTexMap, vTexCoord);
+                    if (vTexCoord.x < 0.5 && vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 }
             } else { // distortionFilterType == 5 or 6 (gorilla or christmas hat)
                 vec4 backgroundColor = texture(uBackgroundTexture, vTexCoord);
@@ -341,6 +441,8 @@
         out vec4 fColor;
 
         uniform int distortionFilterType;
+        uniform int reflectionType;
+
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
 
@@ -375,10 +477,28 @@
 
                 color = vec4(rgb, 1.0);
             } else if (distortionFilterType == 4) { // reflection
-                if (vTexCoord.x < 0.5) { //FIXME maybe add interaction to flip along y axis too? flip along both??
-                    color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                if (reflectionType == 1) {
+                    if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
+                } else if (reflectionType == 2) {
+                    if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 } else {
-                    color = texture(uTexMap, vTexCoord);
+                    if (vTexCoord.x < 0.5 && vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 }
             } else { // distortionFilterType == 5 or 6 (gorilla or christmas hat)
                 vec4 backgroundColor = texture(uBackgroundTexture, vTexCoord);
@@ -410,6 +530,8 @@
         out vec4 fColor;
 
         uniform int distortionFilterType;
+        uniform int reflectionType;
+
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
 
@@ -444,10 +566,28 @@
 
                 color = vec4(rgb, 1.0);
             } else if (distortionFilterType == 4) { // reflection
-                if (vTexCoord.x < 0.5) { //FIXME maybe add interaction to flip along y axis too? flip along both??
-                    color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                if (reflectionType == 1) {
+                    if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
+                } else if (reflectionType == 2) {
+                    if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 } else {
-                    color = texture(uTexMap, vTexCoord);
+                    if (vTexCoord.x < 0.5 && vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 }
             } else { // distortionFilterType == 5 or 6 (gorilla or christmas hat)
                 vec4 backgroundColor = texture(uBackgroundTexture, vTexCoord);
@@ -496,6 +636,8 @@
         out vec4 fColor;
 
         uniform int distortionFilterType;
+        uniform int reflectionType;
+
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
 
@@ -530,10 +672,28 @@
 
                 color = vec4(rgb, 1.0);
             } else if (distortionFilterType == 4) { // reflection
-                if (vTexCoord.x < 0.5) { //FIXME maybe add interaction to flip along y axis too? flip along both??
-                    color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                if (reflectionType == 1) {
+                    if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
+                } else if (reflectionType == 2) {
+                    if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 } else {
-                    color = texture(uTexMap, vTexCoord);
+                    if (vTexCoord.x < 0.5 && vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else if (vTexCoord.x < 0.5) {
+                        color = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+                    } else if (vTexCoord.y < 0.5) {
+                        color = texture(uTexMap, vec2(vTexCoord.x, 1.0 - vTexCoord.y));
+                    } else {
+                        color = texture(uTexMap, vTexCoord);
+                    }
                 }
             } else { // distortionFilterType == 5 or 6 (gorilla or christmas hat)
                 vec4 backgroundColor = texture(uBackgroundTexture, vTexCoord);
@@ -613,6 +773,16 @@
                 <option value="5">Gorilla</option>
                 <option value="6">Christmas Hat</option>
             </select>
-        </div>        
+        </div>
+        
+        <div id="reflectionChoice" style="display: none;">
+            <label for="reflectionType">Reflection Type:</label>
+
+            <select name="reflectionType" id="reflectionType">
+                <option selected value="1">Vertical</option>
+                <option value="2">Horizontal</option>
+                <option value="3">Vertical and Horizontal</option>
+            </select>
+        </div>
     </body>
 </html>
