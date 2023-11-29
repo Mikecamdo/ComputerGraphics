@@ -2,7 +2,7 @@ var canvas;	// Drawing surface
 var gl;	// Graphics context
 
 var program1, program2, program3, program4, 
-program5, program6, program7, program8, program9; // programs for each of the fragment shaders
+program5, program6, program7, program8, program9, program10; // programs for each of the fragment shaders
 var videoFeed, videoTexture;
 
 var liveVideoFeed = true;
@@ -104,6 +104,7 @@ window.onload = function init()
     program7 = initShaders(gl, "vertex-shader", "fragment-shader-7");
     program8 = initShaders(gl, "vertex-shader", "fragment-shader-8");
     program9 = initShaders(gl, "vertex-shader", "fragment-shader-9");
+    program10 = initShaders(gl, "vertex-shader", "fragment-shader-10");
 
     gl.useProgram(program1); // default to no filter
 
@@ -178,6 +179,9 @@ window.onload = function init()
                 break;
             case '9':
                 gl.useProgram(program9);
+                break;
+            case '10':
+                gl.useProgram(program10);
                 break;
             default:
                 gl.useProgram(program1);
