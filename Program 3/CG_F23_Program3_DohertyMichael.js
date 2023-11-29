@@ -19,8 +19,11 @@ var vertices = new Float32Array ( [	// Use Javascript typed arrays for coordinat
 ]);
 
 var backgroundTexture;
+
 var distortionFilterTypeLocs = [undefined];
 var reflectionTypeLocs = [undefined];
+var blurStrengthLocs = [undefined];
+
 var currentProgram = 1;
 
 // adapted from "Hello2DTexture_ImageFile.js" example
@@ -209,6 +212,15 @@ window.onload = function init()
     reflectionTypeLocs.push(gl.getUniformLocation(programs[7], 'reflectionType'));
     reflectionTypeLocs.push(gl.getUniformLocation(programs[8], 'reflectionType'));
 
+    blurStrengthLocs.push(gl.getUniformLocation(programs[1], 'blurStrength'));
+    blurStrengthLocs.push(gl.getUniformLocation(programs[2], 'blurStrength'));
+    blurStrengthLocs.push(gl.getUniformLocation(programs[3], 'blurStrength'));
+    blurStrengthLocs.push(gl.getUniformLocation(programs[4], 'blurStrength'));
+    blurStrengthLocs.push(gl.getUniformLocation(programs[5], 'blurStrength'));
+    blurStrengthLocs.push(gl.getUniformLocation(programs[6], 'blurStrength'));
+    blurStrengthLocs.push(gl.getUniformLocation(programs[7], 'blurStrength'));
+    blurStrengthLocs.push(gl.getUniformLocation(programs[8], 'blurStrength'));
+
     // TODO either implement or remove:
     // distortionFilterTypeLocs.push(gl.getUniformLocation(programs[9], 'distortionFilterType'));
     // distortionFilterTypeLocs.push(gl.getUniformLocation(programs[10], 'distortionFilterType'));
@@ -217,6 +229,7 @@ window.onload = function init()
 
     updateDistortionFilter(1);
     updateReflectionType(1);
+    updateBlurStrength(7);
 
     gl.useProgram(programs[currentProgram]);
 
@@ -272,10 +285,22 @@ window.onload = function init()
         } else {
             document.getElementById("reflectionChoice").style.display = 'none';
         }
+
+        if (event.target.value == '2') {
+            document.getElementById("blurChoice").style.display = 'block';
+        } else {
+            document.getElementById("blurChoice").style.display = 'none';
+        }
     }
 
     document.getElementById("reflectionType").onchange = function (event) {
         updateReflectionType(event.target.value);
+    }
+
+    document.getElementById("blurChoice").onpointermove = function (event) {
+        if (event.pressure !== 0) {
+            updateBlurStrength(event.target.value);
+        }
     }
 
     videoFeed = document.querySelector('video');
@@ -372,6 +397,34 @@ function updateReflectionType(reflectionType) {
 
     gl.useProgram(programs[8]);
     gl.uniform1i(reflectionTypeLocs[8], reflectionType);
+
+    gl.useProgram(programs[currentProgram]);
+}
+
+function updateBlurStrength(blurStrength) {
+    gl.useProgram(programs[1]);
+    gl.uniform1i(blurStrengthLocs[1], blurStrength);
+
+    gl.useProgram(programs[2]);
+    gl.uniform1i(blurStrengthLocs[2], blurStrength);
+
+    gl.useProgram(programs[3]);
+    gl.uniform1i(blurStrengthLocs[3], blurStrength);
+
+    gl.useProgram(programs[4]);
+    gl.uniform1i(blurStrengthLocs[4], blurStrength);
+
+    gl.useProgram(programs[5]);
+    gl.uniform1i(blurStrengthLocs[5], blurStrength);
+
+    gl.useProgram(programs[6]);
+    gl.uniform1i(blurStrengthLocs[6], blurStrength);
+
+    gl.useProgram(programs[7]);
+    gl.uniform1i(blurStrengthLocs[7], blurStrength);
+
+    gl.useProgram(programs[8]);
+    gl.uniform1i(blurStrengthLocs[8], blurStrength);
 
     gl.useProgram(programs[currentProgram]);
 }

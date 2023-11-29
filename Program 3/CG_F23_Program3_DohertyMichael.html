@@ -25,6 +25,7 @@
 
         uniform int distortionFilterType;
         uniform int reflectionType;
+        uniform int blurStrength;
 
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
@@ -38,14 +39,15 @@
                 vec2 texelSize = vec2(1.0/640.0, 1.0/360.0);        
                 vec3 blur = vec3(0.0, 0.0, 0.0);
 
-                // Applies a 15x15 kernel to blur the image
-                for (int i = -7; i <= 7; i++) {
-                    for (int j = -7; j <= 7; j++) {
+                // Applies a kernel to blur the image
+                for (int i = -blurStrength; i <= blurStrength; i++) {
+                    for (int j = -blurStrength; j <= blurStrength; j++) {
                         blur += texture(uTexMap, vTexCoord + vec2(i, j) * texelSize).rgb;
                     }
                 }
 
-                blur /= 225.0; // normalizes the result
+                // normalizes the result
+                blur /= ((float(blurStrength) * 2.0 + 1.0) * (float(blurStrength) * 2.0 + 1.0));
 
                 fColor = vec4(blur, 1.0);
             } else if (distortionFilterType == 3) { // distortion
@@ -103,6 +105,7 @@
 
         uniform int distortionFilterType;
         uniform int reflectionType;
+        uniform int blurStrength;
 
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
@@ -119,14 +122,15 @@
                 vec2 texelSize = vec2(1.0/640.0, 1.0/360.0);        
                 vec3 blur = vec3(0.0, 0.0, 0.0);
 
-                // Applies a 15x15 kernel to blur the image
-                for (int i = -7; i <= 7; i++) {
-                    for (int j = -7; j <= 7; j++) {
+                // Applies a kernel to blur the image
+                for (int i = -blurStrength; i <= blurStrength; i++) {
+                    for (int j = -blurStrength; j <= blurStrength; j++) {
                         blur += texture(uTexMap, vTexCoord + vec2(i, j) * texelSize).rgb;
                     }
                 }
 
-                blur /= 225.0; // normalizes the result
+                // normalizes the result
+                blur /= ((float(blurStrength) * 2.0 + 1.0) * (float(blurStrength) * 2.0 + 1.0));
 
                 color = vec4(blur, 1.0);
             } else if (distortionFilterType == 3) { // distortion
@@ -187,6 +191,7 @@
 
         uniform int distortionFilterType;
         uniform int reflectionType;
+        uniform int blurStrength;
 
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
@@ -202,14 +207,15 @@
                 vec2 texelSize = vec2(1.0/640.0, 1.0/360.0);        
                 vec3 blur = vec3(0.0, 0.0, 0.0);
 
-                // Applies a 15x15 kernel to blur the image
-                for (int i = -7; i <= 7; i++) {
-                    for (int j = -7; j <= 7; j++) {
+                // Applies a kernel to blur the image
+                for (int i = -blurStrength; i <= blurStrength; i++) {
+                    for (int j = -blurStrength; j <= blurStrength; j++) {
                         blur += texture(uTexMap, vTexCoord + vec2(i, j) * texelSize).rgb;
                     }
                 }
 
-                blur /= 225.0; // normalizes the result
+                // normalizes the result
+                blur /= ((float(blurStrength) * 2.0 + 1.0) * (float(blurStrength) * 2.0 + 1.0));
 
                 color = vec4(blur, 1.0);
             } else if (distortionFilterType == 3) { // distortion
@@ -269,6 +275,7 @@
 
         uniform int distortionFilterType;
         uniform int reflectionType;
+        uniform int blurStrength;
 
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
@@ -285,14 +292,15 @@
                 vec2 texelSize = vec2(1.0/640.0, 1.0/360.0);        
                 vec3 blur = vec3(0.0, 0.0, 0.0);
 
-                // Applies a 15x15 kernel to blur the image
-                for (int i = -7; i <= 7; i++) {
-                    for (int j = -7; j <= 7; j++) {
+                // Applies a kernel to blur the image
+                for (int i = -blurStrength; i <= blurStrength; i++) {
+                    for (int j = -blurStrength; j <= blurStrength; j++) {
                         blur += texture(uTexMap, vTexCoord + vec2(i, j) * texelSize).rgb;
                     }
                 }
 
-                blur /= 225.0; // normalizes the result
+                // normalizes the result
+                blur /= ((float(blurStrength) * 2.0 + 1.0) * (float(blurStrength) * 2.0 + 1.0));
 
                 color = vec4(blur, 1.0);
             } else if (distortionFilterType == 3) { // distortion
@@ -355,6 +363,7 @@
 
         uniform int distortionFilterType;
         uniform int reflectionType;
+        uniform int blurStrength;
 
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
@@ -371,14 +380,15 @@
                 vec2 texelSize = vec2(1.0/640.0, 1.0/360.0);        
                 vec3 blur = vec3(0.0, 0.0, 0.0);
 
-                // Applies a 15x15 kernel to blur the image
-                for (int i = -7; i <= 7; i++) {
-                    for (int j = -7; j <= 7; j++) {
+                // Applies a kernel to blur the image
+                for (int i = -blurStrength; i <= blurStrength; i++) {
+                    for (int j = -blurStrength; j <= blurStrength; j++) {
                         blur += texture(uTexMap, vTexCoord + vec2(i, j) * texelSize).rgb;
                     }
                 }
 
-                blur /= 225.0; // normalizes the result
+                // normalizes the result
+                blur /= ((float(blurStrength) * 2.0 + 1.0) * (float(blurStrength) * 2.0 + 1.0));
 
                 color = vec4(blur, 1.0);
             } else if (distortionFilterType == 3) { // distortion
@@ -442,6 +452,7 @@
 
         uniform int distortionFilterType;
         uniform int reflectionType;
+        uniform int blurStrength;
 
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
@@ -457,14 +468,15 @@
                 vec2 texelSize = vec2(1.0/640.0, 1.0/360.0);        
                 vec3 blur = vec3(0.0, 0.0, 0.0);
 
-                // Applies a 15x15 kernel to blur the image
-                for (int i = -7; i <= 7; i++) {
-                    for (int j = -7; j <= 7; j++) {
+                // Applies a kernel to blur the image
+                for (int i = -blurStrength; i <= blurStrength; i++) {
+                    for (int j = -blurStrength; j <= blurStrength; j++) {
                         blur += texture(uTexMap, vTexCoord + vec2(i, j) * texelSize).rgb;
                     }
                 }
 
-                blur /= 225.0; // normalizes the result
+                // normalizes the result
+                blur /= ((float(blurStrength) * 2.0 + 1.0) * (float(blurStrength) * 2.0 + 1.0));
 
                 color = vec4(blur, 1.0);
             } else if (distortionFilterType == 3) { // distortion
@@ -531,6 +543,7 @@
 
         uniform int distortionFilterType;
         uniform int reflectionType;
+        uniform int blurStrength;
 
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
@@ -546,14 +559,15 @@
                 vec2 texelSize = vec2(1.0/640.0, 1.0/360.0);        
                 vec3 blur = vec3(0.0, 0.0, 0.0);
 
-                // Applies a 15x15 kernel to blur the image
-                for (int i = -7; i <= 7; i++) {
-                    for (int j = -7; j <= 7; j++) {
+                // Applies a kernel to blur the image
+                for (int i = -blurStrength; i <= blurStrength; i++) {
+                    for (int j = -blurStrength; j <= blurStrength; j++) {
                         blur += texture(uTexMap, vTexCoord + vec2(i, j) * texelSize).rgb;
                     }
                 }
 
-                blur /= 225.0; // normalizes the result
+                // normalizes the result
+                blur /= ((float(blurStrength) * 2.0 + 1.0) * (float(blurStrength) * 2.0 + 1.0));
 
                 color = vec4(blur, 1.0);
             } else if (distortionFilterType == 3) { // distortion
@@ -637,6 +651,7 @@
 
         uniform int distortionFilterType;
         uniform int reflectionType;
+        uniform int blurStrength;
 
         uniform sampler2D uTexMap;
         uniform sampler2D uBackgroundTexture;
@@ -652,14 +667,15 @@
                 vec2 texelSize = vec2(1.0/640.0, 1.0/360.0);        
                 vec3 blur = vec3(0.0, 0.0, 0.0);
 
-                // Applies a 15x15 kernel to blur the image
-                for (int i = -7; i <= 7; i++) {
-                    for (int j = -7; j <= 7; j++) {
+                // Applies a kernel to blur the image
+                for (int i = -blurStrength; i <= blurStrength; i++) {
+                    for (int j = -blurStrength; j <= blurStrength; j++) {
                         blur += texture(uTexMap, vTexCoord + vec2(i, j) * texelSize).rgb;
                     }
                 }
 
-                blur /= 225.0; // normalizes the result
+                // normalizes the result
+                blur /= ((float(blurStrength) * 2.0 + 1.0) * (float(blurStrength) * 2.0 + 1.0));
 
                 color = vec4(blur, 1.0);
             } else if (distortionFilterType == 3) { // distortion
@@ -783,6 +799,12 @@
                 <option value="2">Horizontal</option>
                 <option value="3">Vertical and Horizontal</option>
             </select>
+        </div>
+
+        <div id="blurChoice" style="display: none;">
+            <label for="blurStrength">Blur Strength:</label>
+            <input name="blurStrength" id="blurStrength" type="range"
+            min="0" max="20" step="1" value="7" />
         </div>
     </body>
 </html>
