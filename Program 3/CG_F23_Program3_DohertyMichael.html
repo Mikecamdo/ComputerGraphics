@@ -278,8 +278,34 @@
         }
     </script>
 
+    <script id="fragment-shader-12" type="x-shader/x-fragment">
+        #version 300 es
+        precision mediump float;
+
+        in vec2 vTexCoord;
+        out vec4 fColor;
+
+        uniform sampler2D uTexMap;
+        uniform sampler2D uBackgroundTexture;
+
+        void main()
+        {
+            vec4 backgroundColor = texture(uBackgroundTexture, vTexCoord);
+            vec4 videoColor = texture(uTexMap, vTexCoord);
+
+            if (backgroundColor.g - 0.1 > (backgroundColor.r + backgroundColor.b)) {
+                fColor = videoColor;
+            } else {
+                fColor = backgroundColor;
+            }
+
+            //fColor = texture(uBackgroundTexture, vTexCoord);
+        }
+    </script>
+
     <script type="text/javascript" src="../Common/initShaders.js"></script>
     <script type="text/javascript" src="CG_F23_Program3_DohertyMichael.js"></script>
+    <script type="text/javascript" src="CG_F23_Program3_DohertyMichael_ImageData.js"></script>
 
     <body>
         <canvas id="gl-canvas" width="640" height="360">
@@ -306,6 +332,7 @@
             <option value="10">Bayer Dot Screen</option>
 
             <option value="11">Reflection</option>
+            <option value="12">Gorilla</option>
         </select>
     </body>
 </html>
