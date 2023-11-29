@@ -233,7 +233,7 @@
             vec4 color = texture(uTexMap, vTexCoord);
             float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
 
-            float clusteredDotScreen[64] = float[](
+            float bayerDotScreen[64] = float[](
                 21.0, 37.0, 25.0, 41.0, 22.0, 38.0, 26.0, 42.0,
                 53.0, 5.0 , 57.0, 9.0 , 54.0, 6.0 , 58.0, 10.0,
                 29.0, 45.0, 17.0, 33.0, 30.0, 46.0, 18.0, 34.0,
@@ -248,13 +248,32 @@
             int row = int(mod(gl_FragCoord.y, 8.0));
             int index = row * 8 + col;
 
-            float threshold = clusteredDotScreen[index];
+            float threshold = bayerDotScreen[index];
             threshold /= 64.0;
  
             if (gray > threshold) {
                 fColor = vec4(1.0, 1.0, 1.0, 1.0);
             } else {
                 fColor = vec4(0.0, 0.0, 0.0, 1.0);
+            }
+        }
+    </script>
+
+    <script id="fragment-shader-11" type="x-shader/x-fragment">
+        #version 300 es
+        precision mediump float;
+
+        in vec2 vTexCoord;
+        out vec4 fColor;
+
+        uniform sampler2D uTexMap;
+
+        void main()
+        {
+            if (vTexCoord.x < 0.5) {
+                fColor = texture(uTexMap, vec2(1.0 - vTexCoord.x, vTexCoord.y));
+            } else {
+                fColor = texture(uTexMap, vTexCoord);
             }
         }
     </script>
@@ -285,6 +304,8 @@
             <option value="8">Constant Threshold Halftoning</option>
             <option value="9">Clustered Dot Screen</option>
             <option value="10">Bayer Dot Screen</option>
+
+            <option value="11">Reflection</option>
         </select>
     </body>
 </html>
