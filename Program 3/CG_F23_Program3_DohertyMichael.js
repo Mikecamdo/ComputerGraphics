@@ -218,7 +218,11 @@ window.onload = function init()
                 break;
             case '12':
                 configureBackgroundTexture(gorillaBackground);
-                //liveVideoFeed = false;
+                gl.useProgram(program12);
+                gl.uniform1i(gl.getUniformLocation(program12, 'uBackgroundTexture'), 1);
+                break;
+            case '13':
+                configureBackgroundTexture(christmasHatBackground);
                 gl.useProgram(program12);
                 gl.uniform1i(gl.getUniformLocation(program12, 'uBackgroundTexture'), 1);
                 break;
