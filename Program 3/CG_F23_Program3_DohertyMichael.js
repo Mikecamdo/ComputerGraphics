@@ -135,10 +135,12 @@ window.onload = function init()
     programs.push(initShaders(gl, "vertex-shader", "fragment-shader-6"));
     programs.push(initShaders(gl, "vertex-shader", "fragment-shader-7"));
     programs.push(initShaders(gl, "vertex-shader", "fragment-shader-8"));
-    programs.push(initShaders(gl, "vertex-shader", "fragment-shader-9"));
-    programs.push(initShaders(gl, "vertex-shader", "fragment-shader-10"));
-    programs.push(initShaders(gl, "vertex-shader", "fragment-shader-11"));
-    programs.push(initShaders(gl, "vertex-shader", "fragment-shader-12"));
+    
+    // TODO either implement or remove:
+    // programs.push(initShaders(gl, "vertex-shader", "fragment-shader-9"));
+    // programs.push(initShaders(gl, "vertex-shader", "fragment-shader-10"));
+    // programs.push(initShaders(gl, "vertex-shader", "fragment-shader-11"));
+    // programs.push(initShaders(gl, "vertex-shader", "fragment-shader-12"));
 
     gl.useProgram(programs[currentProgram]); // default to no filter
 
@@ -196,10 +198,12 @@ window.onload = function init()
     distortionFilterTypeLocs.push(gl.getUniformLocation(programs[6], 'distortionFilterType'));
     distortionFilterTypeLocs.push(gl.getUniformLocation(programs[7], 'distortionFilterType'));
     distortionFilterTypeLocs.push(gl.getUniformLocation(programs[8], 'distortionFilterType'));
-    distortionFilterTypeLocs.push(gl.getUniformLocation(programs[9], 'distortionFilterType'));
-    distortionFilterTypeLocs.push(gl.getUniformLocation(programs[10], 'distortionFilterType'));
-    distortionFilterTypeLocs.push(gl.getUniformLocation(programs[11], 'distortionFilterType'));
-    distortionFilterTypeLocs.push(gl.getUniformLocation(programs[12], 'distortionFilterType'));
+    
+    // TODO either implement or remove:
+    // distortionFilterTypeLocs.push(gl.getUniformLocation(programs[9], 'distortionFilterType'));
+    // distortionFilterTypeLocs.push(gl.getUniformLocation(programs[10], 'distortionFilterType'));
+    // distortionFilterTypeLocs.push(gl.getUniformLocation(programs[11], 'distortionFilterType'));
+    // distortionFilterTypeLocs.push(gl.getUniformLocation(programs[12], 'distortionFilterType'));
 
     updateDistortionFilter(1);
     gl.useProgram(programs[currentProgram]);
@@ -211,35 +215,17 @@ window.onload = function init()
             case '3': // image negative filter
             case '4': // saturated filter
             case '5': // sepia filter
-            // case '6': // blurry filter
-            //     gl.useProgram(program6);
-            //     break;
-            // case '7': // distortion filter
-            //     gl.useProgram(program7);
-            //     break;
-            case '8': // constant threshold halftoning
-            case '9': // clustered dot screen
-            case '10': // bayer dot screen
+            case '6': // constant threshold halftoning
+            case '7': // clustered dot screen
+            case '8': // bayer dot screen
                 currentProgram = event.target.value;
 
                 gl.useProgram(programs[currentProgram]);
                 
+                // ! DO I NEED THE FOLLOWING:
                 gl.uniform1i(gl.getUniformLocation(programs[currentProgram], 'uTexMap'), 0);
                 gl.uniform1i(gl.getUniformLocation(programs[currentProgram], 'uBackgroundTexture'), 1);
                 break;
-            // case '11': // reflection
-            //     gl.useProgram(program11);
-            //     break;
-            // case '12': // gorilla
-            //     configureBackgroundTexture(gorillaBackground);
-            //     gl.useProgram(program12);
-            //     gl.uniform1i(gl.getUniformLocation(program12, 'uBackgroundTexture'), 1);
-            //     break;
-            // case '13': // christmas hat
-            //     configureBackgroundTexture(christmasHatBackground);
-            //     gl.useProgram(program12);
-            //     gl.uniform1i(gl.getUniformLocation(program12, 'uBackgroundTexture'), 1);
-            //     break;
             default:
                 gl.useProgram(program1);
         }
@@ -325,15 +311,16 @@ function updateDistortionFilter(distortionFilterType) {
     gl.useProgram(programs[8]);
     gl.uniform1i(distortionFilterTypeLocs[8], distortionFilterType);
 
-    gl.useProgram(programs[9]);
-    gl.uniform1i(distortionFilterTypeLocs[9], distortionFilterType);
+    // TODO either implement or remove:
+    // gl.useProgram(programs[9]);
+    // gl.uniform1i(distortionFilterTypeLocs[9], distortionFilterType);
 
-    gl.useProgram(programs[10]);
-    gl.uniform1i(distortionFilterTypeLocs[10], distortionFilterType);
+    // gl.useProgram(programs[10]);
+    // gl.uniform1i(distortionFilterTypeLocs[10], distortionFilterType);
 
-    gl.useProgram(programs[11]);
-    gl.uniform1i(distortionFilterTypeLocs[11], distortionFilterType);
+    // gl.useProgram(programs[11]);
+    // gl.uniform1i(distortionFilterTypeLocs[11], distortionFilterType);
 
-    gl.useProgram(programs[12]);
-    gl.uniform1i(distortionFilterTypeLocs[12], distortionFilterType);
+    // gl.useProgram(programs[12]);
+    // gl.uniform1i(distortionFilterTypeLocs[12], distortionFilterType);
 }
