@@ -1,16 +1,11 @@
 var canvas;	// Drawing surface 
 var gl;	// Graphics context
 
-var program1, program2, program3, program4, 
-program5, program6, program7, program8, program9, program10,
-program11, program12; // programs for each of the fragment shaders
-var programs = [undefined];
-
+// variables for the live video feed
 var videoFeed, videoTexture;
-
 var liveVideoFeed = true;
 
-var vertices = new Float32Array ( [	// Use Javascript typed arrays for coordinates
+var vertices = new Float32Array ([ // vertices for textures to be mapped on to
 //    X     Y     Z
    -1.0, -1.0,  0.0,
    -1.0,  1.0,  0.0,
@@ -18,8 +13,10 @@ var vertices = new Float32Array ( [	// Use Javascript typed arrays for coordinat
     1.0, -1.0,  0.0
 ]);
 
-var backgroundTexture;
+var backgroundTexture; // variable to hold the current backgroundTexture (either the gorilla or the Christmas hat)
 
+// arrays to hold the programs and their uniform variable locations (each array starts with undefined so that program1 is index 1, program2 is index 2, etc.)
+var programs = [undefined];
 var distortionFilterTypeLocs = [undefined];
 var reflectionTypeLocs = [undefined];
 var blurStrengthLocs = [undefined];
@@ -27,10 +24,10 @@ var amplitudeLocs = [undefined];
 var frequencyLocs = [undefined];
 var distortionCoefficientLocs = [undefined];
 
-var currentProgram = 1;
+var currentProgram = 1; // keeps track of the current program that is being used
 
 // adapted from "Hello2DTexture_ImageFile.js" example
-function configureTexture(imgString) {
+function configureTexture(imgString) { // used to configure texture for default static image
     let image = new Image();
     let texture = gl.createTexture();
 
@@ -50,7 +47,7 @@ function configureTexture(imgString) {
     image.src = imgString;
 }
 
-var backgroundTexture;
+// used to configure texture for background image (either the gorilla or the Christmas hat)
 function configureBackgroundTexture(imgString) {
     let image = new Image();
     backgroundTexture = gl.createTexture();
@@ -119,6 +116,8 @@ function accessWebcam(video) {
   });
 }
 
+//----------------------------------------------------------------------------
+
 window.onload = function init()
 {
     canvas = document.getElementById("gl-canvas");
@@ -186,6 +185,7 @@ window.onload = function init()
     gl.vertexAttribPointer(positionLoc, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionLoc);
 
+    // store all uniform variable locations
     distortionFilterTypeLocs.push(gl.getUniformLocation(programs[1], 'distortionFilterType'));
     distortionFilterTypeLocs.push(gl.getUniformLocation(programs[2], 'distortionFilterType'));
     distortionFilterTypeLocs.push(gl.getUniformLocation(programs[3], 'distortionFilterType'));
@@ -240,6 +240,7 @@ window.onload = function init()
     distortionCoefficientLocs.push(gl.getUniformLocation(programs[7], 'distortionCoefficient'));
     distortionCoefficientLocs.push(gl.getUniformLocation(programs[8], 'distortionCoefficient'));
 
+    // initialize the uniform variables for each program
     initializeTextureLocations();
 
     updateDistortionFilter(1);
@@ -251,7 +252,7 @@ window.onload = function init()
 
     gl.useProgram(programs[currentProgram]);
 
-    document.getElementById("colorFilter").onchange = function (event) {
+    document.getElementById("colorFilter").onchange = function (event) { // switch between different programs based on user's selection
         // 1 = no filter
         // 2 = grayscale filter
         // 3 = image negative filter
@@ -265,7 +266,7 @@ window.onload = function init()
         gl.useProgram(programs[currentProgram]);
     }
 
-    document.getElementById("distortionFilter").onchange = function (event) {
+    document.getElementById("distortionFilter").onchange = function (event) { // update uniform variables for distortion effects based on user's selection
         switch (event.target.value) {
             case '1': // none
             case '2': // blurry
@@ -290,6 +291,7 @@ window.onload = function init()
                 gl.useProgram(programs[currentProgram]);
         }
 
+        // the following if else statements hide and display various sliders and dropdown menus as needed
         if (event.target.value == '2') {
             document.getElementById("blurChoice").style.display = 'block';
         } else {
@@ -315,29 +317,29 @@ window.onload = function init()
         }        
     }
 
-    document.getElementById("reflectionType").onchange = function (event) {
+    document.getElementById("reflectionType").onchange = function (event) { // updates type of reflection
         updateReflectionType(event.target.value);
     }
 
-    document.getElementById("blurChoice").onpointermove = function (event) {
+    document.getElementById("blurChoice").onpointermove = function (event) { // updates blur strength
         if (event.pressure !== 0) {
             updateBlurStrength(event.target.value);
         }
     }
 
-    document.getElementById("amplitude").onpointermove = function (event) {
+    document.getElementById("amplitude").onpointermove = function (event) { // updates the amplitude of the wave distortion
         if (event.pressure !== 0) {
             updateAmplitude(event.target.value);
         }
     }
 
-    document.getElementById("frequency").onpointermove = function (event) {
+    document.getElementById("frequency").onpointermove = function (event) { // updates the frequency of the wave distortion
         if (event.pressure !== 0) {
             updateFrequency(event.target.value);
         }
     }
 
-    document.getElementById("distortionCoefficient").onpointermove = function (event) {
+    document.getElementById("distortionCoefficient").onpointermove = function (event) { // updates the distortion coefficient of the barrel distortion
         if (event.pressure !== 0) {
             updateDistortionCoefficient(event.target.value);
         }
@@ -360,6 +362,8 @@ window.onload = function init()
     });
 }
 
+//----------------------------------------------------------------------------
+
 function render()
 {
     if (liveVideoFeed) { // only update texture if there is a live video feed
@@ -372,6 +376,9 @@ function render()
 
     requestAnimationFrame(render);	// Call to browser to refresh display
 }
+
+//----------------------------------------------------------------------------
+// the following functions are all used to initialize and update uniform variables across all fragment shaders
 
 function initializeTextureLocations() {
     gl.useProgram(programs[1]);

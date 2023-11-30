@@ -607,6 +607,7 @@
                 }
             }
 
+            // inspired by https://engineering.purdue.edu/~bouman/ece637/notes/pdf/Halftoning.pdf
             float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
             float threshold = 0.5;
 
@@ -712,6 +713,7 @@
                 }
             }
 
+            // inspired by https://engineering.purdue.edu/~bouman/ece637/notes/pdf/Halftoning.pdf
             float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
 
             float clusteredDotScreen[64] = float[](
@@ -725,6 +727,7 @@
                 61.0, 54.0, 43.0, 29.0, 28.0, 42.0, 53.0, 60.0
             );
 
+            // the following 3 lines essentially treat clusteredDotScreen as an 8x8 matrix
             int col = int(mod(gl_FragCoord.x, 8.0));
             int row = int(mod(gl_FragCoord.y, 8.0));
             int index = row * 8 + col;
@@ -834,6 +837,7 @@
                 }
             }
 
+            // inspired by https://engineering.purdue.edu/~bouman/ece637/notes/pdf/Halftoning.pdf
             float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
 
             float bayerDotScreen[64] = float[](
@@ -847,6 +851,7 @@
                 63.0, 15.0, 51.0, 3.0 , 60.0, 12.0, 48.0, 0.0
             );
 
+            // the following 3 lines essentially treat bayerDotScreen as an 8x8 matrix
             int col = int(mod(gl_FragCoord.x, 8.0));
             int row = int(mod(gl_FragCoord.y, 8.0));
             int index = row * 8 + col;
