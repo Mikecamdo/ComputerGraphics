@@ -25,6 +25,7 @@ var reflectionTypeLocs = [undefined];
 var blurStrengthLocs = [undefined];
 var amplitudeLocs = [undefined];
 var frequencyLocs = [undefined];
+var distortionCoefficientLocs = [undefined];
 
 var currentProgram = 1;
 
@@ -241,6 +242,15 @@ window.onload = function init()
     frequencyLocs.push(gl.getUniformLocation(programs[7], 'frequency'));
     frequencyLocs.push(gl.getUniformLocation(programs[8], 'frequency'));
 
+    distortionCoefficientLocs.push(gl.getUniformLocation(programs[1], 'distortionCoefficient'));
+    distortionCoefficientLocs.push(gl.getUniformLocation(programs[2], 'distortionCoefficient'));
+    distortionCoefficientLocs.push(gl.getUniformLocation(programs[3], 'distortionCoefficient'));
+    distortionCoefficientLocs.push(gl.getUniformLocation(programs[4], 'distortionCoefficient'));
+    distortionCoefficientLocs.push(gl.getUniformLocation(programs[5], 'distortionCoefficient'));
+    distortionCoefficientLocs.push(gl.getUniformLocation(programs[6], 'distortionCoefficient'));
+    distortionCoefficientLocs.push(gl.getUniformLocation(programs[7], 'distortionCoefficient'));
+    distortionCoefficientLocs.push(gl.getUniformLocation(programs[8], 'distortionCoefficient'));
+
     // TODO either implement or remove:
     // distortionFilterTypeLocs.push(gl.getUniformLocation(programs[9], 'distortionFilterType'));
     // distortionFilterTypeLocs.push(gl.getUniformLocation(programs[10], 'distortionFilterType'));
@@ -252,6 +262,7 @@ window.onload = function init()
     updateBlurStrength(7);
     updateAmplitude(0.2);
     updateFrequency(10.0);
+    updateDistortionCoefficient(1.0);
 
     gl.useProgram(programs[currentProgram]);
 
@@ -282,17 +293,18 @@ window.onload = function init()
         switch (event.target.value) {
             case '1': // none
             case '2': // blurry
-            case '3': // distortion
-            case '4': // reflection
+            case '3': // reflection
+            case '4': // wave distortion
+            case '5': // barrel distortion
                 updateDistortionFilter(event.target.value);
                 gl.useProgram(programs[currentProgram]);
                 break;
-            case '5': // gorilla
+            case '6': // gorilla
                 configureBackgroundTexture(gorillaBackground);
                 updateDistortionFilter(event.target.value);
                 gl.useProgram(programs[currentProgram]);
                 break;
-            case '6': // christmas hat
+            case '7': // christmas hat
                 configureBackgroundTexture(christmasHatBackground);
                 updateDistortionFilter(event.target.value);
                 gl.useProgram(programs[currentProgram]);
@@ -309,16 +321,22 @@ window.onload = function init()
         }
 
         if (event.target.value == '3') {
+            document.getElementById("reflectionChoice").style.display = 'block';
+        } else {
+            document.getElementById("reflectionChoice").style.display = 'none';
+        }
+
+        if (event.target.value == '4') {
             document.getElementById("waveChoices").style.display = 'block';
         } else {
             document.getElementById("waveChoices").style.display = 'none';
         }
 
-        if (event.target.value == '4') {
-            document.getElementById("reflectionChoice").style.display = 'block';
+        if (event.target.value == '5') {
+            document.getElementById("distortionChoice").style.display = 'block';
         } else {
-            document.getElementById("reflectionChoice").style.display = 'none';
-        }
+            document.getElementById("distortionChoice").style.display = 'none';
+        }        
     }
 
     document.getElementById("reflectionType").onchange = function (event) {
@@ -340,6 +358,12 @@ window.onload = function init()
     document.getElementById("frequency").onpointermove = function (event) {
         if (event.pressure !== 0) {
             updateFrequency(event.target.value);
+        }
+    }
+
+    document.getElementById("distortionCoefficient").onpointermove = function (event) {
+        if (event.pressure !== 0) {
+            updateDistortionCoefficient(event.target.value);
         }
     }
 
@@ -521,6 +545,34 @@ function updateFrequency(frequency) {
 
     gl.useProgram(programs[8]);
     gl.uniform1f(frequencyLocs[8], frequency);
+
+    gl.useProgram(programs[currentProgram]);
+}
+
+function updateDistortionCoefficient(distortionCoefficient) {
+    gl.useProgram(programs[1]);
+    gl.uniform1f(distortionCoefficientLocs[1], distortionCoefficient);
+
+    gl.useProgram(programs[2]);
+    gl.uniform1f(distortionCoefficientLocs[2], distortionCoefficient);
+
+    gl.useProgram(programs[3]);
+    gl.uniform1f(distortionCoefficientLocs[3], distortionCoefficient);
+
+    gl.useProgram(programs[4]);
+    gl.uniform1f(distortionCoefficientLocs[4], distortionCoefficient);
+
+    gl.useProgram(programs[5]);
+    gl.uniform1f(distortionCoefficientLocs[5], distortionCoefficient);
+
+    gl.useProgram(programs[6]);
+    gl.uniform1f(distortionCoefficientLocs[6], distortionCoefficient);
+
+    gl.useProgram(programs[7]);
+    gl.uniform1f(distortionCoefficientLocs[7], distortionCoefficient);
+
+    gl.useProgram(programs[8]);
+    gl.uniform1f(distortionCoefficientLocs[8], distortionCoefficient);
 
     gl.useProgram(programs[currentProgram]);
 }
