@@ -23,6 +23,8 @@ var backgroundTexture;
 var distortionFilterTypeLocs = [undefined];
 var reflectionTypeLocs = [undefined];
 var blurStrengthLocs = [undefined];
+var amplitudeLocs = [undefined];
+var frequencyLocs = [undefined];
 
 var currentProgram = 1;
 
@@ -221,6 +223,24 @@ window.onload = function init()
     blurStrengthLocs.push(gl.getUniformLocation(programs[7], 'blurStrength'));
     blurStrengthLocs.push(gl.getUniformLocation(programs[8], 'blurStrength'));
 
+    amplitudeLocs.push(gl.getUniformLocation(programs[1], 'amplitude'));
+    amplitudeLocs.push(gl.getUniformLocation(programs[2], 'amplitude'));
+    amplitudeLocs.push(gl.getUniformLocation(programs[3], 'amplitude'));
+    amplitudeLocs.push(gl.getUniformLocation(programs[4], 'amplitude'));
+    amplitudeLocs.push(gl.getUniformLocation(programs[5], 'amplitude'));
+    amplitudeLocs.push(gl.getUniformLocation(programs[6], 'amplitude'));
+    amplitudeLocs.push(gl.getUniformLocation(programs[7], 'amplitude'));
+    amplitudeLocs.push(gl.getUniformLocation(programs[8], 'amplitude'));
+
+    frequencyLocs.push(gl.getUniformLocation(programs[1], 'frequency'));
+    frequencyLocs.push(gl.getUniformLocation(programs[2], 'frequency'));
+    frequencyLocs.push(gl.getUniformLocation(programs[3], 'frequency'));
+    frequencyLocs.push(gl.getUniformLocation(programs[4], 'frequency'));
+    frequencyLocs.push(gl.getUniformLocation(programs[5], 'frequency'));
+    frequencyLocs.push(gl.getUniformLocation(programs[6], 'frequency'));
+    frequencyLocs.push(gl.getUniformLocation(programs[7], 'frequency'));
+    frequencyLocs.push(gl.getUniformLocation(programs[8], 'frequency'));
+
     // TODO either implement or remove:
     // distortionFilterTypeLocs.push(gl.getUniformLocation(programs[9], 'distortionFilterType'));
     // distortionFilterTypeLocs.push(gl.getUniformLocation(programs[10], 'distortionFilterType'));
@@ -230,6 +250,8 @@ window.onload = function init()
     updateDistortionFilter(1);
     updateReflectionType(1);
     updateBlurStrength(7);
+    updateAmplitude(0.2);
+    updateFrequency(10.0);
 
     gl.useProgram(programs[currentProgram]);
 
@@ -280,16 +302,22 @@ window.onload = function init()
                 gl.useProgram(programs[currentProgram]);
         }
 
-        if (event.target.value == '4') {
-            document.getElementById("reflectionChoice").style.display = 'block';
-        } else {
-            document.getElementById("reflectionChoice").style.display = 'none';
-        }
-
         if (event.target.value == '2') {
             document.getElementById("blurChoice").style.display = 'block';
         } else {
             document.getElementById("blurChoice").style.display = 'none';
+        }
+
+        if (event.target.value == '3') {
+            document.getElementById("waveChoices").style.display = 'block';
+        } else {
+            document.getElementById("waveChoices").style.display = 'none';
+        }
+
+        if (event.target.value == '4') {
+            document.getElementById("reflectionChoice").style.display = 'block';
+        } else {
+            document.getElementById("reflectionChoice").style.display = 'none';
         }
     }
 
@@ -300,6 +328,18 @@ window.onload = function init()
     document.getElementById("blurChoice").onpointermove = function (event) {
         if (event.pressure !== 0) {
             updateBlurStrength(event.target.value);
+        }
+    }
+
+    document.getElementById("amplitude").onpointermove = function (event) {
+        if (event.pressure !== 0) {
+            updateAmplitude(event.target.value);
+        }
+    }
+
+    document.getElementById("frequency").onpointermove = function (event) {
+        if (event.pressure !== 0) {
+            updateFrequency(event.target.value);
         }
     }
 
@@ -425,6 +465,62 @@ function updateBlurStrength(blurStrength) {
 
     gl.useProgram(programs[8]);
     gl.uniform1i(blurStrengthLocs[8], blurStrength);
+
+    gl.useProgram(programs[currentProgram]);
+}
+
+function updateAmplitude(amplitude) {
+    gl.useProgram(programs[1]);
+    gl.uniform1f(amplitudeLocs[1], amplitude);
+
+    gl.useProgram(programs[2]);
+    gl.uniform1f(amplitudeLocs[2], amplitude);
+
+    gl.useProgram(programs[3]);
+    gl.uniform1f(amplitudeLocs[3], amplitude);
+
+    gl.useProgram(programs[4]);
+    gl.uniform1f(amplitudeLocs[4], amplitude);
+
+    gl.useProgram(programs[5]);
+    gl.uniform1f(amplitudeLocs[5], amplitude);
+
+    gl.useProgram(programs[6]);
+    gl.uniform1f(amplitudeLocs[6], amplitude);
+
+    gl.useProgram(programs[7]);
+    gl.uniform1f(amplitudeLocs[7], amplitude);
+
+    gl.useProgram(programs[8]);
+    gl.uniform1f(amplitudeLocs[8], amplitude);
+
+    gl.useProgram(programs[currentProgram]);
+}
+
+function updateFrequency(frequency) {
+    gl.useProgram(programs[1]);
+    gl.uniform1f(frequencyLocs[1], frequency);
+
+    gl.useProgram(programs[2]);
+    gl.uniform1f(frequencyLocs[2], frequency);
+
+    gl.useProgram(programs[3]);
+    gl.uniform1f(frequencyLocs[3], frequency);
+
+    gl.useProgram(programs[4]);
+    gl.uniform1f(frequencyLocs[4], frequency);
+
+    gl.useProgram(programs[5]);
+    gl.uniform1f(frequencyLocs[5], frequency);
+
+    gl.useProgram(programs[6]);
+    gl.uniform1f(frequencyLocs[6], frequency);
+
+    gl.useProgram(programs[7]);
+    gl.uniform1f(frequencyLocs[7], frequency);
+
+    gl.useProgram(programs[8]);
+    gl.uniform1f(frequencyLocs[8], frequency);
 
     gl.useProgram(programs[currentProgram]);
 }
