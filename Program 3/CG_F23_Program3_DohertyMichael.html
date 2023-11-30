@@ -871,6 +871,66 @@
     <script type="text/javascript" src="CG_F23_Program3_DohertyMichael.js"></script>
     <script type="text/javascript" src="CG_F23_Program3_DohertyMichael_ImageData.js"></script>
 
+    <head>
+        <!-- CSS Styles were partially inspired by ChatGPT -->
+        <style>
+            body {
+                text-align: center;
+            }
+
+            label {
+                font-family: 'Times New Roman', serif;
+                font-size: 16px;
+                padding: 6px;
+                border: none;
+                border-radius: 5px 0px 0px 5px;
+                background-color: #4f61fa;
+                color: white;
+                margin-right: -10.5px;
+            }
+
+            .slider-label { 
+                width: 100%;
+                border-radius: 1rem;
+            }
+
+            .label-wrapper {
+                margin-top: 11px;
+            }
+
+            select {
+                font-family: 'Times New Roman', serif;
+                font-size: 16px;
+                padding: 5px;
+                border: none;
+                border-radius: 5px;
+                background-color: #4f61fa;
+                color: white;
+                cursor: pointer;
+                margin-right: 5px;
+            }
+
+            select:focus {
+                outline: none;
+            }
+
+            option {
+                font-family: 'Times New Roman', serif;
+                font-size: 16px;
+            }
+
+            input {
+                margin-left: 1rem;
+                cursor: pointer;
+                accent-color: #4f61fa;
+            }
+
+            div {
+                margin-bottom: 5px;
+            }
+        </style>
+    </head>
+
     <body>
         <div>
             <canvas id="gl-canvas" width="640" height="360">
@@ -881,7 +941,7 @@
         </div>
 
         <div>
-            <label for="colorFilter">Choose Color Filter:</label>
+            <label for="colorFilter">Color Filter:</label>
 
             <select name="colorFilter" id="colorFilter">
                 <option selected value="1">None</option>
@@ -893,10 +953,8 @@
                 <option value="7">Clustered Dot Screen</option>
                 <option value="8">Bayer Dot Screen</option>
             </select>
-        </div>
 
-        <div>
-            <label for="distortionFilter">Choose Geometric Distortion Filter:</label>
+            <label for="distortionFilter">Geometric Distortion Filter:</label>
 
             <select name="distortionFilter" id="distortionFilter">
                 <option selected value="1">None</option>
@@ -920,25 +978,41 @@
         </div>
 
         <div id="blurChoice" style="display: none;">
-            <label for="blurStrength">Blur Strength:</label>
-            <input name="blurStrength" id="blurStrength" type="range"
-            min="0" max="20" step="1" value="7" />
+            <div class="label-wrapper">
+                <label class="slider-label" for="blurStrength">Blur Strength:</label>
+            </div>
+
+            <div>
+                <input name="blurStrength" id="blurStrength" type="range"
+                min="0" max="20" step="1" value="7" />    
+            </div>
         </div>
 
         <div id="waveChoices" style="display: none;">
-            <label for="amplitude">Amplitude:</label>
-            <input name="amplitude" id="amplitude" type="range"
-            min="0.0" max="1.0" step="0.01" value="0.2" />
+            <div class="label-wrapper">
+                <label class="slider-label" for="amplitude" style="margin-right: 30px;">Amplitude:</label>
 
-            <label for="frequency">Frequency:</label>
-            <input name="frequency" id="frequency" type="range"
-            min="0.0" max="25.0" step="0.1" value="10.0" />
+                <label class="slider-label" for="frequency" style="margin-left: 30px;">Frequency:</label>
+            </div>
+
+            <div>
+                <input name="amplitude" id="amplitude" type="range"
+                min="0.0" max="1.0" step="0.01" value="0.2" />
+
+                <input name="frequency" id="frequency" type="range"
+                min="0.0" max="25.0" step="0.1" value="10.0" />
+            </div>
         </div>
 
         <div id="distortionChoice" style="display: none;">
-            <label for="distortionCoefficient">Distortion Coefficient:</label>
-            <input name="distortionCoefficient" id="distortionCoefficient" type="range"
-            min="0.0" max="20.0" step="0.1" value="1.0" />
+            <div class="label-wrapper">
+                <label class="slider-label" for="distortionCoefficient">Distortion Coefficient:</label>
+            </div>
+
+            <div>
+                <input name="distortionCoefficient" id="distortionCoefficient" type="range"
+                min="0.0" max="20.0" step="0.1" value="1.0" />
+            </div>
         </div>
     </body>
 </html>
