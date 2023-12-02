@@ -11,5 +11,5 @@ For this homework assignment, you are to use 2D images to texture map simple pol
 
 Attach a single, zipped folder that includes all your code files and image files.  Follow naming conventions.
 
-- **CG_HW5_FragmentShaderSelfie_<yourname>.html**, **CG_HW5_FragmentShaderSelfie_<yourname>.js**, others as needed
-- **CG_HW5_FragmentShaderSelfie_<yourname>.jpg (or png)**, a representative screenshot of your program
+- **CG_HW5_FragmentShaderSelfie_&lt;yourname>.html**, **CG_HW5_FragmentShaderSelfie_&lt;yourname>.js**, others as needed
+- **CG_HW5_FragmentShaderSelfie_&lt;yourname>.jpg (or png)**, a representative screenshot of your program
